@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000'); // Asegúrate de que esté en CORS
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || '', {
+  path: '/socket.io',
+  transports: ['websocket', 'polling'],
+});
 type ChatMessage = {
   username?: string;
   content: string;
@@ -29,7 +32,7 @@ function Chat() {
     return () => {
       socket.emit('leave', { room, username });
     };
-  }, [room]);
+  }, [room, username]);
 
   const sendMessage = () => {
     if (message.trim()) {

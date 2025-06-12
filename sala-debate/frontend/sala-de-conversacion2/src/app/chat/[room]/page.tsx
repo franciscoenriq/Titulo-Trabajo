@@ -5,6 +5,20 @@ import { useEffect, useState, useRef } from 'react'
 import { io, Socket } from 'socket.io-client'
 
 export default function ChatRoom() {
+  type ChatMessage = {
+    username?: string;
+    content: string;
+    system?: boolean;
+  };
+  
+  type EvaluacionData = {
+    evaluacion: string;
+    agente: string;
+    evaluado: string;
+    intervencion?: string;
+    respuesta?: string;
+  };
+  
   const params = useParams()
   const room = params.room as string
   const [evaluaciones, setEvaluaciones] = useState<string[]>([])
@@ -15,32 +29,35 @@ export default function ChatRoom() {
   const socketRef = useRef<Socket | null>(null)
   const [tema, setTema] = useState('')
   useEffect(() => {
-    fetch(`http://localhost:5000/tema/${room}`)
+    fetch(`http://localhost:5000/api/tema/${room}`)
     .then((res) => res.json())
     .then((data) => setTema(data.tema))
   }, [room])
 
   // Inicializa el socket una sola vez
   useEffect(() => {
-    socketRef.current = io('http://localhost:5000')
+    socketRef.current = io('/', {
+      path: '/socket.io',
+      transports: ['websocket'],
+    });
 
     const socket = socketRef.current
 
-    const handleMessage = (msg: any) => {
+    const handleMessage = (msg: ChatMessage) => {
       setMessages((prev) => [...prev, msg])
     }
 
-    const handleStatus = (statusMsg: any) => {
+    const handleStatus = (statusMsg: {msg:string}) => {
       setMessages((prev) => [...prev, { content: statusMsg.msg, system: true }])
     }
 
-    const handleEvaluacion = (data: any) => {
+    const handleEvaluacion = (data: EvaluacionData) => {
       const { evaluacion, agente, evaluado, intervencion, respuesta } = data
 
       const mensaje = `${agente} evaluó lo que dijo ${evaluado}: ${evaluacion}`
       setEvaluaciones((prev) => [...prev, mensaje])
 
-      if (intervencion && respuesta.trim() ){
+      if (intervencion && respuesta?.trim() ){
         const intervencionMsg = `${agente} interviene tras el mensaje de ${evaluado} y dijo: "${respuesta}"`
         setEvaluaciones((prev) => [...prev, intervencionMsg])
       }

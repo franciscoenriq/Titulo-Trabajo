@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/app
+    container_name: flask_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - ORIGIN_DOMAIN=${ORIGIN_DOMAIN}
+
+  frontend:
+    build:
+      context: ./frontend/sala-de-conversacion2
+    container_name: react_frontend
+    ports:
+      - "3000:3000"
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx_server
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend

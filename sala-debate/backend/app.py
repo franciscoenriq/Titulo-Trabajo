@@ -38,7 +38,7 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 """    
-@app.route("/messages", methods=["POST"])
+@app.route("/api/messages", methods=["POST"])
 def create_message():
     data = request.json
     message_id = messages.insert_message(
@@ -48,7 +48,7 @@ def create_message():
     )
     return jsonify({"message_id": message_id}), 201
 
-@app.route("/check-mongo")
+@app.route("/api/check-mongo")
 def check_mongo():
     uri = os.getenv("MONGO_URI")
     if not uri:
@@ -59,7 +59,7 @@ def check_mongo():
     except Exception as e:
         return {"error": str(e)}, 500
     
-@app.route("/log-conversation-agent", methods=["POST"])
+@app.route("/api/log-conversation-agent", methods=["POST"])
 def safeConversation():
     data = request.json
     nombre_agente=data["agent"]
@@ -71,7 +71,7 @@ def safeConversation():
     }, room="chat")
 
 
-    return jsonify({"status":"ok"},200)
+    return jsonify({"status":"ok"}), 200
 # Socket.IO events
 @socketio.on('join')
 def on_join(data):
@@ -108,7 +108,7 @@ def handle_message(data):
     }, room=room)
 
 
-@app.route("/init-topic",methods=["POST"])
+@app.route("/api/init-topic",methods=["POST"])
 def init_topic():
     data =request.json
     room = data["room"]
@@ -121,11 +121,12 @@ def init_topic():
     inicializar_conversacion(room, topic)
     return jsonify({"status": "initialized"}), 201
 
-@app.route('/tema/<room>', methods=["GET"])
+@app.route('/api/tema/<room>', methods=["GET"])
 def obtener_tema(room):
     tema = temas.get(room,"sin tema definido")
     return jsonify({"tema":tema})
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    #app.run(debug=True)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)

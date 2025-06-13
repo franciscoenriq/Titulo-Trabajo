@@ -90,8 +90,12 @@ export default function ChatRoom() {
     <main className="p-8">
       <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
       {tema && (
-        <div className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 rounded">
-          <strong>Tema de la sala:</strong> {tema}
+        <div 
+          className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 rounded"
+          style={{ maxHeight: '150px', overflowY: 'auto', whiteSpace: 'pre-wrap' }}
+        >
+          <strong>Tema de la sala:</strong><br />
+           {tema}
         </div>
       )}
       {!joined ? (

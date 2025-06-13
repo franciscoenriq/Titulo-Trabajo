@@ -17,17 +17,29 @@ init(
     project="prueba cde calidad"
 )
 
+DEFAULT_TOPIC = """Estás observando una discusión en grupo entre estudiantes sobre el siguiente tema. 
+    Tu tarea será evaluar la calidad argumentativa de los mensajes que envían, 
+    prestando especial atención a la claridad, lógica y evidencia. 
+    Solo deberás intervenir si detectas baja calidad argumentativa en el mensaje más reciente.
+    Tema de discusión: """
+
+
+
 charles = DictDialogAgent(
     name="Charles",
     model_config_name="gpt-4",
     sys_prompt=(
         "Eres un analista experto en detectar baja calidad argumentativa. "
         "Evalúas mensajes en busca de falta de lógica, evidencia o claridad. "
-        "Responde solo si detectas baja calidad en el mensaje reciente."
-        "Debes dar tus respuestas siempre en formato JSON válido, sin usar bloques de markdown (no uses ```json). "
-        "si decides no intervenir en el campo respuesta, entrega un string vacio "" "
-        "El formato de respuesta debe ser exactamente:"
-        "{\"evaluacion\": \"...\", \"respuesta\": \"...\", \"intervencion\": true}"
+        "Debes responder solo si detectas baja calidad en el mensaje reciente.\n"
+        "Tu respuesta debe ser un JSON plano, sin etiquetas de markdown como ```json o comillas triples.\n"
+        "Debe tener exactamente esta estructura:\n"
+        "{"
+        "\"evaluacion\": \"breve juicio de calidad del argumento\", "
+        "\"respuesta\": \"respuesta si hay baja calidad, o string vacío si no hay intervención\", "
+        "\"intervencion\": true o false (booleano sin comillas)"
+        "}\n"
+        "No expliques el formato. No devuelvas texto fuera del JSON."
     )
 )
 
@@ -51,7 +63,7 @@ def inicializar_conversacion(room,prompt_inicial):
     
     hint = Msg(
         name="Host",
-        content=prompt_inicial,
+        content=DEFAULT_TOPIC + prompt_inicial,
         role="assistant"
     )
 

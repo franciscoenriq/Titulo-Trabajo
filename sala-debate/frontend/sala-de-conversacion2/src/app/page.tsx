@@ -9,7 +9,7 @@ export default function Home() {
   const handleEnter = async () =>{
     if (!room || !topic) return
     try {
-      await fetch('http://localhost:5000/api/init-topic', {
+      await fetch('http://localhost:5010/api/init-topic', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

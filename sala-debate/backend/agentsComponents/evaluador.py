@@ -7,8 +7,8 @@ from agentscope.exception import JsonParsingError
 from agentscope.msghub import msghub
 import os
 import ast
-import time 
-import json 
+import time
+import json
 base_dir = os.path.dirname(os.path.abspath(__file__))
 model_config_path = os.path.join(base_dir, "configs", "model_configs.json")
 
@@ -19,7 +19,7 @@ init(
 
 charles = DictDialogAgent(
     name="Charles",
-    model_config_name="gpt-4",
+    model_config_name="openai_chat_gpt-4o",
     sys_prompt=(
         "Eres un analista experto en detectar baja calidad argumentativa. "
         "Evalúas mensajes en busca de falta de lógica, evidencia o claridad. "
@@ -47,8 +47,8 @@ historiales = {}
 conversaciones = {}
 def inicializar_conversacion(room,prompt_inicial):
     if room in conversaciones:
-        return #ya fue inicializado 
-    
+        return #ya fue inicializado
+
     hint = Msg(
         name="Host",
         content=prompt_inicial,
@@ -75,11 +75,11 @@ def analizar_argumento(room, user_input, user_name):
     msg = Msg(user_name, user_input, "user")
     historiales[room].append(msg)
 
-    intentos = 0 
+    intentos = 0
     max_reintentos = 2
 
     while intentos < max_reintentos:
-        try: 
+        try:
             respuesta = charles(historiales[room])
             parsed = ast.literal_eval(respuesta.content)
             #parsed = json.loads(respuesta.content)
@@ -88,7 +88,7 @@ def analizar_argumento(room, user_input, user_name):
                 "respuesta": parsed["respuesta"],
                 "intervencion": respuesta.metadata,
                 "agente": charles.name,
-                "evaluado": user_name 
+                "evaluado": user_name
             }
         except (ValueError, SyntaxError, KeyError, JsonParsingError) as e:
             intentos += 1

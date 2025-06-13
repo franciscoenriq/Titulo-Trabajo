@@ -29,7 +29,7 @@ export default function ChatRoom() {
   const socketRef = useRef<Socket | null>(null)
   const [tema, setTema] = useState('')
   useEffect(() => {
-    fetch(`http://localhost:5000/api/tema/${room}`)
+    fetch(`http://localhost:5010/api/tema/${room}`)
     .then((res) => res.json())
     .then((data) => setTema(data.tema))
   }, [room])

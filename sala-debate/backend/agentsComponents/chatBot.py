@@ -10,7 +10,7 @@ if not openai_api_key:
     raise ValueError("API_KEY no encontrada en el archivo .env")
 
 chat = ChatOpenAI(
-    model_name="gpt-4",  
+    model_name="gpt-4o",  
     openai_api_key=openai_api_key,
     temperature=0.7
 )

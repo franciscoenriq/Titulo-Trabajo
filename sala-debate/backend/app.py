@@ -10,13 +10,13 @@ from agentsComponents.evaluador import *
 load_dotenv()
 app = Flask(__name__)
 CORS(app)
-app.config["MONGO_URI"] = os.getenv("MONGO_URI")
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") 
-redis_url = os.getenv("REDIS_URL")
+# app.config["MONGO_URI"] = os.getenv("MONGO_URI")
+# app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") 
+# redis_url = os.getenv("REDIS_URL")
 
 #conectamos a mongo
-mongo = PyMongo(app)
-app.mongo = mongo
+# mongo = PyMongo(app)
+# app.mongo = mongo
 #conectamos con redis 
 #redis_conn = Redis.from_url(redis_url)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -48,16 +48,16 @@ def create_message():
     )
     return jsonify({"message_id": message_id}), 201
 
-@app.route("/api/check-mongo")
-def check_mongo():
-    uri = os.getenv("MONGO_URI")
-    if not uri:
-        return {"error": "MONGO_URI not loaded"}, 500
-    try:
-        collections = app.mongo.db.list_collection_names()
-        return {"status": "ok", "collections": collections}
-    except Exception as e:
-        return {"error": str(e)}, 500
+# @app.route("/api/check-mongo")
+# def check_mongo():
+#     uri = os.getenv("MONGO_URI")
+#     if not uri:
+#         return {"error": "MONGO_URI not loaded"}, 500
+#     try:
+#         collections = app.mongo.db.list_collection_names()
+#         return {"status": "ok", "collections": collections}
+#     except Exception as e:
+#         return {"error": str(e)}, 500
     
 @app.route("/api/log-conversation-agent", methods=["POST"])
 def safeConversation():
@@ -129,4 +129,4 @@ def obtener_tema(room):
 
 if __name__ == "__main__":
     #app.run(debug=True)
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5010)

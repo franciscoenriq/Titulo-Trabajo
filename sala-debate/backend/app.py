@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from flask_cors import CORS 
-from task.analize import *
 import os 
 from flask_pymongo import PyMongo
 from models import messages
@@ -69,8 +68,6 @@ def safeConversation():
         "username":nombre_agente,
         "content":mensaje
     }, room="chat")
-
-
     return jsonify({"status":"ok"}), 200
 # Socket.IO events
 @socketio.on('join')

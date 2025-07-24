@@ -5,6 +5,7 @@ from agentscope.parsers import MarkdownJsonDictParser
 from agentscope.message import Msg
 from agentscope.exception import JsonParsingError
 from agentscope.msghub import msghub
+from openai import RateLimitError
 import os
 import ast
 import time 
@@ -27,7 +28,7 @@ DEFAULT_TOPIC = """Estás observando una discusión en grupo entre estudiantes s
 
 charles = DictDialogAgent(
     name="Charles",
-    model_config_name="gpt-4",
+    model_config_name="gpt-3.5-turbo",
     sys_prompt=(
         "Eres un analista experto en detectar baja calidad argumentativa. "
         "Evalúas mensajes en busca de falta de lógica, evidencia o claridad. "
@@ -99,7 +100,7 @@ def analizar_argumento(room, user_input, user_name):
                 "evaluacion": parsed["evaluacion"],
                 "respuesta": parsed["respuesta"],
                 "intervencion": respuesta.metadata,
-                "agente": charles.name,
+                "agente": "Agente",
                 "evaluado": user_name 
             }
         except (ValueError, SyntaxError, KeyError, JsonParsingError) as e:
@@ -107,12 +108,21 @@ def analizar_argumento(room, user_input, user_name):
             print(f"[Error de parseo - intento {intentos }]:", e)
             print("Contenido recibido:", respuesta.content if respuesta else "No disponible")
             time.sleep(0.2)  # evitar saturar con múltiples llamadas seguidas
+        except RateLimitError:
+            print("ERROR: Límite de uso de la API de OpenAI excedido.")
+            return {
+                "evaluacion": "Error",
+                "respuesta": "Se ha excedido el límite de uso de la API. Intenta más tarde o revisa tu cuenta.",
+                "intervencion": None,
+                "agente": "Agente",
+                "evaluado": user_name
+            }
 
     # Si después de los reintentos aún falla
     return {
         "evaluacion": "Error al analizar el argumento.",
         "respuesta": "No se pudo evaluar correctamente el mensaje. Intenta reformularlo.",
         "intervencion": False,
-        "agente": charles.name,
+        "agente": "Agente",
         "evaluado": user_name
     }

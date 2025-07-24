@@ -36,7 +36,7 @@ export default function ChatRoom() {
 
   // Inicializa el socket una sola vez
   useEffect(() => {
-    socketRef.current = io('/', {
+    socketRef.current = io('http://localhost:5000', {
       path: '/socket.io',
       transports: ['websocket'],
     });

@@ -2,7 +2,7 @@ agentscope
 Flask==2.3.3
 Flask-SocketIO==5.3.6
 Flask-Cors==4.0.0
-Flask-PyMongo==2.3.0
 python-dotenv==1.0.1
 eventlet==0.33.3
-pymongo==4.7.0
+psycopg2-binary==2.9.6
+google-generativeai

@@ -15,7 +15,7 @@ df_ordenado = df.sort_values(by=["team_id", "time"])
 #df_ordenado.to_csv("data_ordenada.csv", index=False, sep=";")
  
 
-tres_grupos = list(df_ordenado.groupby("team_id"))[:3]
+tres_grupos = list(df_ordenado.groupby("team_id"))[3:6]
 
 resultados = []
 # Recorrer cada grupo de conversación
@@ -68,5 +68,5 @@ for team_id, mensajes in tqdm(tres_grupos, desc="Procesando salas"):
         mensajes_antes_intervencion += 1
 # Guardar resultados
 resultados_df = pd.DataFrame(resultados)
-resultados_df.to_csv("resultados_intervenciones.csv", index=False)
+resultados_df.to_csv("resultados_intervenciones2.csv", index=False)
 print("✅ Resultados guardados en 'resultados_intervenciones.csv'")

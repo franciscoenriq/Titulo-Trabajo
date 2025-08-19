@@ -41,33 +41,70 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-16 p-6 border rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Iniciar Sesión</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Usuario"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          className="w-full p-2 border mb-3 rounded"
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full p-2 border mb-3 rounded"
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
-          Entrar
-        </button>
-      </form>
-      {error && <p className="text-red-600 mt-2">{error}</p>}
-    </div>
+    <>
+      <div className="container" id="container">
+        <div className="form-container sign-up-container">
+          <form action="#">
+            <h1>Create Account</h1>
+            <span>or use your email for registration</span>
+            <input type="text" placeholder="Name" />
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
+            <button>Sign Up</button>
+          </form>
+        </div>
+
+        <div className="form-container sign-in-container">
+          <form onSubmit={handleLogin}>
+            <h1>Sign in</h1>
+            
+            <span>or use your account</span>
+            <p></p>
+            <input 
+              type="text"
+              placeholder="Usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required 
+            />
+            <input 
+              type="password" 
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+
+            />
+            {/*<a href="#">Forgot your password?</a>*/}
+            <p></p>
+            <button type='submit'>
+              Entrar
+            </button>
+          </form>
+        </div>
+
+        <div className="overlay-container">
+          <div className="overlay">
+            <div className="overlay-panel overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>To keep connected with us please login with your personal info</p>
+              <button className="ghost" id="signIn">Sign In</button>
+            </div>
+            <div className="overlay-panel overlay-right">
+              <h1>Hello, Friend!</h1>
+              <p>Enter your personal details and start journey with us</p>
+              {/*<button className="ghost" id="signUp">Sign Up</button>*/}
+            </div>
+          </div>
+        </div>
+        {error && <p className="text-red-600 mt-2">{error}</p>}
+      </div>
+      {/*<Script src="/js/login.js" strategy="afterInteractive" /> */}
+
+  </>
+    
+
+
+    
   )
 }

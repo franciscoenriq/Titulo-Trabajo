@@ -7,11 +7,16 @@ from dotenv import load_dotenv
 #from agentsComponents.evaluador import *
 from agentsComponents.multiagent_evaluador import *
 from controllers.auth_controller import auth_bp
+from models.models import Base, engine
+
 load_dotenv()
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(auth_bp)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") 
+
+# Crear tablas si no existen
+Base.metadata.create_all(engine)
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -75,13 +80,14 @@ def handle_message(data):
     #resultado = analizar_argumento(room, content,username)
     resultado = analizar_argumento_cascada(room,content,username)
     # Enviar la evaluación a la misma sala
-    emit('evaluacion', {
-        'evaluacion': resultado["evaluacion"],
-        'respuesta': resultado["respuesta"],
-        'intervencion': resultado["intervencion"],
-        'agente':resultado["agente"],
-        'evaluado':resultado["evaluado"]
-    }, room=room)
+    if(resultado["intervencion"] == True):
+        emit('evaluacion', {
+            'evaluacion': resultado["evaluacion"],
+            'respuesta': resultado["respuesta"],
+            'intervencion': resultado["intervencion"],
+            'agente':resultado["agente"],
+            'evaluado':resultado["evaluado"]
+        }, room=room)
 
 @app.route("/api/init-topic",methods=["POST"])
 def init_topic():
@@ -106,4 +112,5 @@ def obtener_tema(room):
 
 if __name__ == "__main__":
     #app.run(debug=True)
+
     socketio.run(app, debug=True, host='0.0.0.0', port=5000)

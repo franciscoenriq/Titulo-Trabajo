@@ -29,14 +29,14 @@ export default function ChatRoom() {
   const socketRef = useRef<Socket | null>(null)
   const [tema, setTema] = useState('')
   useEffect(() => {
-    fetch(`http://localhost:5000/api/tema/${room}`)
+    fetch(`http://127.0.0.1:5000/api/tema/${room}`)
     .then((res) => res.json())
     .then((data) => setTema(data.tema))
   }, [room])
 
   // Inicializa el socket una sola vez
   useEffect(() => {
-    socketRef.current = io('http://localhost:5000', {
+    socketRef.current = io('http://127.0.0.1:5000', {
       path: '/socket.io',
       transports: ['websocket'],
     });
@@ -52,16 +52,26 @@ export default function ChatRoom() {
     }
 
     const handleEvaluacion = (data: EvaluacionData) => {
-      const { evaluacion, agente, evaluado, intervencion, respuesta } = data
-
-      const mensaje = `${agente} evaluó lo que dijo ${evaluado}: ${evaluacion}`
-      setEvaluaciones((prev) => [...prev, mensaje])
-
-      if (intervencion && respuesta?.trim() ){
-        const intervencionMsg = `${agente} interviene tras el mensaje de ${evaluado} y dijo: "${respuesta}"`
-        setEvaluaciones((prev) => [...prev, intervencionMsg])
+      const { evaluacion, agente, evaluado, intervencion, respuesta } = data;
+    
+      // Mensaje de evaluación
+      const mensajeEvaluacion: ChatMessage = {
+        username: 'agenteIA',
+        content: `"${evaluacion}"`,
+      };
+    
+      //setMessages((prev) => [...prev, mensajeEvaluacion]);
+    
+      // Mensaje de intervención (si aplica)
+      if (intervencion && respuesta?.trim()) {
+        const mensajeIntervencion: ChatMessage = {
+          username: 'agenteIA',
+          content: `"${respuesta}"`,
+        };
+        setMessages((prev) => [...prev, mensajeIntervencion]);
       }
-    }
+    };
+    
 
     socket.on('message', handleMessage)
     socket.on('status', handleStatus)
@@ -87,76 +97,84 @@ export default function ChatRoom() {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
-      {tema && (
-        <div 
-          className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 rounded"
-          style={{ maxHeight: '150px', overflowY: 'auto', whiteSpace: 'pre-wrap' }}
-        >
-          <strong>Tema de la sala:</strong><br />
-           {tema}
-        </div>
-      )}
-      {!joined ? (
-        <div className="flex flex-col gap-2 max-w-sm">
-          <label>Nombre de usuario:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Ingresa tu nombre"
-            className="border p-2"
-          />
-          <button
-            onClick={joinRoom}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-            disabled={!username.trim()}
+    <main className="flex justify-start p-8">
+      <div id="chat-container">
+        <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
+  
+        {tema && (
+          <div 
+            className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 rounded"
+            style={{ maxHeight: '150px', overflowY: 'auto', whiteSpace: 'pre-wrap' }}
           >
-            Unirse a la sala
-          </button>
-        </div>
-      ) : (
-        <>
-          <div
-            style={{ height: '300px', overflowY: 'auto', border: '1px solid gray', padding: '10px' }}
-            className="mb-4"
-          >
-            {messages.map((m, i) => (
-              <div key={i}>
-                <b>{m.system ? '[Sistema]' : `${m.username}:`}</b> {m.content}
-              </div>
-            ))}
+            <strong>Tema de la sala:</strong><br />
+            {tema}
           </div>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Escribe tu mensaje"
-            className="border p-2 w-full"
-          />
-          <button onClick={sendMessage} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-            Enviar
-          </button>
-
-          {evaluaciones.length > 0 && (
-            <div className="mt-4">
-            <h2 className="text-md font-semibold mb-2 text-gray-800">Evaluaciones e intervenciones</h2>
-            <div
-              style={{ maxHeight: '200px', overflowY: 'auto' }}
-              className="p-3 border border-gray-300 rounded bg-gray-50"
+        )}
+  
+        {!joined ? (
+          <div className="flex flex-col gap-2 max-w-sm">
+            <label>Nombre de usuario:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Ingresa tu nombre"
+              className="border p-2"
+            />
+            <button
+              onClick={joinRoom}
+              className="bg-green-600 text-white px-4 py-2 rounded"
+              disabled={!username.trim()}
             >
-              <ul className="list-disc list-inside text-sm text-gray-700">
-                {evaluaciones.map((e, idx) => (
-                  <li key={idx}>{e}</li>
-                ))}
-              </ul>
+              Unirse a la sala
+            </button>
+          </div>
+        ) : (
+          <>
+            <div
+              style={{ height: '300px', overflowY: 'auto', border: '1px solid gray', padding: '10px' }}
+              className="mb-4"
+            >
+              {messages.map((m, i) => (
+                <div key={i}>
+                  <b>{m.system ? '[Sistema]' : `${m.username}:`}</b> {m.content}
+                </div>
+              ))}
             </div>
-            </div>
-          )}
-        </>
-      )}
+  
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Escribe tu mensaje"
+              className="border p-2 w-full"
+            />
+            <button onClick={sendMessage} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+              Enviar
+            </button>
+  
+            {evaluaciones.length > 0 && (
+              <div className="mt-4">
+                <h2 className="text-md font-semibold mb-2 text-gray-800">
+                  Evaluaciones e intervenciones
+                </h2>
+                <div
+                  style={{ maxHeight: '200px', overflowY: 'auto' }}
+                  className="p-3 border border-gray-300 rounded bg-gray-50"
+                >
+                  <ul className="list-disc list-inside text-sm text-gray-700">
+                    {evaluaciones.map((e, idx) => (
+                      <li key={idx}>{e}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </main>
   )
+  
 }

@@ -1,0 +1,27 @@
+Para crear categorías de tipos de baja calidad argumentativa a partir del dataset proporcionado, podemos analizar los mensajes y sus características. Aquí hay algunas posibles 
+categorías de baja calidad argumentativa que podrían identificarse en un contexto de discusión ética:
+
+1. **Generalización excesiva**: Mensajes que hacen afirmaciones amplias sin evidencia o ejemplos concretos. Por ejemplo, afirmar que "siempre" o "nunca" ocurre algo
+ sin proporcionar casos específicos.
+
+2. **Falta de profundidad**: Mensajes que presentan argumentos superficiales o simplistas sin explorar las complejidades del dilema ético. Estos mensajes pueden carecer
+ de análisis detallado o consideración de múltiples perspectivas.
+
+3. **Apelación emocional**: Mensajes que se basan principalmente en emociones en lugar de razones lógicas o evidencia. Aunque las emociones son importantes, un argumento
+ sólido debe equilibrar emoción y lógica.
+
+4. **Desviación del tema**: Mensajes que se alejan del tema central del dilema ético y no contribuyen directamente a la discusión. Esto puede incluir comentarios irrelevantes
+ o tangenciales.
+
+5. **Falta de evidencia**: Mensajes que presentan afirmaciones sin respaldo de evidencia o ejemplos concretos. La falta de evidencia puede debilitar la credibilidad
+del argumento.
+
+6. **Ambigüedad**: Mensajes que son vagos o ambiguos, lo que dificulta entender el punto de vista del autor. La claridad es crucial para una buena argumentación.
+
+7. **Repetición sin avance**: Mensajes que repiten puntos ya discutidos sin aportar nuevas ideas o perspectivas. Esto puede estancar la discusión y no contribuir al desarrollo del debate.
+
+8. **Apelación a la autoridad sin justificación**: Mensajes que citan a una autoridad o experto sin explicar por qué esa autoridad es relevante o confiable en 
+el contexto del dilema ético.
+
+Al analizar los mensajes del dataset, podríamos clasificar cada mensaje en una o más de estas categorías para identificar patrones de baja calidad argumentativa. Esto ayudaría a mejorar 
+la calidad de las discusiones éticas al fomentar argumentos más sólidos y bien fundamentados.

@@ -23,8 +23,8 @@ Todos los participantes son: {agent_names}
 El tema a discutir en la sala es el siguiente:
 """
 base_dir = os.path.dirname(os.path.abspath(__file__))
-model_config_path = os.path.join(base_dir, "configs", "model_configs_gemini.json")
-agent_config_path = os.path.join(base_dir, "configs", "agent_configs_gemini.json")
+model_config_path = os.path.join(base_dir, "configs", "model_configs.json")
+agent_config_path = os.path.join(base_dir, "configs", "agent_configs.json")
 
 """group chat"""
 npc_agents = agentscope.init(
@@ -81,8 +81,8 @@ def analizar_argumento_cascada(room,user_input,user_name):
                     a3 = next_agents[0]
                     a3_msg = a3()  # A3 responde
                 return {
-                    "evaluacion": "Evaluación Final (A3)",
-                    "respuesta": a2_msg.content,
+                    "evaluacion": "Evaluación Final (A2)",
+                    "respuesta": (a2_msg.content).replace("@a3",""),
                     "intervencion": True,
                     "agente": a2_msg.name,
                     "evaluado": user_name

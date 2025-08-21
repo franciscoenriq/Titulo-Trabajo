@@ -276,12 +276,3 @@ footer a {
     text-decoration: none;
 }
 
-
-.main-wrapper {
-  display: flex;
-  justify-content: flex-start; /* todo se alinea a la izquierda */
-}
-
-#chat-container {
-
-}

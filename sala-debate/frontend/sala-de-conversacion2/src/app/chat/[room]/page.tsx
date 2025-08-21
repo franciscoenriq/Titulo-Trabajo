@@ -97,8 +97,8 @@ export default function ChatRoom() {
   }
 
   return (
-    <main className="flex justify-start p-8">
-      <div id="chat-container">
+    <main className="p-8">
+      <div id="chat-container" className="w-full text-left">
         <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
   
         {tema && (
@@ -176,5 +176,6 @@ export default function ChatRoom() {
       </div>
     </main>
   )
+  
   
 }

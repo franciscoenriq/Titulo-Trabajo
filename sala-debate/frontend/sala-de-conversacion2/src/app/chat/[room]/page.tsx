@@ -18,7 +18,7 @@ export default function ChatRoom() {
     intervencion?: string;
     respuesta?: string;
   };
-  
+
   const params = useParams()
   const room = params.room as string
   const [evaluaciones, setEvaluaciones] = useState<string[]>([])
@@ -28,15 +28,17 @@ export default function ChatRoom() {
   const [joined, setJoined] = useState(false)
   const socketRef = useRef<Socket | null>(null)
   const [tema, setTema] = useState('')
+  const [agentMessages, setAgentMessages] = useState<ChatMessage[]>([])
+  const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/api/tema/${room}`)
+    fetch(`${backend}/api/tema/${room}`)
     .then((res) => res.json())
     .then((data) => setTema(data.tema))
   }, [room])
 
   // Inicializa el socket una sola vez
   useEffect(() => {
-    socketRef.current = io('http://127.0.0.1:5000', {
+    socketRef.current = io(backend, {
       path: '/socket.io',
       transports: ['websocket'],
     });
@@ -61,18 +63,17 @@ export default function ChatRoom() {
       };
     
       //setMessages((prev) => [...prev, mensajeEvaluacion]);
-    
+      setAgentMessages((prev) => [...prev, mensajeEvaluacion]);
       // Mensaje de intervención (si aplica)
       if (intervencion && respuesta?.trim()) {
         const mensajeIntervencion: ChatMessage = {
           username: 'agenteIA',
           content: `"${respuesta}"`,
         };
-        setMessages((prev) => [...prev, mensajeIntervencion]);
+        setAgentMessages((prev) => [...prev, mensajeIntervencion]);
       }
     };
     
-
     socket.on('message', handleMessage)
     socket.on('status', handleStatus)
     socket.on('evaluacion', handleEvaluacion)
@@ -98,82 +99,113 @@ export default function ChatRoom() {
 
   return (
     <main className="p-8">
-      <div id="chat-container" className="w-full text-left">
-        <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
-  
-        {tema && (
-          <div 
-            className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 rounded"
-            style={{ maxHeight: '150px', overflowY: 'auto', whiteSpace: 'pre-wrap' }}
+      <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
+
+      {tema && (
+        <div 
+          className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 rounded"
+          style={{ maxHeight: '150px', overflowY: 'auto', whiteSpace: 'pre-wrap' }}
+        >
+          <strong>Tema de la sala:</strong><br />
+          {tema}
+        </div>
+      )}
+
+      {!joined ? (
+        <div className="flex flex-col gap-2 max-w-sm">
+          <label>Nombre de usuario:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Ingresa tu nombre"
+            className="border p-2"
+          />
+          <button
+            onClick={joinRoom}
+            className="bg-green-600 text-white px-4 py-2 rounded"
+            disabled={!username.trim()}
           >
-            <strong>Tema de la sala:</strong><br />
-            {tema}
-          </div>
-        )}
-  
-        {!joined ? (
-          <div className="flex flex-col gap-2 max-w-sm">
-            <label>Nombre de usuario:</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ingresa tu nombre"
-              className="border p-2"
-            />
-            <button
-              onClick={joinRoom}
-              className="bg-green-600 text-white px-4 py-2 rounded"
-              disabled={!username.trim()}
-            >
-              Unirse a la sala
-            </button>
-          </div>
-        ) : (
-          <>
-            <div
-              style={{ height: '300px', overflowY: 'auto', border: '1px solid gray', padding: '10px' }}
-              className="mb-4"
-            >
-              {messages.map((m, i) => (
-                <div key={i}>
-                  <b>{m.system ? '[Sistema]' : `${m.username}:`}</b> {m.content}
-                </div>
-              ))}
-            </div>
-  
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-              placeholder="Escribe tu mensaje"
-              className="border p-2 w-full"
-            />
-            <button onClick={sendMessage} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-              Enviar
-            </button>
-  
-            {evaluaciones.length > 0 && (
-              <div className="mt-4">
-                <h2 className="text-md font-semibold mb-2 text-gray-800">
-                  Evaluaciones e intervenciones
-                </h2>
-                <div
-                  style={{ maxHeight: '200px', overflowY: 'auto' }}
-                  className="p-3 border border-gray-300 rounded bg-gray-50"
-                >
-                  <ul className="list-disc list-inside text-sm text-gray-700">
-                    {evaluaciones.map((e, idx) => (
-                      <li key={idx}>{e}</li>
-                    ))}
-                  </ul>
-                </div>
+            Unirse a la sala
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* 📌 Nuevo layout con 2 columnas */}
+          <div className="grid grid-cols-[2fr_1fr] gap-4 mb-4 items-start">
+            {/* Columna izquierda - Chat normal */}
+            <div className="min-w-0 border p-3 rounded">
+              <h2 className="font-semibold mb-2">Chat</h2>
+              <div style={{ marginTop: 20, border: '1px solid gray', height: 300, overflowY: 'scroll', padding: '10px' }}>
+                {messages.map((m, i) => {
+                  const isOwn = m.username === username; // mensaje propio
+                  const isSystem = m.system;
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        display: 'flex',
+                        justifyContent: isSystem ? 'center' : isOwn ? 'flex-end' : 'flex-start',
+                        marginBottom: '5px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: isSystem ? '#e0e0e0' : isOwn ? '#4caf50' : '#f1f0f0',
+                          color: isOwn ? 'white' : 'black',
+                          padding: '8px 12px',
+                          borderRadius: '20px',
+                          maxWidth: '60%',
+                          wordBreak: 'break-word',
+                        }}
+                      >
+                        {!isSystem && !isOwn && <b>{m.username}: </b>}
+                        {m.content}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </>
-        )}
-      </div>
+            </div>
+
+            {/* Columna derecha - Mensajes del agente */}
+            <div className="min-w-0 border p-3 rounded bg-gray-50">
+              <h2 className="font-semibold mb-2 text-blue-700">Agente</h2>
+              <div 
+                style={{ height: '300px', overflowY: 'auto' }}
+                className="space-y-2 min-w-0 overflow-x-hidden break-words"
+                >
+                {agentMessages.length === 0 ? (
+                  <p className="text-gray-500 text-sm">Sin mensajes del agente todavía.</p>
+                ) : (
+                  agentMessages.map((m, i) => (
+                    <div 
+                    key={i}
+                    className="w-full min-w-0 max-w-full p-2 rounded bg-blue-100 text-sm text-blue-800"
+                    >
+                      <b>{m.username}:</b> {m.content}
+                    </div>
+
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Input de mensajes */}
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Escribe tu mensaje"
+            className="border p-2 w-full"
+          />
+          <button onClick={sendMessage} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+            Enviar
+          </button>
+        </>
+      )}
     </main>
   )
   

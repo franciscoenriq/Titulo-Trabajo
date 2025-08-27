@@ -9,29 +9,14 @@ export default function Home() {
   const [topic,setTopic] = useState('')
   const [selectedCaseKey, setSelectedCaseKey] = useState('')
   const router = useRouter()
+  const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const casosPredefinidos = {
     '': { titulo: '-- Selecciona un caso predefinido --', contenido: '' },
-    'ia_regulacion': {
-      titulo: 'Regulación de la IA',
-      contenido: '¿La inteligencia artificial debería ser regulada por el Estado para proteger a la sociedad?',
-    },
-
+    
     'bicicleta contra el cambio climatico':{
       titulo:'Bicicleta como agente contra el cambio climatico',
       contenido:'Discutir el rol que tiene la bicicleta para combatir el cambio climatico.'
-    },
-    'educacion_online': {
-      titulo: 'Educación online vs presencial',
-      contenido: '¿Es efectiva la educación online comparada con la presencial?',
-    },
-    'derechos_animales': {
-      titulo: 'Derechos de los animales',
-      contenido: '¿Deberían los animales tener derechos similares a los humanos?',
-    },
-    'edicion_genetica': {
-      titulo: 'Edición genética humana',
-      contenido: '¿Es ético usar edición genética en humanos para prevenir enfermedades?',
     },
     'caso_sebastian':{
       titulo:'El caso de Sebastian',
@@ -50,16 +35,16 @@ export default function Home() {
     },
   }
 
-
   const handleCaseChane = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const key = e.target.value as keyof typeof casosPredefinidos 
     setSelectedCaseKey(key)
     setTopic(casosPredefinidos[key].contenido)
   }
+  
   const handleEnter = async () =>{
     if (!room || !topic) return
     try {
-      await fetch('http://127.0.0.1:5000/api/init-topic', {
+      await fetch(`${backend}/api/init-topic`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

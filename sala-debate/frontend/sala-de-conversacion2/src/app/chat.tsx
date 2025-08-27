@@ -1,31 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || '', {
-  path: '/socket.io',
-  transports: ['websocket', 'polling'],
-});
+
 type ChatMessage = {
   username?: string;
   content: string;
   system?: boolean // para qe cuando haya un mensaje del sistema lo podamos reconocer. 
 }
+type StatusMessage = {
+  msg: string
+}
 function Chat() {
+  const [socket, SetSocket] = useState<any>(null);
   const [room, setRoom] = useState('sala1');
   const [username, setUsername] = useState('Usuario');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  
+  useEffect(() => {
+    const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL,{
+      path: '/socket.io',
+      transports: ['websocket', 'polling'],
+    })
+    SetSocket(newSocket);
+    return () =>{
+      newSocket.disconnect();
+    }
+  }, [])
 
   useEffect(() => {
     // Unirse a una sala
     socket.emit('join', { room, username });
 
     // Escuchar mensajes
-    socket.on('message', (data) => {
+    socket.on('message', (data: ChatMessage) => {
       setMessages((prev) => [...prev, data]);
     });
 
-    socket.on('status', (data) => {
+    socket.on('status', (data: StatusMessage) => {
       setMessages((prev) => [...prev, { content: data.msg, system: true }]);
     });
 

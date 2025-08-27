@@ -6,3 +6,4 @@ python-dotenv==1.0.1
 eventlet==0.33.3
 psycopg2-binary==2.9.6
 google-generativeai
+eventlet

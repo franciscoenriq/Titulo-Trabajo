@@ -1,6 +1,7 @@
 // src/api/auth.ts
+const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
 export async function login(username: string, password: string) {
-    const response = await fetch('http://127.0.0.1:5000/api/auth/login', {
+    const response = await fetch(`${backend}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -6,7 +6,6 @@ import { login } from '@/api/auth' // ajusta si la ruta es distinta
 
 export default function LoginPage() {
   const router = useRouter()
-
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')

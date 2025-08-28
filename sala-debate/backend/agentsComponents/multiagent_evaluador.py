@@ -119,3 +119,23 @@ def analizar_argumento_cascada(room,user_input,user_name):
         "evaluado": user_name
     }
 
+
+def llamar_relator(room,user_input,user_name):
+    """
+    El relator es el encargado de resumir la conversasion, si es llamado entonces se ejecuta. 
+    """
+    if room not in historiales or room not in conversaciones:
+        raise ValueError(f"La conversación para la sala {room} no ha sido inicializada.")
+
+    next_agents = filter_agents(user_input, npc_agents)
+    if next_agents and next_agents[0].name == "Relator":
+        print("El relator fue llamado")
+        Relator = next_agents[0]
+        Relator_msg = Relator()  #El relator resume 
+        return {
+                "evaluacion": "Evaluación Final (A2)",
+                "respuesta": (Relator_msg.content).replace("@a3",""),
+                "intervencion": False,
+                "agente": Relator_msg.name,
+                "evaluado": user_name
+                }

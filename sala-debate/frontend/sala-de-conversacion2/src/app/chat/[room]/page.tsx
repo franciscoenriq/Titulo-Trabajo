@@ -16,7 +16,7 @@ export default function ChatRoom() {
     agente: string;
     evaluado: string;
     intervencion?: string;
-    respuesta?: string;
+    respuesta: string;
   };
 
   const params = useParams()
@@ -56,22 +56,22 @@ export default function ChatRoom() {
     const handleEvaluacion = (data: EvaluacionData) => {
       const { evaluacion, agente, evaluado, intervencion, respuesta } = data;
     
-      // Mensaje de evaluación
-      const mensajeEvaluacion: ChatMessage = {
-        username: 'agenteIA',
-        content: `"${evaluacion}"`,
-      };
-    
-      //setMessages((prev) => [...prev, mensajeEvaluacion]);
-      setAgentMessages((prev) => [...prev, mensajeEvaluacion]);
       // Mensaje de intervención (si aplica)
       if (intervencion && respuesta?.trim()) {
         const mensajeIntervencion: ChatMessage = {
-          username: 'agenteIA',
-          content: `"${respuesta}"`,
+          username: agente,
+          content: respuesta,
         };
-        setAgentMessages((prev) => [...prev, mensajeIntervencion]);
+        setMessages((prev) => [...prev, mensajeIntervencion]);
+        return;
       }
+
+      const mensajeEvaluacion: ChatMessage = {
+        username: agente,     
+        content: respuesta,  
+      };
+      setAgentMessages((prev) => [...prev, mensajeEvaluacion]);
+
     };
     
     socket.on('message', handleMessage)
@@ -131,12 +131,23 @@ export default function ChatRoom() {
         </div>
       ) : (
         <>
-          {/* 📌 Nuevo layout con 2 columnas */}
+          {/* Layout con 2 columnas */}
           <div className="grid grid-cols-[2fr_1fr] gap-4 mb-4 items-start">
             {/* Columna izquierda - Chat normal */}
-            <div className="min-w-0 border p-3 rounded">
+            <div className="min-w-0 border p-3 rounded w-[1000px]"> {/* el [500px] arregló el problema del contenedor */}
               <h2 className="font-semibold mb-2">Chat</h2>
-              <div style={{ marginTop: 20, border: '1px solid gray', height: 300, overflowY: 'scroll', padding: '10px' }}>
+              <div  className="mt-5 border h-[500px] overflow-y-auto p-2 break-words"
+              style={
+                { marginTop: 20, 
+                border: '1px solid gray', 
+                height: 500, //cambiar esto para poder setear la altura del contenedor
+                maxHeight: 500, // esto igual 
+                width: '100%',
+                overflowY: 'auto', 
+                padding: '10px',
+                overflowWrap: 'break-word',
+                wordBreak: 'break-word'
+                }}>
                 {messages.map((m, i) => {
                   const isOwn = m.username === username; // mensaje propio
                   const isSystem = m.system;
@@ -171,10 +182,8 @@ export default function ChatRoom() {
             {/* Columna derecha - Mensajes del agente */}
             <div className="min-w-0 border p-3 rounded bg-gray-50">
               <h2 className="font-semibold mb-2 text-blue-700">Agente</h2>
-              <div 
-                style={{ height: '300px', overflowY: 'auto' }}
-                className="space-y-2 min-w-0 overflow-x-hidden break-words"
-                >
+              <div className="space-y-2 min-w-0 h-[500px] overflow-y-auto overflow-x-hidden break-words">
+
                 {agentMessages.length === 0 ? (
                   <p className="text-gray-500 text-sm">Sin mensajes del agente todavía.</p>
                 ) : (

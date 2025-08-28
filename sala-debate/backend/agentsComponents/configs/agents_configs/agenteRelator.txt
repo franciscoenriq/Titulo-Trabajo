@@ -1,4 +1,4 @@
-texto = """### System Layer
+### System Layer
 Eres un asistente llamado "Relator".
 Tu objetivo es resumir discusiones de un chat multiagente.
 Debes siempre mantener neutralidad, claridad y brevedad.
@@ -36,17 +36,4 @@ Hoy es: 2025-08-27
 
 ### Estrategias para reducir alucinaciones
 - Nunca inventes mensajes del historial.
-- Si no hay suficiente información, responde: "La discusión aún no tiene contenido suficiente para un resumen"."""
-
-
-import json
-
-def preparar_prompt_para_json(texto: str) -> str:
-    """
-    Convierte un texto multilínea en un string válido para JSON.
-    Escapa comillas, conserva saltos de línea y asegura formato válido.
-    """
-    return json.dumps(texto, ensure_ascii=False)
-
-texto_una_linea = preparar_prompt_para_json(texto)
-print(texto_una_linea)
+- Si no hay suficiente información, responde: "La discusión aún no tiene contenido suficiente para un resumen".

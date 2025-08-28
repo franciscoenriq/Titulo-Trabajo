@@ -49,3 +49,15 @@ def register_sockets(socketio):
                 'agente':resultado["agente"],
                 'evaluado':resultado["evaluado"]
             }, room=room)
+
+            # ---- 2) Revisar si alguien llamó al relator ----
+        resultado_relator = llamar_relator(room, content, username)
+
+        if resultado_relator:  # solo si devolvió algo
+            emit('evaluacion', {
+                'evaluacion': resultado_relator["evaluacion"],
+                'respuesta': resultado_relator["respuesta"],
+                'intervencion': resultado_relator["intervencion"],
+                'agente': resultado_relator["agente"],
+                'evaluado': resultado_relator["evaluado"]
+            }, room=room)

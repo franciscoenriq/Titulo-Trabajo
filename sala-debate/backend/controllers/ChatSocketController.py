@@ -1,12 +1,12 @@
+import asyncio
+import threading
 from flask_socketio import join_room, leave_room, emit
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from models.models import *
-from agentsComponents.multiagent_evaluador import *
+from agentsComponents.clases.pipeLine_ejecucion import CascadaPipeline
 
-# Diccionario que mapea nombre de sala -> id en BD
-salas_activas = {}
 
-def register_sockets(socketio):
+def register_sockets(socketio,salas_activas):
 # esta es la funcion para poder usar los socketsEvents  para el chat.
     @socketio.on('join')
     def on_join(data):
@@ -24,6 +24,10 @@ def register_sockets(socketio):
 
     @socketio.on('message')
     def handle_message(data):
+        """
+        Maneja un mensaje entrante de un usuario, lo envía al pipeline
+        y emite la evaluación resultante.
+        """
         room = data['room']
         username = data['username']
         content = data['content']
@@ -32,24 +36,54 @@ def register_sockets(socketio):
         message_data = {'username': username, 'content': content}
         emit('message', message_data, room=room)
         #guardamos en la bd 
+        """
         insert_message(
             room_session_id=id_room,
             user_id=username,
             content=content
         )
-        # Analizar el mensaje usando IA
-        #resultado = analizar_argumento(room, content,username)
-        resultado = analizar_argumento_cascada(room,content,username)
-        # Enviar la evaluación a la misma sala
-        if(resultado["intervencion"] == True):
-            emit('evaluacion', {
-                'evaluacion': resultado["evaluacion"],
-                'respuesta': resultado["respuesta"],
-                'intervencion': resultado["intervencion"],
-                'agente':resultado["agente"],
-                'evaluado':resultado["evaluado"]
-            }, room=room)
+        """
+        
+        pipeLine:CascadaPipeline = salas_activas.get(room)
+        if not pipeLine:
+            emit('error', {'msg': 'La sala no está inicializada con agentes.'}, room=room)
+            return
+        
+        # Función de tarea de fondo
+        def process_message():
+            # Ejecutar async desde el loop de asyncio
+            resultado = asyncio.run(pipeLine.analizar_argumento_cascada(content, username))
+            # Emitir resultado de evaluación del agente
+            socketio.emit('evaluacion', resultado, room=room)
 
+        # Lanzar como tarea de fondo de SocketIO
+        socketio.start_background_task(process_message)
+
+
+
+'''
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+resultado = loop.run_until_complete(
+    pipeLine.analizar_argumento_cascada(content, username)
+)
+
+# Emitimos el resultado de la evaluación
+socketio.emit('evaluacion', {
+    'evaluacion': resultado["evaluacion"],
+    'respuesta': resultado["respuesta"],
+    'intervencion': resultado["intervencion"],
+    'agente': resultado["agente"],
+    'evaluado': resultado["evaluado"]
+}, room=room)
+
+# Ejecutar async sin bloquear el servidor
+threading.Thread(target=process_message).start()
+'''
+
+
+
+'''
             # ---- 2) Revisar si alguien llamó al relator ----
         resultado_relator = llamar_relator(room, content, username)
 
@@ -61,3 +95,4 @@ def register_sockets(socketio):
                 'agente': resultado_relator["agente"],
                 'evaluado': resultado_relator["evaluado"]
             }, room=room)
+'''

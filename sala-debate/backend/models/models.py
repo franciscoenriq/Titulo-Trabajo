@@ -8,6 +8,7 @@ import uuid
 import os
 from dotenv import load_dotenv
 import enum
+from datetime import datetime
 
 # Cargar variables de entorno
 load_dotenv()
@@ -57,6 +58,18 @@ class Message(Base):
     user_id = Column(Text, nullable=False)
     content = Column(Text, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class AgentPrompt(Base):
+    __tablename__ = 'agent_prompts'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    agent_name = Column(String, nullable=False)
+    prompt = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+
 
 
 def create_room_name(name: str) -> int:

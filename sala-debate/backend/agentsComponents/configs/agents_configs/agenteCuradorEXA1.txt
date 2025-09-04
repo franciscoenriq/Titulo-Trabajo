@@ -1,4 +1,3 @@
-texto = """
 
 # Agente: Curador
 
@@ -78,18 +77,3 @@ Output:
   "Aún no hay suficiente contenido, sigo esperando."  
 - Nunca @tagees a participantes humanos (solo a agentes como @Orientador).  
 - Nunca formules preguntas ni invites directamente a usuarios.  
-
-"""
-
-
-import json
-
-def preparar_prompt_para_json(texto: str) -> str:
-    """
-    Convierte un texto multilínea en un string válido para JSON.
-    Escapa comillas, conserva saltos de línea y asegura formato válido.
-    """
-    return json.dumps(texto, ensure_ascii=False)
-
-texto_una_linea = preparar_prompt_para_json(texto)
-print(texto_una_linea)

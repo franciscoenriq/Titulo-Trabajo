@@ -55,7 +55,7 @@ export default function LoginPage() {
 
         <div className="form-container sign-in-container">
           <form onSubmit={handleLogin}>
-            <h1>Sign in</h1>
+            <h1>Log in</h1>
             
             <span>or use your account</span>
             <p></p>
@@ -72,7 +72,6 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-
             />
             {/*<a href="#">Forgot your password?</a>*/}
             <p></p>
@@ -85,13 +84,15 @@ export default function LoginPage() {
         <div className="overlay-container">
           <div className="overlay">
             <div className="overlay-panel overlay-left">
-              <h1>Welcome Back!</h1>
-              <p>To keep connected with us please login with your personal info</p>
               <button className="ghost" id="signIn">Sign In</button>
             </div>
             <div className="overlay-panel overlay-right">
-              <h1>Hello, Friend!</h1>
-              <p>Enter your personal details and start journey with us</p>
+              <h1>¡Hola, explorador ético!</h1>
+              <p>
+              Forma parte de conversaciones en salas de chat en las 
+              que tus argumentos son examinados por un sistema multiagente 
+              orientado al análisis y la evaluación de discusiones éticas.
+              </p>
               {/*<button className="ghost" id="signUp">Sign Up</button>*/}
             </div>
           </div>

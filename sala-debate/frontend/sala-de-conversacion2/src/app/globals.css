@@ -13,11 +13,14 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+	input {
+	  background-color: #222;
+	  color: #fff;
+	}
+	input::placeholder {
+	  color: #bbb;
+	}
   }
-}
 
 body {
   background: var(--background);
@@ -112,7 +115,14 @@ input {
 	padding: 12px 15px;
 	margin: 8px 0;
 	width: 100%;
+	color: #000; 
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
 }
+input::placeholder {
+	color: #555; 
+  }
 
 .container {
 	background-color: #fff;

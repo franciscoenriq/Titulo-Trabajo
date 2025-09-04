@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """ A group chat where user can talk any time implemented by agentscope. """
+'''
+
 from utils.groupchat_utils import * 
 import agentscope
 import os 
@@ -9,6 +11,7 @@ from agentscope.message import Msg
 from agentscope.msghub import msghub
 from agentscope.exception import JsonParsingError
 from openai import RateLimitError
+import json 
 USER_TIME_TO_SPEAK = 10
 DEFAULT_TOPIC = """
 Esta es una sala de conversación entre usuarios humanos, ustedes como agentes tienen la finalidad de detectar baja calidad argumentativa , 
@@ -34,8 +37,7 @@ npc_agents = agentscope.init(
 
 agents = list(npc_agents) 
 
-historiales = {}
-conversaciones = {}
+
 def inicializar_conversacion_cascada(room, promt_inicial):
     if room in conversaciones:
         return
@@ -64,36 +66,35 @@ def analizar_argumento_cascada(room,user_input,user_name):
     while intentos < max_reintentos:
         try: 
             # A1 responde
-            a1 = npc_agents[0]
-            a1_msg = a1(msg)
-            # Detectamos si A2 fue mencionado por A1
-            next_agents = filter_agents(a1_msg.content, npc_agents)
+            curador = npc_agents[0]
+            curador_msg = curador(msg)
+            # Detectamos si el Orientador fue mencionado por el Curador
+            next_agents = filter_agents(curador_msg.content, npc_agents)
 
-            if next_agents and next_agents[0].name == "a2":
-                print("agente 2 fue mencionado")
-                a2 = next_agents[0]
-                a2_msg = a2()  # A2 responde
-
+            if next_agents and next_agents[0].name == "Orientador":
+                print("Orientador fue mencionado")
+                Orientador = next_agents[0]
+                orientador_msg = Orientador()  # A2 responde
                 # Verificamos si A3 fue mencionado por A2
-                next_agents = filter_agents(a2_msg.content, npc_agents)
+                next_agents = filter_agents(orientador_msg.content, npc_agents)
                 if next_agents and next_agents[0].name == "a3":
                     print("agente 3 fue mencionado")
                     a3 = next_agents[0]
-                    a3_msg = a3()  # A3 responde
+                    #a3_msg = a3()  # A3 responde
                 return {
-                    "evaluacion": "Evaluación Final (A2)",
-                    "respuesta": (a2_msg.content).replace("@a3",""),
+                    "evaluacion": "Evaluación Final (Orientador)",
+                    "respuesta": orientador_msg.content.replace("@a3",""),
                     "intervencion": True,
-                    "agente": a2_msg.name,
+                    "agente": orientador_msg.name,
                     "evaluado": user_name
                 }
 
             else:
                 return {
-                    "evaluacion": "Evaluación Inicial (A1)",
-                    "respuesta": a1_msg.content,
+                    "evaluacion": "Evaluación Inicial (Curador)",
+                    "respuesta": curador_msg.content,
                     "intervencion": False,
-                    "agente": a1.name,
+                    "agente": curador_msg.name,
                     "evaluado": user_name
                 }
         except (ValueError, SyntaxError, KeyError, JsonParsingError) as e:
@@ -139,3 +140,5 @@ def llamar_relator(room,user_input,user_name):
                 "agente": Relator_msg.name,
                 "evaluado": user_name
                 }
+
+'''

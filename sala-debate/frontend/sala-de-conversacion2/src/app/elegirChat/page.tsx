@@ -9,9 +9,6 @@ export default function Home() {
   const [topic,setTopic] = useState('')
   const [selectedCaseKey, setSelectedCaseKey] = useState('')
   const router = useRouter()
-  const [prompts, setPrompts] = useState<{ agenteEntrada: string; agenteRespuesta: string } | null>(null)
-  const [loadingPrompts, setLoadingPrompts] = useState(false)
-  const [saving, setSaving] = useState(false)
   const [availableRooms, setAvailableRooms] = useState<{ id: number, name: string }[]>([])
   const [roomStatuses, setRoomStatuses] = useState<{ room_name: string, status: string }[]>([])
 
@@ -50,22 +47,6 @@ export default function Home() {
       console.error('Error al cargar salas:', error)
     }
   }
-  const fetchPrompts = async () => {
-    try {
-      setLoadingPrompts(true)
-      const res = await fetch(`${backend}/api/prompts`)
-      if (!res.ok) throw new Error('Error al obtener prompts')
-      const data = await res.json()
-      setPrompts({
-        agenteEntrada: data.Curador || '',
-        agenteRespuesta: data.Orientador || '',
-      })
-    } catch (error) {
-      console.error('Error al cargar prompts:', error)
-    } finally {
-      setLoadingPrompts(false)
-    }
-  }
 
   const fetchStatuses = async () => {
     try {
@@ -79,7 +60,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    fetchPrompts()
     fetchRooms()
     fetchStatuses()
   }, [backend])
@@ -108,28 +88,32 @@ export default function Home() {
       console.error('Error al inicializar la conversación:', error)
     }
   }
-
-  const handleSavePrompts = async () => {
-    if (!prompts) return
+  const handleCloseRoom = async (roomName: string) => {
+    if (!confirm(`¿Deseas cerrar la sala "${roomName}"?`)) return;
+  
     try {
-      setSaving(true)
-      await fetch(`${backend}/api/prompts`, {
+      const res = await fetch(`${backend}/api/close-room`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Curador: prompts.agenteEntrada,
-          Orientador: prompts.agenteRespuesta,
-        }),
-      })
-      await fetchPrompts() // refresca después de guardar
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room: roomName }),
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.error || 'No se pudo cerrar la sala'}`);
+        return;
+      }
+  
+      const data = await res.json();
+      alert(`Sala "${roomName}" cerrada exitosamente`);
+      // Refresca los estados de las salas
+      fetchStatuses();
     } catch (error) {
-      console.error('Error al guardar prompts:', error)
-    } finally {
-      setSaving(false)
+      console.error('Error al cerrar la sala:', error);
+      alert('Error al cerrar la sala');
     }
-  }
+  };
+  
 
   return (
     <main className="p-8 max-w-6xl mx-auto">
@@ -153,6 +137,14 @@ export default function Home() {
               >
                 {r.status || 'sin sesión'}
               </span>
+              {r.status === 'active' && (
+              <button
+                className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded hover:bg-red-600 transition"
+                onClick={() => handleCloseRoom(r.room_name)}
+              >
+                Cerrar
+              </button>
+            )}
             </li>
           ))}
         </ul>

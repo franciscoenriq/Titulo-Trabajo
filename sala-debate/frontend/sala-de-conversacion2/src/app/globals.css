@@ -22,11 +22,6 @@
 	}
   }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
 * {
@@ -34,7 +29,9 @@ body {
 }
 
 body {
-	background: #f6f5f7;
+	background: #E8DAEF;
+  	color: var(--foreground);
+	font-family: Arial, Helvetica, sans-serif;
 	display: flex;
 	justify-content: center;
 	align-items: center;

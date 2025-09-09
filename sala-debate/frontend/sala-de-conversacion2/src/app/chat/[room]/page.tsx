@@ -36,6 +36,61 @@ export default function ChatRoom() {
     .then((res) => res.json())
     .then((data) => setTema(data.tema))
   }, [room])
+// Hook para cargar mensajes históricos al unirse
+useEffect(() => {
+  if (!joined || !username) return;
+
+  const fetchHistoricalMessages = async () => {
+    try {
+      const res = await fetch(`${backend}/api/room-messages/${room}`);
+      if (!res.ok) return; // si no hay mensajes o error, no hacemos nada
+
+      const data: {
+        username?: string;
+        content: string;
+        system?: boolean;
+        agente?: string;
+        intervencion?: string;
+        timestamp?: string;
+      }[] = await res.json();
+
+      if (!data || data.length === 0) return;
+
+      // Separar mensajes de agentes y normales
+      const normalMessages: ChatMessage[] = [];
+      const agentMsgs: ChatMessage[] = [];
+
+      data.forEach((m) => {
+        if (m.agente) {
+          // Curador -> panel de agentes
+          if (m.agente.toLowerCase() === 'curador') {
+            agentMsgs.push({ username: m.agente, content: m.content });
+          } else {
+            // Orientador -> chat normal
+            normalMessages.push({ username: m.agente, content: m.content });
+          }
+        } else {
+          // Mensajes históricos normales
+          const isOwn = m.username === username; // Si coincide con el usuario actual
+          normalMessages.push({
+            username: m.username,
+            content: m.content,
+            system: m.system,
+          });
+        }
+      });
+
+      // Actualizar estado
+      setMessages((prev) => [...normalMessages, ...prev]);
+      setAgentMessages((prev) => [...agentMsgs, ...prev]);
+    } catch (error) {
+      console.error('Error al cargar mensajes históricos:', error);
+    }
+  };
+
+  fetchHistoricalMessages();
+}, [joined, room, backend, username]);
+
 
   // Inicializa el socket una sola vez
   useEffect(() => {

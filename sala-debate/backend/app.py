@@ -150,8 +150,15 @@ def get_salas():
         room_id = create_room_name(data["nombre_sala"])
         return jsonify({"id":room_id,"nombre":data["nombre_sala"]}),201
 
+@app.route("/api/room-messages/<room_name>",methods=["GET"])
+def get_room_messages(room_name):
+    #recuperamos el id de la sesion activa
+    id_session = get_active_room_session_id(room_name)
+    if not id_session:
+        return jsonify({"error":"No hay sesion activa"}) , 404
 
-
+    messages = get_messages_by_room(id_session)
+    return jsonify(messages), 200 
 if __name__ == "__main__":
     #app.run(debug=True)
     socketio.run(app, debug=True, host='0.0.0.0', port=5000)

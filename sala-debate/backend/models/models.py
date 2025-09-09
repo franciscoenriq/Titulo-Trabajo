@@ -246,6 +246,29 @@ def insert_message(room_session_id: str, user_id: str, content: str) :
     finally:
         session.close()
 
+def get_messages_by_room(id_session:str) -> list[dict]:
+    '''
+    Recupera todos los mensajes de una sala la cual tiene una session activa
+    Se pide que la id se recupere desde get_active_room_session_id()
+    '''
+    session = Session()
+    try:
+        messages = (
+            session.query(Message)
+            .filter(Message.room_session_id == id_session)
+            .order_by(Message.created_at)
+            .all()
+        )
+        return [
+            {
+                "username": m.user_id,
+                "content": m.content,
+                "timestamp": m.created_at.isoformat()
+            }
+            for m in messages
+        ]
+    finally:
+        session.close()
 
 #----------------------------- Funciones para IA --------------------------------------
 def get_current_prompts():

@@ -1,6 +1,7 @@
 from sqlalchemy import (
-    Column, Integer, String, Text, DateTime, ForeignKey, func
+    Column, Integer, String, Text, DateTime, ForeignKey, func, select
 )
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship, scoped_session, sessionmaker
 from sqlalchemy import create_engine, Enum
@@ -22,6 +23,10 @@ Base = declarative_base()
 class UserRole(enum.Enum):
     alumno = "alumno"
     monitor = "monitor"
+
+class SessionStatus(enum.Enum):
+    active="active"
+    closed="closed"
 
 class User(Base):
     __tablename__ = 'users'
@@ -47,6 +52,7 @@ class RoomSession(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     room_name = Column(Text, nullable=False)
     topic = Column(Text, nullable=True)
+    status = Column(Enum(SessionStatus), nullable=False, default=SessionStatus.active)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 # Tabla: messages
@@ -66,13 +72,149 @@ class AgentPrompt(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     agent_name = Column(String, nullable=False)
     prompt = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now())
 
 
+#----------------------------- Funciones para la sala ---------------------------------------
+def get_rooms() -> list[dict]:
+    'Devuelve todas las salas a las cuales se pueden entrar'
+    session = Session()
+    try:
+        rooms = session.query(RoomName).all()
+        rooms_data = [{"id":r.id,"name":r.name} for r in rooms]
+        return rooms_data
+    finally:
+        session.close()
+def get_active_room_topic(room_name:str) -> str:
+    '''
+    Devuelve el tema de la sesion activa de la sala indicada
+    Si no existe la sesion activa devuelve none
+    '''
+    session = Session()
+    try:
+        active_Session = session.query(RoomSession).filter_by(
+            room_name=room_name,
+            status=SessionStatus.active
+        ).first()
+        if active_Session:
+            return active_Session.topic
+        return None
+    finally: 
+        session.close()
 
+def get_or_create_Active_room_session(room_name:str, topic:str) -> dict:
+    '''
+    Devuelve el id de la sesión activa para la sala indicada.
+    Si no existe, crea una nueva sesión activa.
+    '''
+    session = Session()
+    try:
+        # Buscar sesión activa
+        active_session = session.query(RoomSession).filter_by(
+            room_name=room_name,
+            status=SessionStatus.active
+        ).first()
 
+        if active_session:
+            print("ya habia sesion activa")
+            return {"id":str(active_session.id),"primera_inicializacion":False}  # ya hay una sesión activa
+        # No hay sesión activa -> crear una nueva
+        nueva_sesion = RoomSession(
+            room_name=room_name,
+            topic=topic,
+            status=SessionStatus.active
+        )
+        session.add(nueva_sesion)
+        session.commit()
+        session.refresh(nueva_sesion)
+        return {"id":str(nueva_sesion.id),"primera_inicializacion":True}
+    
+    except SQLAlchemyError as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
 
+def close_active_room_session(room_name: str) -> dict:
+    """
+    Busca la sesión activa para una sala y la marca como cerrada.
+    Devuelve un dict con información de la sesión cerrada o None si no existe.
+    """
+    session = Session()
+    try:
+        active_session = session.query(RoomSession).filter_by(
+            room_name=room_name,
+            status=SessionStatus.active
+        ).first()
+
+        if not active_session:
+            return None
+
+        active_session.status = SessionStatus.closed
+        session.commit()
+        session.refresh(active_session)
+
+        return {
+            "id": str(active_session.id),
+            "room_name": active_session.room_name,
+            "status": active_session.status.value
+        }
+
+    except SQLAlchemyError as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+def get_active_room_session_id(room_name:str) -> str | None:
+    """
+    Retorna el ID de la sesión activa para una sala dada.
+    Si no existe sesión activa, devuelve None.
+    """
+    session = Session()
+    try: 
+        active_session = session.query(RoomSession).filter_by(
+            room_name=room_name,
+            status=SessionStatus.active
+        ).first()
+        return str(active_session.id) if active_session else None
+    finally:
+        session.close()
+
+def get_latest_room_statuses() -> list[dict]:
+    """
+    Devuelve el estado más reciente de cada sala (última sesión creada).
+    Retorna una lista de diccionarios con room_name y status.
+    """
+    session = Session()
+    try: 
+        subquery = (
+            session.query(
+                RoomSession.room_name,
+                func.max(RoomSession.created_at).label("latest_created")
+            )
+            .group_by(RoomSession.room_name)
+            .subquery()
+        )
+        # Query principal: unir para recuperar la fila completa
+        query = (
+            session.query(RoomSession.room_name, RoomSession.status)
+            .join(
+                subquery,
+                (RoomSession.room_name == subquery.c.room_name) &
+                (RoomSession.created_at == subquery.c.latest_created)
+            )
+        )
+        results = query.all()
+        # Convertir a lista de diccionarios
+        return [{"room_name": r.room_name, "status": r.status.value} for r in results]
+    finally:
+        session.close()
+        
 def create_room_name(name: str) -> int:
+    '''
+    Se crea una nueva sala. En la tabla RoomName
+    '''
     session = Session()
     try:
         nuevo_nombre = RoomName(name=name)
@@ -85,6 +227,8 @@ def create_room_name(name: str) -> int:
         raise e
     finally:
         session.close()
+
+#----------------------------- Funciones para mensajes --------------------------------------
         
 def insert_message(room_session_id: str, user_id: str, content: str) :
     session = Session()
@@ -103,14 +247,56 @@ def insert_message(room_session_id: str, user_id: str, content: str) :
         session.close()
 
 
-def create_room_session(room_name: str, topic: str = None) -> str:
+#----------------------------- Funciones para IA --------------------------------------
+def get_current_prompts():
+    """
+    Retorna los prompts más recientes para cada agente.
+    extrae el prompts de cada agente mas reciente creado
+    """
     session = Session()
     try:
-        nueva_sesion = RoomSession(room_name=room_name, topic=topic)
-        session.add(nueva_sesion)
+        subquery = (
+            select(
+                AgentPrompt.agent_name,
+                func.max(AgentPrompt.created_at).label("latest")
+            )
+            .group_by(AgentPrompt.agent_name)
+            .subquery()
+        )
+
+        query = (
+            select(AgentPrompt)
+            .join(
+                subquery,
+                (AgentPrompt.agent_name == subquery.c.agent_name) &
+                (AgentPrompt.created_at == subquery.c.latest)
+            )
+        )
+
+        results = session.execute(query).scalars().all()
+
+        # Convertir a dict
+        return {p.agent_name: p.prompt for p in results}
+    finally:
+        session.close()
+
+
+def create_promt(agent_name:str, prompt_text: str) -> int:
+    """
+    Crea un nuevo prompt para un agente.
+    Retorna el ID del nuevo registro.
+    """
+    session = Session()
+    try:
+        new_prompt = AgentPrompt(
+            agent_name=agent_name,
+            prompt=prompt_text,
+            created_at=datetime.now()
+        )
+        session.add(new_prompt)
         session.commit()
-        session.refresh(nueva_sesion)
-        return str(nueva_sesion.id)
+        session.refresh(new_prompt)
+        return new_prompt.id
     except Exception as e:
         session.rollback()
         raise e

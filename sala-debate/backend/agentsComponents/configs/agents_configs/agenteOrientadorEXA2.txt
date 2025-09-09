@@ -39,7 +39,7 @@ Acciones a seguir:
 ### Output esperado  
 Formato String:  
 
-"Texto de intervención redactado como si hablara directamente con los estudiantes, terminado en @a3"
+"Texto de intervención redactado como si hablara directamente con los estudiantes,
 
 ---
 

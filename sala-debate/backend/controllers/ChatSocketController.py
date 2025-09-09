@@ -32,17 +32,19 @@ def register_sockets(socketio,salas_activas):
         username = data['username']
         content = data['content']
         #extraemos la id de la sala 
-        id_room = salas_activas.get(room)
+        id_room_session = get_active_room_session_id(room)
+        if not id_room_session:
+            emit('error', {'msg': f"No hay sesión activa para la sala {room}"}, room=room)
+            return
+        
         message_data = {'username': username, 'content': content}
         emit('message', message_data, room=room)
         #guardamos en la bd 
-        """
         insert_message(
-            room_session_id=id_room,
+            room_session_id=id_room_session,
             user_id=username,
             content=content
         )
-        """
         
         pipeLine:CascadaPipeline = salas_activas.get(room)
         if not pipeLine:
@@ -59,6 +61,20 @@ def register_sockets(socketio,salas_activas):
         # Lanzar como tarea de fondo de SocketIO
         socketio.start_background_task(process_message)
 
+    @socketio.on('typing')
+    def handle_typing(data):
+        username = data['username']
+        room = data['room']
+        # Enviamos a todos los demás de la sala que este usuario está escribiendo
+        emit('typing', {'username': username}, room=room, include_self=False)
+
+    # Nuevo: cuando alguien deja de escribir
+    @socketio.on('stop_typing')
+    def handle_stop_typing(data):
+        username = data['username']
+        room = data['room']
+        # Avisamos a todos los demás que este usuario dejó de escribir
+        emit('stop_typing', {'username': username}, room=room, include_self=False)
 
 
 '''

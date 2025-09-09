@@ -2,82 +2,38 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { login } from '@/api/auth' // ajusta si la ruta es distinta
+
 
 export default function LoginPage() {
   const router = useRouter()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  const entrarComoAlumno = () => {
+    router.push('/elegirChat')
+  }
 
-    try {
-      const response = await login(username, password)
-      const { user } = response
-
-      if (!user?.rol) {
-        throw new Error('El usuario no tiene rol definido.')
-      }
-
-      // Guarda al usuario
-      localStorage.setItem('user', JSON.stringify(user))
-
-      // Redirige según el rol
-      if (user.rol === 'alumno') {
-        router.push('/elegirChat') // formulario sala/tema
-      } else if (user.rol === 'monitor') {  
-        router.push('/monitor') // página especial para monitor
-      } else {
-        throw new Error('Rol no reconocido')
-      }
-
-    } catch (err: any) {
-      setError(err.message || 'Error al iniciar sesión')
-    }
+  const entrarComoMonitor = () => {
+    router.push('/monitor')
   }
 
   return (
     <>
       <div className="container" id="container">
-        <div className="form-container sign-up-container">
-          <form action="#">
-            <h1>Create Account</h1>
-            <span>or use your email for registration</span>
-            <input type="text" placeholder="Name" />
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <button>Sign Up</button>
-          </form>
-        </div>
-
         <div className="form-container sign-in-container">
-          <form onSubmit={handleLogin}>
-            <h1>Log in</h1>
-            
-            <span>or use your account</span>
+          <form>
+            <h1>Entrar al Debate</h1>
             <p></p>
-            <input 
-              type="text"
-              placeholder="Usuario"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required 
-            />
-            <input 
-              type="password" 
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            {/*<a href="#">Forgot your password?</a>*/}
+            <button
+              type="button"
+              onClick={entrarComoAlumno}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-600"
+            > Debatir </button>
             <p></p>
-            <button type='submit'>
-              Entrar
-            </button>
+            <button
+              type="button"
+              onClick={entrarComoMonitor}
+              className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-green-700"
+            > Monitorear </button>
+            <p></p>
           </form>
         </div>
 
@@ -93,13 +49,10 @@ export default function LoginPage() {
               que tus argumentos son examinados por un sistema multiagente 
               orientado al análisis y la evaluación de discusiones éticas.
               </p>
-              {/*<button className="ghost" id="signUp">Sign Up</button>*/}
             </div>
           </div>
         </div>
-        {error && <p className="text-red-600 mt-2">{error}</p>}
       </div>
-      {/*<Script src="/js/login.js" strategy="afterInteractive" /> */}
 
   </>
     

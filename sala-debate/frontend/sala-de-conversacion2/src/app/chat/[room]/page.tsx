@@ -29,6 +29,7 @@ export default function ChatRoom() {
   const socketRef = useRef<Socket | null>(null)
   const [tema, setTema] = useState('')
   const [agentMessages, setAgentMessages] = useState<ChatMessage[]>([])
+  const [typingUsers,setTypingUsers] = useState<string[]>([])
   const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
   useEffect(() => {
     fetch(`${backend}/api/tema/${room}`)
@@ -54,25 +55,34 @@ export default function ChatRoom() {
     }
 
     const handleEvaluacion = (data: EvaluacionData) => {
-      const { evaluacion, agente, evaluado, intervencion, respuesta } = data;
+      const { agente, respuesta, intervencion } = data;
+
+      if (!respuesta?.trim()) return;
     
-      // Mensaje de intervención (si aplica)
-      if (intervencion && respuesta?.trim()) {
-        const mensajeIntervencion: ChatMessage = {
-          username: agente,
-          content: respuesta,
-        };
-        setMessages((prev) => [...prev, mensajeIntervencion]);
-        return;
+      // Si intervino el orientador -> va al chat general (izquierda)
+      if (agente.toLowerCase() === "orientador" && intervencion) {
+        setMessages((prev) => [...prev, { username: agente, content: respuesta }]);
+      } 
+      // Si es el curador -> va al panel de agentes (derecha)
+      else if (agente.toLowerCase() === "curador") {
+        setAgentMessages((prev) => [...prev, { username: agente, content: respuesta }]);
       }
-
-      const mensajeEvaluacion: ChatMessage = {
-        username: agente,     
-        content: respuesta,  
-      };
-      setAgentMessages((prev) => [...prev, mensajeEvaluacion]);
-
     };
+
+    // usuarios que escriben
+    socket.on('typing', (data: { username: string }) => {
+      setTypingUsers((prev) => {
+        if (!prev.includes(data.username)) {
+          return [...prev, data.username]
+        }
+        return prev
+      })
+    })
+
+    socket.on('stop_typing', (data: { username: string }) => {
+      setTypingUsers((prev) => prev.filter((u) => u !== data.username))
+    })
+
     
     socket.on('message', handleMessage)
     socket.on('status', handleStatus)
@@ -93,9 +103,24 @@ export default function ChatRoom() {
   const sendMessage = () => {
     if (input.trim() && socketRef.current && username) {
       socketRef.current.emit('message', { room, username, content: input.trim() })
+      socketRef.current.emit('stop_typing',{room,username})
       setInput('')
     }
   }
+  // Detectar cuando el usuario escribe
+  const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value)
+
+    if (socketRef.current && username) {
+      if (e.target.value.length > 0) {
+        socketRef.current.emit('typing', { room, username })
+      } else {
+        socketRef.current.emit('stop_typing', { room, username })
+      }
+    }
+  }
+
+
 
   return (
     <main className="p-8">
@@ -176,6 +201,29 @@ export default function ChatRoom() {
                     </div>
                   );
                 })}
+                {typingUsers.length > 0 && (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    marginBottom: '5px',
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: '#f1f0f0',
+                      color: 'gray',
+                      padding: '6px 10px',
+                      borderRadius: '20px',
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    <span className="mr-2">💬</span>
+                    {typingUsers.join(', ')} {typingUsers.length > 1 ? 'están' : 'está'} escribiendo...
+                  </div>
+                </div>
+              )}
+
               </div>
             </div>
 
@@ -205,7 +253,7 @@ export default function ChatRoom() {
           <input
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleTyping}
             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             placeholder="Escribe tu mensaje"
             className="border p-2 w-full"

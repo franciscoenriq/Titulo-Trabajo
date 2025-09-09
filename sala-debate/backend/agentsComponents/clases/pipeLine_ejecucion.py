@@ -5,7 +5,7 @@ from utils.groupchat_utils import *
 from .factory_agents import ReActAgentFactory
 
 DEFAULT_TOPIC = """
-    Esta es una sala de conversación entre usuarios humanos, ustedes como agentes tienen la finalidad de detectar baja calidad argumentativa , 
+    Esta es una sala de conversación entre usuarios humanos sobre temas éticos, ustedes como agentes tienen la finalidad de detectar baja calidad argumentativa , 
     saber cuando hay que intervenir y saber que decir. Dependiendo de sus roles asignados.  
     """
 SYS_PROMPT = """
@@ -14,6 +14,8 @@ SYS_PROMPT = """
     dejar un espacio luego de colocar el nombre. 
     Todos los participantes son: {nombre_Agentes}.
     El mensaje del usuario se les pasará en forma de broadcast a todos los agentes
+
+    El tema que se discutirá en esta sesion es el siguiente:
     """
 class CascadaPipeline:
     def __init__(self, 
@@ -37,7 +39,7 @@ class CascadaPipeline:
         self.hub = None #inicializamos el hub cuando entramos a una sala. 
 
 
-    async def start_session(self) -> None:
+    async def start_session(self, tema_sala:str) -> None:
         """
         Inicializa el msghub con el cual se va a trabajar en una sesion de discusion
         @Hint: mensaje con el cual se inicializan los agentes.
@@ -48,7 +50,7 @@ class CascadaPipeline:
             content=DEFAULT_TOPIC
             +SYS_PROMPT.format(
                 nombre_Agentes=[agent.name for agent in self.agentes]
-            )
+            ) + tema_sala
         )
         self.hub = await MsgHub(participants=self.agentes,announcement=hint).__aenter__()
         
@@ -83,9 +85,9 @@ class CascadaPipeline:
         else: 
             print("se termina el asuntoo")
             return {
-                "evaluacion": "Evaluación Orientador",
+                "evaluacion": "Evaluación Curador",
                 "respuesta": curador_msg.content,
-                "agente": "Orientador",
+                "agente": "Curador",
                 "evaluado": user_name,
                 "intervencion":False
                 

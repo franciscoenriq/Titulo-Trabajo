@@ -1,15 +1,19 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthGuard } from '../hooks/useAuthGuard'
 
 export default function Home() {
-  const {user,isLoading} = useAuthGuard('alumno')
+  const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [room, setRoom] = useState('')
   const [topic,setTopic] = useState('')
   const [selectedCaseKey, setSelectedCaseKey] = useState('')
   const router = useRouter()
-  const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const [prompts, setPrompts] = useState<{ agenteEntrada: string; agenteRespuesta: string } | null>(null)
+  const [loadingPrompts, setLoadingPrompts] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [availableRooms, setAvailableRooms] = useState<{ id: number, name: string }[]>([])
+  const [roomStatuses, setRoomStatuses] = useState<{ room_name: string, status: string }[]>([])
 
   const casosPredefinidos = {
     '': { titulo: '-- Selecciona un caso predefinido --', contenido: '' },
@@ -35,7 +39,52 @@ export default function Home() {
     },
   }
 
-  const handleCaseChane = (e: React.ChangeEvent<HTMLSelectElement>) => {
+
+  const fetchRooms = async () => {
+    try{
+      const res = await fetch(`${backend}/api/rooms`)
+      if(!res.ok) throw new Error('Error al obtener salas')
+      const data = await res.json()
+      setAvailableRooms(data)
+    } catch(error){
+      console.error('Error al cargar salas:', error)
+    }
+  }
+  const fetchPrompts = async () => {
+    try {
+      setLoadingPrompts(true)
+      const res = await fetch(`${backend}/api/prompts`)
+      if (!res.ok) throw new Error('Error al obtener prompts')
+      const data = await res.json()
+      setPrompts({
+        agenteEntrada: data.Curador || '',
+        agenteRespuesta: data.Orientador || '',
+      })
+    } catch (error) {
+      console.error('Error al cargar prompts:', error)
+    } finally {
+      setLoadingPrompts(false)
+    }
+  }
+
+  const fetchStatuses = async () => {
+    try {
+      const res = await fetch(`${backend}/api/estado-salas`)
+      if (!res.ok) throw new Error('Error al obtener estado de salas')
+      const data = await res.json()
+      setRoomStatuses(data)
+    } catch (error) {
+      console.error('Error al cargar estado de salas:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchPrompts()
+    fetchRooms()
+    fetchStatuses()
+  }, [backend])
+
+  const handleCaseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const key = e.target.value as keyof typeof casosPredefinidos 
     setSelectedCaseKey(key)
     setTopic(casosPredefinidos[key].contenido)
@@ -59,63 +108,117 @@ export default function Home() {
       console.error('Error al inicializar la conversación:', error)
     }
   }
-  if(isLoading) return <p className='text-center mt-10'>Cargando ...</p>
+
+  const handleSavePrompts = async () => {
+    if (!prompts) return
+    try {
+      setSaving(true)
+      await fetch(`${backend}/api/prompts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Curador: prompts.agenteEntrada,
+          Orientador: prompts.agenteRespuesta,
+        }),
+      })
+      await fetchPrompts() // refresca después de guardar
+    } catch (error) {
+      console.error('Error al guardar prompts:', error)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
-    <main className="p-8 max-w-3xl mx-auto">
-  <h1 className="text-2xl font-bold mb-6">Ingresa el nombre de la sala</h1>
+    <main className="p-8 max-w-6xl mx-auto">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {/* Columna izquierda: estado de salas */}
+    <div className="border rounded-lg p-4 shadow bg-gray-50">
+      <h2 className="text-lg font-semibold mb-2">Estado de salas</h2>
+      {roomStatuses.length === 0 ? (
+        <p className="text-sm text-gray-500">No hay información de salas.</p>
+      ) : (
+        <ul className="space-y-2">
+          {roomStatuses.map((r, idx) => (
+            <li key={idx} className="flex justify-between items-center border-b pb-1">
+              <span>{r.room_name}</span>
+              <span
+                className={`px-2 py-1 rounded text-xs font-semibold ${
+                  r.status === 'active'
+                    ? 'bg-green-200 text-green-800'
+                    : 'bg-red-200 text-red-800'
+                }`}
+              >
+                {r.status || 'sin sesión'}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
 
-  <div className="mb-4">
-    <input
-      type="text"
-      className="border p-2 w-full rounded"
-      value={room}
-      onChange={(e) => setRoom(e.target.value)}
-      placeholder="Nombre de la sala"
-    />
+    {/* Columna central: formulario de ingreso */}
+    <div>
+      <h1 className="text-2xl font-bold mb-6">Ingresa el nombre de la sala</h1>
+      <div className="mb-4">
+        <label className="block mb-2 text-sm font-medium">Elige la sala:</label>
+        <select
+          className="border p-2 w-full rounded cursor-pointer"
+          value={room}
+          onChange={(e) => setRoom(e.target.value)}
+        >
+          <option value="">-- Selecciona una sala --</option>
+          {availableRooms.map((r) => (
+            <option key={r.id} value={r.name}>{r.name}</option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block mb-2 text-sm font-medium">Elige un caso predefinido:</label>
+        <select
+          className="border p-2 w-full rounded"
+          value={selectedCaseKey}
+          onChange={handleCaseChange}
+        >
+          {Object.entries(casosPredefinidos).map(([key, { titulo }]) => (
+            <option key={key} value={key}>{titulo}</option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block mb-2 text-sm font-medium">O escribe tu propio tema:</label>
+        <textarea
+          className="border p-2 w-full rounded"
+          rows={5}
+          value={topic}
+          onChange={(e) => {
+            setTopic(e.target.value)
+            setSelectedCaseKey('')
+          }}
+          placeholder="Tema inicial de la discusión"
+        />
+      </div>
+      <div>
+        <button
+          onClick={handleEnter}
+          className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+        >
+          Entrar
+        </button>
+      </div>
+    </div>
+
+    {/* Columna derecha: prompts de agentes */}
+    <div className="flex items-center justify-center">
+      <button
+        onClick={() => router.push('/prompts')}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+      >
+        Ver Prompts de Agentes
+      </button>
+    </div>
   </div>
-
-  <div className="mb-4">
-    <label className="block mb-2 text-sm font-medium">
-      Elige un caso predefinido:
-    </label>
-    <select
-      className="border p-2 w-full rounded"
-      value={selectedCaseKey}
-      onChange={handleCaseChane}
-    >
-      {Object.entries(casosPredefinidos).map(([key, { titulo }]) => (
-        <option key={key} value={key}>
-          {titulo}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div className="mb-4">
-    <label className="block mb-2 text-sm font-medium">
-      O escribe tu propio tema:
-    </label>
-    <textarea
-      className="border p-2 w-full rounded"
-      rows={5}
-      value={topic}
-      onChange={(e) => {
-        setTopic(e.target.value)
-        setSelectedCaseKey('')
-      }}
-      placeholder="Tema inicial de la discusión"
-    />
-  </div>
-
-  <div>
-    <button
-      onClick={handleEnter}
-      className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
-    >
-      Entrar
-    </button>
-  </div>
-</main>
-
-  )
+</main>)
 }

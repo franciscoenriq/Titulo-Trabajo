@@ -3,7 +3,6 @@ import threading
 from flask_socketio import join_room, leave_room, emit
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from models.models import *
-from agentsComponents.clases.pipeLine_ejecucion import CascadaPipeline
 from agentsComponents.clases.intermediador import Intermediario
 
 def register_sockets(socketio,salas_activas):
@@ -14,6 +13,9 @@ def register_sockets(socketio,salas_activas):
         room = data['room']
         join_room(room)
         emit('status', {'msg': f'{username} ha entrado a la sala {room}.'}, room=room)
+        #Avisamos al sistema multiagente que ha entrado un participante
+        intermediario:Intermediario = salas_activas.get(room)
+        asyncio.run(intermediario.anunciar_entrada_participante(username))
 
     @socketio.on('leave')
     def on_leave(data):
@@ -21,6 +23,9 @@ def register_sockets(socketio,salas_activas):
         room = data['room']
         leave_room(room)
         emit('status', {'msg': f'{username} ha salido de la sala {room}.'}, room=room)
+        #Avisamos al sistema multiagente que ha salido un participante
+        intermediario:Intermediario = salas_activas.get(room)
+        asyncio.run(intermediario.anunciar_salida_participante(username))
 
     @socketio.on('message')
     def handle_message(data):

@@ -7,6 +7,7 @@ from .factory_agents import ReActAgentFactory
 DEFAULT_TOPIC = """
     Esta es una sala de conversación entre usuarios humanos sobre temas éticos, ustedes como agentes tienen la finalidad de detectar baja calidad argumentativa , 
     saber cuando hay que intervenir y saber que decir. Dependiendo de sus roles asignados.  
+    Serán avisados cuando un participante entra o salga de a la sala.
     """
 SYS_PROMPT = """
     Tu puedes designar a un miembro para responder a tu mensaje, debes usar el simbolo @ 
@@ -38,8 +39,6 @@ class CascadaPipeline:
         self.agentes = list([self.agenteEntrada, self.agenteRespuesta])
         self.hub = None #inicializamos el hub cuando entramos a una sala. 
         self.initialState = None
-
-
 
     async def start_session(self, tema_sala:str) -> None:
         """
@@ -89,9 +88,27 @@ class CascadaPipeline:
         return respuestas
    
 
+    async def anunciar_entrada_participante(self,userName:str) -> None:
+        """
+        Funcion que avisa al Hub cuando entra un participante a la sala.
+        Así el sistema tiene conciencia de cuantos participantes hay conversando acerca del tema en cuestión.
+        """
+        print("entra participante" + userName)
+        prompt = "Ha entrado a la sala el participante llamado: " + userName
+        msgSystem = Msg("system",prompt,"system")
+        await self.hub.broadcast(msgSystem)
+
+    async def anunciar_salida_participante(self,userName:str) -> None:
+        """
+        Funcion que avisa al Hub cuando sale un participante a la sala.
+        """
+        prompt = "Ha salido de la sala el participante llamado: " + userName
+        msgSystem = Msg("system",prompt,"system")
+        await self.hub.broadcast(msgSystem)
+
     async def show_memory(self) -> dict:
         """
-        retornamos la memoria de los agentes
+        Retorna la memoria de los agentes
         """
         memoria_total = {}
         for agente in self.agentes:

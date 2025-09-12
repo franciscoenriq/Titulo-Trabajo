@@ -8,7 +8,6 @@ class Intermediario:
         self.mensajesTotales = []
         self.pipeLine = CascadaPipeline(factory, prompt_agenteEntrada,prompt_agenteSalida)
     
-
     async def agregarMensage(self, userName:str, message:str) -> list[dict] | None:
         print("se agrega un mensjae")
         self.mensajesTotales.append({
@@ -24,12 +23,17 @@ class Intermediario:
         else: 
             return 
     
-
     async def start_session(self,topic:str)->None:
-        return await self.pipeLine.start_session(topic)
+        await self.pipeLine.start_session(topic)
     
     async def stop_session(self):
-        return await self.pipeLine.stop_session()
+        await self.pipeLine.stop_session()
+
+    async def anunciar_entrada_participante(self,userName:str) -> None:
+        await self.pipeLine.anunciar_entrada_participante(userName)
+
+    async def anunciar_salida_participante(self,userName:str) -> None:
+        await self.pipeLine.anunciar_salida_participante(userName)
             
 
 

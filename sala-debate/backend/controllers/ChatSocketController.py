@@ -4,7 +4,7 @@ from flask_socketio import join_room, leave_room, emit
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from models.models import *
 from agentsComponents.clases.pipeLine_ejecucion import CascadaPipeline
-
+from agentsComponents.clases.intermediador import Intermediario
 
 def register_sockets(socketio,salas_activas):
 # esta es la funcion para poder usar los socketsEvents  para el chat.
@@ -31,6 +31,7 @@ def register_sockets(socketio,salas_activas):
         room = data['room']
         username = data['username']
         content = data['content']
+        print("llega un mensaje ")
         #extraemos la id de la sala 
         id_room_session = get_active_room_session_id(room)
         if not id_room_session:
@@ -46,17 +47,19 @@ def register_sockets(socketio,salas_activas):
             content=content
         )
         
-        pipeLine:CascadaPipeline = salas_activas.get(room)
-        if not pipeLine:
+        intermediario:Intermediario = salas_activas.get(room)
+        if not intermediario:
             emit('error', {'msg': 'La sala no está inicializada con agentes.'}, room=room)
             return
         
         
         def process_message():
             # Ejecutar async desde el loop de asyncio
-            resultado = asyncio.run(pipeLine.analizar_argumento_cascada(content, username))
-            # Emitir resultado de evaluación del agente
-            socketio.emit('evaluacion', resultado, room=room)
+            print("se ejecuta intermediario")
+            resultado = asyncio.run(intermediario.agregarMensage(username, content))
+            # Emitir resultado de evaluación del agente si es que existe 
+            if resultado: 
+                socketio.emit('evaluacion', resultado, room=room)
 
         # Lanzar como tarea de fondo de SocketIO
         socketio.start_background_task(process_message)

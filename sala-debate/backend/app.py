@@ -10,7 +10,7 @@ from controllers.auth_controller import auth_bp
 from controllers.ChatSocketController import *
 from agentsComponents.clases.factory_agents import ReActAgentFactory
 from agentsComponents.clases.pipeLine_ejecucion import CascadaPipeline
-
+from agentsComponents.clases.intermediador import Intermediario
 
 load_dotenv()
 app = Flask(__name__)
@@ -27,7 +27,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 register_sockets(socketio,salas_activas)
 #Creamos la factory con la cual vamos a crear los agentes
 factory = ReActAgentFactory()
-
+tamaño_ventana_mensajes = 2
 
 @app.route("/api/estado-salas",methods=["GET"])
 def get_estado_salas():
@@ -76,8 +76,10 @@ def init_topic():
         # Iniciar la sesión asincrónica
         asyncio.run(cascada_pipeline.start_session(topic))
 
+
+        intermediario = Intermediario(tamañoVentana=tamaño_ventana_mensajes,pipeLine=cascada_pipeline)
         # Guardar el pipeline en el dict de salas
-        salas_activas[room_name] = cascada_pipeline
+        salas_activas[room_name] = intermediario
 
         return jsonify({"status": "initialized"}), 201
     if(room_session["primera_inicializacion"] == False):

@@ -37,6 +37,8 @@ class CascadaPipeline:
         )
         self.agentes = list([self.agenteEntrada, self.agenteRespuesta])
         self.hub = None #inicializamos el hub cuando entramos a una sala. 
+        self.initialState = None
+
 
 
     async def start_session(self, tema_sala:str) -> None:
@@ -53,7 +55,6 @@ class CascadaPipeline:
             ) + tema_sala
         )
         self.hub = await MsgHub(participants=self.agentes,announcement=hint).__aenter__()
-        
 
     async def stop_session(self) -> None:
         """
@@ -76,19 +77,14 @@ class CascadaPipeline:
             print("habla el orientador")
             orientador_msg = await self.agenteRespuesta()
             return {
-                "evaluacion": "termino de la intervencion",
                 "respuesta": orientador_msg.content,
                 "agente": "orientador",
-                "evaluado": user_name,
                 "intervencion":True
             }
         else: 
-            print("se termina el asuntoo")
             return {
-                "evaluacion": "Evaluación Curador",
                 "respuesta": curador_msg.content,
                 "agente": "Curador",
-                "evaluado": user_name,
                 "intervencion":False
                 
             }

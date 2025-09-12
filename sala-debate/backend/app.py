@@ -50,7 +50,9 @@ def get_estado_salas():
 @app.route("/api/init-topic",methods=["POST"])
 def init_topic():
     """
-    #TODO:hacer documentacion
+    Se extrae el nombre de la sala y el prompt inicial que en verdad es el tema que se va a discutir en la sala 
+    Luego se crea la room_session o si estaba ya activa se devuelve el id. 
+    Si se tuvo que crear entonces se tiene que setear la clase del sistema multiagente.
     """
     data =request.json
     room_name = data["room"]
@@ -97,6 +99,8 @@ def close_room():
 
         # Limpiar la instancia en memoria
         if room_name in salas_activas:
+            cascada_pipeline = salas_activas.get(room_name)
+            asyncio.run(cascada_pipeline.stop_session())
             del salas_activas[room_name]
 
 

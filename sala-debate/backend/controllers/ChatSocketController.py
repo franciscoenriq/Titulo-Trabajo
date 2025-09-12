@@ -51,7 +51,7 @@ def register_sockets(socketio,salas_activas):
             emit('error', {'msg': 'La sala no está inicializada con agentes.'}, room=room)
             return
         
-        # Función de tarea de fondo
+        
         def process_message():
             # Ejecutar async desde el loop de asyncio
             resultado = asyncio.run(pipeLine.analizar_argumento_cascada(content, username))
@@ -75,40 +75,3 @@ def register_sockets(socketio,salas_activas):
         room = data['room']
         # Avisamos a todos los demás que este usuario dejó de escribir
         emit('stop_typing', {'username': username}, room=room, include_self=False)
-
-
-'''
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
-resultado = loop.run_until_complete(
-    pipeLine.analizar_argumento_cascada(content, username)
-)
-
-# Emitimos el resultado de la evaluación
-socketio.emit('evaluacion', {
-    'evaluacion': resultado["evaluacion"],
-    'respuesta': resultado["respuesta"],
-    'intervencion': resultado["intervencion"],
-    'agente': resultado["agente"],
-    'evaluado': resultado["evaluado"]
-}, room=room)
-
-# Ejecutar async sin bloquear el servidor
-threading.Thread(target=process_message).start()
-'''
-
-
-
-'''
-            # ---- 2) Revisar si alguien llamó al relator ----
-        resultado_relator = llamar_relator(room, content, username)
-
-        if resultado_relator:  # solo si devolvió algo
-            emit('evaluacion', {
-                'evaluacion': resultado_relator["evaluacion"],
-                'respuesta': resultado_relator["respuesta"],
-                'intervencion': resultado_relator["intervencion"],
-                'agente': resultado_relator["agente"],
-                'evaluado': resultado_relator["evaluado"]
-            }, room=room)
-'''

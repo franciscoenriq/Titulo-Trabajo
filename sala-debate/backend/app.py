@@ -8,8 +8,6 @@ from models.models import *
 from models.models import Base, engine
 from controllers.auth_controller import auth_bp
 from controllers.ChatSocketController import *
-from agentsComponents.clases.factory_agents import ReActAgentFactory
-from agentsComponents.clases.pipeLine_ejecucion import CascadaPipeline
 from agentsComponents.clases.intermediador import Intermediario
 
 load_dotenv()
@@ -17,17 +15,14 @@ app = Flask(__name__)
 CORS(app)
 app.register_blueprint(auth_bp)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") 
-
 Base.metadata.create_all(engine)
 
-salas_activas = {}  # room_name -> CascadaPipeLine
+salas_activas = {}  # room_name -> Intermediario
 #Inicializar Sockets
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 # Cargar eventos de sockets
 register_sockets(socketio,salas_activas)
-#Creamos la factory con la cual vamos a crear los agentes
-factory = ReActAgentFactory()
-tamaño_ventana_mensajes = 2
+tamaño_ventana_mensajes = 1
 
 @app.route("/api/estado-salas",methods=["GET"])
 def get_estado_salas():
@@ -70,15 +65,15 @@ def init_topic():
         
         promt_curador = current_prompts.get("Curador", "Prompt por defecto del curador")
         promt_orientador = current_prompts.get("Orientador", "Prompt por defecto del orientador")
-        #Creamos la clase pipeLine 
-        cascada_pipeline = CascadaPipeline(factory, promt_curador, promt_orientador)
-
-        # Iniciar la sesión asincrónica
-        asyncio.run(cascada_pipeline.start_session(topic))
 
 
-        intermediario = Intermediario(tamañoVentana=tamaño_ventana_mensajes,pipeLine=cascada_pipeline)
-        # Guardar el pipeline en el dict de salas
+        intermediario = Intermediario(
+            tamañoVentana=tamaño_ventana_mensajes,
+            prompt_agenteEntrada=promt_curador,
+            prompt_agenteSalida=promt_orientador)
+        
+        asyncio.run(intermediario.start_session(topic))
+        # Guardar el intermediario en el dict de salas
         salas_activas[room_name] = intermediario
 
         return jsonify({"status": "initialized"}), 201
@@ -101,8 +96,8 @@ def close_room():
 
         # Limpiar la instancia en memoria
         if room_name in salas_activas:
-            cascada_pipeline = salas_activas.get(room_name)
-            asyncio.run(cascada_pipeline.stop_session())
+            intermediario = salas_activas.get(room_name)
+            asyncio.run(intermediario.stop_session())
             del salas_activas[room_name]
 
 

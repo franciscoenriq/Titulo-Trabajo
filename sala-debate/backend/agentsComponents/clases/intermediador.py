@@ -1,12 +1,15 @@
 from .pipeLine_ejecucion import CascadaPipeline
+from .factory_agents import ReActAgentFactory
+factory = ReActAgentFactory()
+
 class Intermediario:
-    def __init__(self,tamañoVentana:int,pipeLine:CascadaPipeline):
+    def __init__(self,tamañoVentana:int,prompt_agenteEntrada:str,prompt_agenteSalida:str):
         self.tamañoVentana = tamañoVentana
         self.mensajesTotales = []
-        self.pipeLine = pipeLine
+        self.pipeLine = CascadaPipeline(factory, prompt_agenteEntrada,prompt_agenteSalida)
     
 
-    async def agregarMensage(self, userName:str, message:str):
+    async def agregarMensage(self, userName:str, message:str) -> list[dict] | None:
         print("se agrega un mensjae")
         self.mensajesTotales.append({
             "userName":userName,
@@ -20,6 +23,13 @@ class Intermediario:
             return result
         else: 
             return 
+    
+
+    async def start_session(self,topic:str)->None:
+        return await self.pipeLine.start_session(topic)
+    
+    async def stop_session(self):
+        return await self.pipeLine.stop_session()
             
 
 

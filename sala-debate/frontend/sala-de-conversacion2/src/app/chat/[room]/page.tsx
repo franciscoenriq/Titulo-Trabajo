@@ -12,10 +12,7 @@ export default function ChatRoom() {
   };
   
   type EvaluacionData = {
-    evaluacion: string;
     agente: string;
-    evaluado: string;
-    intervencion?: string;
     respuesta: string;
   };
 
@@ -109,19 +106,21 @@ useEffect(() => {
       setMessages((prev) => [...prev, { content: statusMsg.msg, system: true }])
     }
 
-    const handleEvaluacion = (data: EvaluacionData) => {
-      const { agente, respuesta, intervencion } = data;
+    const handleEvaluacion = (data: EvaluacionData[]|EvaluacionData) => {
+      const mensajes = Array.isArray(data) ? data : [data];
 
-      if (!respuesta?.trim()) return;
+      mensajes.forEach(({agente, respuesta}) => {
+        if (!respuesta?.trim()) return;
     
-      // Si intervino el orientador -> va al chat general (izquierda)
-      if (agente.toLowerCase() === "orientador" && intervencion) {
-        setMessages((prev) => [...prev, { username: agente, content: respuesta }]);
-      } 
-      // Si es el curador -> va al panel de agentes (derecha)
-      else if (agente.toLowerCase() === "curador") {
-        setAgentMessages((prev) => [...prev, { username: agente, content: respuesta }]);
-      }
+        if (agente.toLowerCase() === "orientador") {
+          //orientador -> chat general
+          setMessages((prev) => [...prev, { username: agente, content: respuesta }]);
+        } 
+        // curador -> va al panel de agentes
+        else if (agente.toLowerCase() === "curador") {
+          setAgentMessages((prev) => [...prev, { username: agente, content: respuesta }]);
+        }
+      })
     };
 
     // usuarios que escriben

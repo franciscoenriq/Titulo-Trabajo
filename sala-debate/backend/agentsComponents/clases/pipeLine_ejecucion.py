@@ -64,7 +64,7 @@ class CascadaPipeline:
             await self.hub.__aexit__(None, None, None)
             self.hub = None
 
-    async def analizar_argumento_cascada(self,mensajes:list[Msg]) -> dict:
+    async def analizar_argumento_cascada(self,mensajes:list[Msg]) -> list[dict]:
         if not self.hub: 
             raise RuntimeError("La sesión de chat no ha sido iniciada. Llama a start_session primero.")
         
@@ -74,22 +74,20 @@ class CascadaPipeline:
 
         curador_msg = await self.agenteEntrada()
         next_agent = filter_agents(curador_msg.content, self.agentes)
+
+        respuestas = [{
+            "agente":"Curador",
+            "respuesta":curador_msg.content
+        }]
         if next_agent and next_agent[0].name == "Orientador":
             print("habla el orientador")
             orientador_msg = await self.agenteRespuesta()
-            return {
-                "respuesta": orientador_msg.content,
-                "agente": "orientador",
-                "intervencion":True
-            }
-        else: 
-            return {
-                "respuesta": curador_msg.content,
-                "agente": "Curador",
-                "intervencion":False
-                
-            }
-        
+            respuestas.append({
+                "agente":"Orientador",
+                "respuesta":orientador_msg.content
+            })
+        return respuestas
+   
 
     async def show_memory(self) -> dict:
         """

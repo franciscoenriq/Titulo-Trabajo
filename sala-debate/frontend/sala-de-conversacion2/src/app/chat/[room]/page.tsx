@@ -151,8 +151,20 @@ useEffect(() => {
     if (username && socketRef.current) {
       socketRef.current.emit('join', { room, username })
       setJoined(true)
+      sessionStorage.setItem('chatUser', JSON.stringify({ room, username }))
     }
   }
+  useEffect(() => {
+    const saved = sessionStorage.getItem('chatUser')
+    if (saved) {
+      const { room: savedRoom, username: savedUser } = JSON.parse(saved)
+      if (savedRoom === room) {
+        setUsername(savedUser)
+        setJoined(true)
+        socketRef.current?.emit('join', { room, username: savedUser })
+      }
+    }
+  }, [room])
 
   const sendMessage = () => {
     if (input.trim() && socketRef.current && username) {
@@ -174,7 +186,32 @@ useEffect(() => {
     }
   }
 
+  useEffect(() => {
+    const socket = socketRef.current;
+    if (!socket || !username || !joined) return;
+  
+    const handleBeforeUnload = () => {
+      socket.emit("leave", { room, username });
+    };
+  
+    window.addEventListener("beforeunload", handleBeforeUnload);
+  
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [joined, username, room]);
+  
 
+  const leaveRoom = () => {
+    if (socketRef.current && username) {
+      socketRef.current.emit("leave", { room, username });
+      setJoined(false);
+      setMessages([]);
+      setAgentMessages([]);
+      sessionStorage.removeItem('chatUser')
+    }
+  };
+  
 
   return (
     <main className="p-8">
@@ -315,6 +352,13 @@ useEffect(() => {
           <button onClick={sendMessage} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
             Enviar
           </button>
+          <button 
+            onClick={leaveRoom} 
+            className="mt-2 bg-red-600 text-white px-4 py-2 rounded"
+          >
+            Salir de la sala
+          </button>
+
         </>
       )}
     </main>

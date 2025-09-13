@@ -93,7 +93,6 @@ class CascadaPipeline:
         Funcion que avisa al Hub cuando entra un participante a la sala.
         Así el sistema tiene conciencia de cuantos participantes hay conversando acerca del tema en cuestión.
         """
-        print("entra participante" + userName)
         prompt = "Ha entrado a la sala el participante llamado: " + userName
         msgSystem = Msg("system",prompt,"system")
         await self.hub.broadcast(msgSystem)

@@ -1,6 +1,7 @@
 import asyncio
 from agentscope.pipeline import MsgHub
 from agentscope.message import Msg
+from agentscope.token import OpenAITokenCounter
 from utils.groupchat_utils import *
 from .factory_agents import ReActAgentFactory
 
@@ -18,6 +19,7 @@ SYS_PROMPT = """
 
     El tema que se discutirá en esta sesion es el siguiente:
     """
+
 class CascadaPipeline:
     def __init__(self, 
                  factory: ReActAgentFactory,
@@ -39,6 +41,7 @@ class CascadaPipeline:
         self.agentes = list([self.agenteEntrada, self.agenteRespuesta])
         self.hub = None #inicializamos el hub cuando entramos a una sala. 
         self.initialState = None
+        self.token_counter = OpenAITokenCounter(model_name="gpt-4o-mini")
 
     async def start_session(self, tema_sala:str) -> None:
         """
@@ -59,6 +62,8 @@ class CascadaPipeline:
         """
         Cierra el MsgHub cuando termina la sesión de chat.
         """
+        tokens_totales = await self.contar_tokens_memoria()
+        print(tokens_totales)
         if self.hub:
             await self.hub.__aexit__(None, None, None)
             self.hub = None
@@ -117,3 +122,21 @@ class CascadaPipeline:
                 memoria_agente.append(msg.get_text_content())
             memoria_total[agente.name] = memoria_agente
         return memoria_total
+    
+    
+    async def contar_tokens_memoria(self) -> dict:
+        """
+        Retorna el conteo de tokens por cada agente en base a su memoria.
+        """
+        tokens_total = {}
+
+        for agente in self.agentes:
+            mensajes_historial = await agente.memory.get_memory()
+            mensajes_convertidos = [
+                {"role": msg.role, "content": msg.get_text_content()} 
+                for msg in mensajes_historial
+            ]
+            n_tokens = await self.token_counter.count(mensajes_convertidos)
+            tokens_total[agente.name] = n_tokens
+
+        return tokens_total

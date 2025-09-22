@@ -4,7 +4,8 @@ from agentscope.message import Msg
 from agentscope.token import OpenAITokenCounter
 from utils.groupchat_utils import *
 from .factory_agents import ReActAgentFactory
-
+from agentscope.tool import Toolkit, ToolResponse
+from models.models import get_messages_by_room,get_active_room_session_id
 DEFAULT_TOPIC = """
     Esta es una sala de conversación entre usuarios humanos sobre temas éticos, ustedes como agentes tienen la finalidad de detectar baja calidad argumentativa , 
     saber cuando hay que intervenir y saber que decir. Dependiendo de sus roles asignados.  
@@ -20,12 +21,19 @@ SYS_PROMPT = """
     El tema que se discutirá en esta sesion es el siguiente:
     """
 
+PROMT_ENRUTADOR = "Eres el enrutador y decidiras a donde enviar el mensaje.Tu input serán mensajes de una sala de chat en que la gente discute temas eticos." \
+" Si alguien llama al resumidor con @Resumidor(o similar) entonces ejecutas la funcion de " \
+"hacer resumen y si no llaman al resumidor entonces ejecutas la accion de analizar_argumento_en_Cascada"
+PROMT_RESUMIDOR ="Eres un agente encargado de resumir la coversación que se está llevando a cabo respecto a un tema etico en cuestion." \
+"cuando seas llamado se te pasarán los mensajes de la sala más el tema que se está discutiendo para que sepas como resumir." \
+"De esta manera tu output deberá ser de a lo mas 30 palabras. "
+
 class CascadaPipeline:
     def __init__(self, 
                  factory: ReActAgentFactory,
                  promt_agenteEntrada:str,
                  promt_agenteRespuesta:str):
-        
+        self.tema_sala = None
         self.factory = factory
         self.promt_agenteEntrada = promt_agenteEntrada
         self.promt_agenteRespuesta = promt_agenteRespuesta
@@ -48,6 +56,7 @@ class CascadaPipeline:
         Inicializa el msghub con el cual se va a trabajar en una sesion de discusion
         @Hint: mensaje con el cual se inicializan los agentes.
         """
+        self.tema_sala = tema_sala
         hint = Msg(
             name="Host",
             role="system",
@@ -84,7 +93,6 @@ class CascadaPipeline:
             "respuesta":curador_msg.content
         }]
         if next_agent and next_agent[0].name == "Orientador":
-            print("habla el orientador")
             orientador_msg = await self.agenteRespuesta()
             respuestas.append({
                 "agente":"Orientador",

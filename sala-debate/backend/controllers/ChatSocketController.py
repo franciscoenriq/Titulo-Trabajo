@@ -50,7 +50,6 @@ def register_sockets(socketio,salas_activas):
         room = data['room']
         username = data['username']
         content = data['content']
-        print("llega un mensaje ")
         #extraemos la id de la sala 
         id_room_session = get_active_room_session_id(room)
         if not id_room_session:
@@ -63,6 +62,8 @@ def register_sockets(socketio,salas_activas):
         insert_message(
             room_session_id=id_room_session,
             user_id=username,
+            agent_name=None,
+            sender_type=SenderType.user,
             content=content
         )
         
@@ -70,14 +71,20 @@ def register_sockets(socketio,salas_activas):
         if not intermediario:
             emit('error', {'msg': 'La sala no está inicializada con agentes.'}, room=room)
             return
-        
-        
         def process_message():
             # Ejecutar async desde el loop de asyncio
-            print("se ejecuta intermediario")
             resultado = asyncio.run(intermediario.agregarMensage(username, content))
             # Emitir resultado de evaluación del agente si es que existe 
             if resultado: 
+                # Guardar en la BD cada respuesta de agente
+                for r in resultado:
+                    insert_message(
+                        room_session_id=id_room_session,
+                        user_id=None,
+                        agent_name=r["agente"],
+                        sender_type=SenderType.agent,
+                        content=r["respuesta"]
+                    )
                 socketio.emit('evaluacion', resultado, room=room)
 
         # Lanzar como tarea de fondo de SocketIO

@@ -20,6 +20,10 @@ engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 Session = scoped_session(sessionmaker(bind=engine))
 Base = declarative_base()
 
+class SenderType(enum.Enum):
+    user = "user"
+    agent = "agent"
+
 class UserRole(enum.Enum):
     alumno = "alumno"
     monitor = "monitor"
@@ -61,7 +65,9 @@ class Message(Base):
 
     id = Column(Integer, primary_key=True)
     room_session_id = Column(UUID(as_uuid=True), ForeignKey('room_sessions.id', ondelete='CASCADE'), nullable=False)
-    user_id = Column(Text, nullable=False)
+    user_id = Column(Text, nullable=True)
+    agent_name = Column(String(50), nullable=True)
+    sender_type = Column(Enum(SenderType),nullable=False)
     content = Column(Text, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -230,12 +236,20 @@ def create_room_name(name: str) -> int:
 
 #----------------------------- Funciones para mensajes --------------------------------------
         
-def insert_message(room_session_id: str, user_id: str, content: str) :
+def insert_message(room_session_id: str, user_id: str | None, agent_name: str | None, content: str, sender_type:SenderType) :
+    """
+    Inserta un mensaje en la BD.
+    - Si sender_type = user => guarda user_id
+    - Si sender_type = agent => guarda agent_name
+    """
     session = Session()
     try:
+        
         nuevo_mensaje = Message(
             room_session_id=room_session_id,
-            user_id=user_id,
+            user_id=user_id if sender_type == SenderType.user else None,
+            agent_name=agent_name if sender_type == SenderType.agent else None,
+            sender_type=sender_type,
             content=content
         )
         session.add(nuevo_mensaje)
@@ -261,7 +275,8 @@ def get_messages_by_room(id_session:str) -> list[dict]:
         )
         return [
             {
-                "username": m.user_id,
+                "username": m.user_id if m.sender_type == SenderType.user else None,
+                "agente": m.agent_name if m.sender_type == SenderType.agent else None,
                 "content": m.content,
                 "timestamp": m.created_at.isoformat()
             }

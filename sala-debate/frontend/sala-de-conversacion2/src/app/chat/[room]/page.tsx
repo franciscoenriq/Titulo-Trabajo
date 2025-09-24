@@ -120,6 +120,10 @@ useEffect(() => {
         else if (agente.toLowerCase() === "curador") {
           setAgentMessages((prev) => [...prev, { username: agente, content: respuesta }]);
         }
+        else if (agente.toLowerCase() === "resumidor") {
+          // Resumidor -> chat general 
+          setMessages((prev) => [...prev, { username: agente, content: respuesta }]);
+        }
       })
     };
 

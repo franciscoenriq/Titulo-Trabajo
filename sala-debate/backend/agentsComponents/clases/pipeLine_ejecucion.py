@@ -21,12 +21,30 @@ SYS_PROMPT = """
     El tema que se discutirá en esta sesion es el siguiente:
     """
 
-PROMT_ENRUTADOR = "Eres el enrutador y decidiras a donde enviar el mensaje.Tu input serán mensajes de una sala de chat en que la gente discute temas eticos." \
-" Si alguien llama al resumidor con @Resumidor(o similar) entonces ejecutas la funcion de " \
-"hacer resumen y si no llaman al resumidor entonces ejecutas la accion de analizar_argumento_en_Cascada"
-PROMT_RESUMIDOR ="Eres un agente encargado de resumir la coversación que se está llevando a cabo respecto a un tema etico en cuestion." \
-"cuando seas llamado se te pasarán los mensajes de la sala más el tema que se está discutiendo para que sepas como resumir." \
-"De esta manera tu output deberá ser de a lo mas 30 palabras. "
+PROMT_ENRUTADOR = (
+    "Eres el Enrutador. SOLO debes responder exactamente una de estas dos opciones:\n\n"
+    "1. '@Resumidor' → únicamente si el mensaje contiene de forma explícita:\n"
+    "   - la palabra '@Resumidor', o\n"
+    "   - frases como 'resumir', 'hazme un resumen', 'ayuda a resumir', dirigidas al agente.\n\n"
+    "2. 'paso' → para absolutamente cualquier otro mensaje, aunque hable de temas, qué hacer, etc.\n\n"
+    "Reglas adicionales:\n"
+    "- Nunca adivines la intención.\n"
+    "- Nunca actives al Resumidor por preguntas generales (ej. '¿qué hacemos con este tema?').\n"
+    "- Tu salida debe ser exactamente '@Resumidor' o 'paso'. Nada más."
+    "No es motivo para activar al resumidor si es que se estan dando argumentos del tema en discusion. SOLO SI TE LO PIDEN POR FAVOR"
+)
+PROMT_RESUMIDOR = (
+    "Eres el agente Resumidor. Tu única tarea es generar un resumen breve y claro "
+    "sobre la conversación ética en curso.\n\n"
+    "Instrucciones estrictas:\n"
+    "- El resumen debe estar escrito en español natural y conciso.\n"
+    "- Máximo 30 palabras.\n"
+    "- No agregues opiniones propias ni explicaciones.\n"
+    "- No repitas información innecesaria.\n"
+    "- Si no hay suficiente contenido para resumir, responde exactamente: 'Aún no hay suficiente contenido para resumir.'\n\n"
+    "Tu salida debe ser únicamente el resumen final, sin encabezados ni texto adicional."
+)
+
 
 class CascadaPipeline:
     def __init__(self, 
@@ -46,7 +64,15 @@ class CascadaPipeline:
             name="Orientador",
             sys_prompt=self.promt_agenteRespuesta
         )
-        self.agentes = list([self.agenteEntrada, self.agenteRespuesta])
+        self.agenteEnrutador = self.factory.create_agent(
+            name="Enrutador",
+            sys_prompt=PROMT_ENRUTADOR
+        )
+        self.agenteResumidor = self.factory.create_agent(
+            name="Resumidor",
+            sys_prompt=PROMT_RESUMIDOR
+        )
+        self.agentes = list([self.agenteEntrada, self.agenteRespuesta,self.agenteEnrutador,self.agenteResumidor])
         self.hub = None #inicializamos el hub cuando entramos a una sala. 
         self.initialState = None
         self.token_counter = OpenAITokenCounter(model_name="gpt-4o-mini")
@@ -77,14 +103,26 @@ class CascadaPipeline:
             await self.hub.__aexit__(None, None, None)
             self.hub = None
 
-    async def analizar_argumento_cascada(self,mensajes:list[Msg]) -> list[dict]:
+    async def entrar_mensaje_al_hub(self,mensaje:dict):
+        msg = Msg(mensaje["userName"], mensaje["content"], "user")
+        await self.hub.broadcast(msg)
+        enrutador_msg = await self.agenteEnrutador()
+        next_agent = filter_agents(enrutador_msg.content,self.agentes)
+        if next_agent and next_agent[0].name == "Resumidor":
+            resumidor_msg = await self.agenteResumidor()
+            respuesta = [{
+                "agente":"Resumidor",
+                "respuesta": resumidor_msg.content
+            }]
+            return respuesta
+        else:
+            return None
+
+
+    async def analizar_argumento_cascada(self) -> list[dict]:
         if not self.hub: 
             raise RuntimeError("La sesión de chat no ha sido iniciada. Llama a start_session primero.")
         
-        for msg_data in mensajes:
-            msg = Msg(msg_data["userName"], msg_data["content"], "user")
-            await self.hub.broadcast(msg)  # Broadcast al hub
-
         curador_msg = await self.agenteEntrada()
         next_agent = filter_agents(curador_msg.content, self.agentes)
 

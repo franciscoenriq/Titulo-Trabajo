@@ -7,15 +7,21 @@ class Intermediario:
         self.tamañoVentana = tamañoVentana
         self.mensajesTotales = []
         self.pipeLine = CascadaPipeline(factory, prompt_agenteEntrada,prompt_agenteSalida)
+        self.numeroMensajesTotales = 0
     
     async def agregarMensage(self, userName:str, message:str) -> list[dict] | None:
-        self.mensajesTotales.append({
+        respuesta_enrutador = await self.pipeLine.entrar_mensaje_al_hub({
             "userName":userName,
             "content":message
         })
-        if(len(self.mensajesTotales) == self.tamañoVentana):
-            result = await self.pipeLine.analizar_argumento_cascada(self.mensajesTotales)
-            self.mensajesTotales = []
+        if(respuesta_enrutador):
+            return respuesta_enrutador
+
+        self.numeroMensajesTotales += 1 
+        print(self.numeroMensajesTotales)
+        if (self.numeroMensajesTotales == self.tamañoVentana):
+            result = await self.pipeLine.analizar_argumento_cascada()
+            self.numeroMensajesTotales = 0
             return result
         else: 
             return 

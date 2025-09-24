@@ -22,7 +22,7 @@ salas_activas = {}  # room_name -> Intermediario
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 # Cargar eventos de sockets
 register_sockets(socketio,salas_activas)
-tamaño_ventana_mensajes = 1
+tamaño_ventana_mensajes = 5
 
 @app.route("/api/estado-salas",methods=["GET"])
 def get_estado_salas():

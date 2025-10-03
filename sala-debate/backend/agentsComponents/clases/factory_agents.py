@@ -5,6 +5,7 @@ from agentscope.model import OpenAIChatModel
 from agentscope.formatter import OpenAIChatFormatter
 from agentscope.memory import InMemoryMemory
 from agentscope.tool import Toolkit, ToolResponse
+from agentscope.plan import PlanNotebook
 load_dotenv()
 api_key = os.getenv("API_KEY")
 
@@ -39,7 +40,21 @@ class ReActAgentFactory:
             ),
             formatter=OpenAIChatFormatter(),
             memory=InMemoryMemory(),
-            toolkit=toolkit
+            toolkit=toolkit,
+        
+        )
+    def create_agent_with_plan(self,name: str, sys_prompt: str,planNotebook:PlanNotebook):
+        return ReActAgent(
+            name=name,
+            sys_prompt=sys_prompt,
+            model=OpenAIChatModel(
+                model_name=self.model_name,
+                api_key=self.api_key,
+                stream=False
+            ),
+            formatter=OpenAIChatFormatter(),
+            memory=InMemoryMemory(),
+            plan_notebook=planNotebook,
         )
 
 

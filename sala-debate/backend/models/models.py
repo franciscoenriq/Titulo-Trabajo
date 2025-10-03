@@ -340,3 +340,16 @@ def create_promt(agent_name:str, prompt_text: str) -> int:
         raise e
     finally:
         session.close()
+
+
+def get_all_agents() -> list[str]:
+    """
+    Retorna una lista con los nombres únicos de agentes registrados.
+    """
+    session = Session()
+    try:
+        query = select(AgentPrompt.agent_name).distinct()
+        results = session.execute(query).scalars().all()
+        return results
+    finally:
+        session.close()

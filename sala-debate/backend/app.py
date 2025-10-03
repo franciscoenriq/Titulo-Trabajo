@@ -136,6 +136,14 @@ def get_prompts():
         return jsonify({
             "status": "success", 
             "updated": created_ids}), 201
+    
+@app.route("/api/cuantosagentes", methods=["GET"])
+def get_agents():
+    """
+    Endpoint: Retorna la lista de nombres únicos de agentes registrados.
+    """
+    agents = get_all_agents()
+    return jsonify({"agents": agents}), 200
 
 @app.route("/api/rooms",methods=["GET","POST"])
 def get_salas():

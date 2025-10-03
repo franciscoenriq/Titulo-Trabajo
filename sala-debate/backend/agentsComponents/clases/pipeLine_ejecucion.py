@@ -5,7 +5,6 @@ from agentscope.token import OpenAITokenCounter
 from utils.groupchat_utils import *
 from .factory_agents import ReActAgentFactory
 from agentscope.tool import Toolkit, ToolResponse
-from models.models import get_messages_by_room,get_active_room_session_id
 DEFAULT_TOPIC = """
     Esta es una sala de conversación entre usuarios humanos sobre temas éticos, ustedes como agentes tienen la finalidad de detectar baja calidad argumentativa , 
     saber cuando hay que intervenir y saber que decir. Dependiendo de sus roles asignados.  
@@ -35,7 +34,7 @@ PROMT_ENRUTADOR = (
 )
 PROMT_RESUMIDOR = (
     "Eres el agente Resumidor. Tu única tarea es generar un resumen breve y claro "
-    "sobre la conversación ética en curso.\n\n"
+    "sobre la conversación llevada a cabo hasta el momento.\n\n"
     "Instrucciones estrictas:\n"
     "- El resumen debe estar escrito en español natural y conciso.\n"
     "- Máximo 30 palabras.\n"
@@ -52,23 +51,20 @@ class CascadaPipeline:
                  promt_agenteEntrada:str,
                  promt_agenteRespuesta:str):
         self.tema_sala = None
-        self.factory = factory
-        self.promt_agenteEntrada = promt_agenteEntrada
-        self.promt_agenteRespuesta = promt_agenteRespuesta
         #Creamos los agentes de la arquitectura
-        self.agenteEntrada = self.factory.create_agent(
+        self.agenteEntrada = factory.create_agent(
             name="Curador",
-            sys_prompt=self.promt_agenteEntrada
+            sys_prompt=promt_agenteEntrada
         )
-        self.agenteRespuesta = self.factory.create_agent(
+        self.agenteRespuesta = factory.create_agent(
             name="Orientador",
-            sys_prompt=self.promt_agenteRespuesta
+            sys_prompt=promt_agenteRespuesta
         )
-        self.agenteEnrutador = self.factory.create_agent(
+        self.agenteEnrutador = factory.create_agent(
             name="Enrutador",
             sys_prompt=PROMT_ENRUTADOR
         )
-        self.agenteResumidor = self.factory.create_agent(
+        self.agenteResumidor = factory.create_agent(
             name="Resumidor",
             sys_prompt=PROMT_RESUMIDOR
         )
@@ -102,10 +98,13 @@ class CascadaPipeline:
         if self.hub:
             await self.hub.__aexit__(None, None, None)
             self.hub = None
+        memoria = await self.show_memory()
+        #print(memoria)
 
     async def entrar_mensaje_al_hub(self,mensaje:dict):
         msg = Msg(mensaje["userName"], mensaje["content"], "user")
         await self.hub.broadcast(msg)
+        '''
         enrutador_msg = await self.agenteEnrutador()
         next_agent = filter_agents(enrutador_msg.content,self.agentes)
         if next_agent and next_agent[0].name == "Resumidor":
@@ -117,6 +116,7 @@ class CascadaPipeline:
             return respuesta
         else:
             return None
+        '''
 
 
     async def analizar_argumento_cascada(self) -> list[dict]:

@@ -5,6 +5,18 @@ from flask_socketio import SocketIO, join_room, leave_room, emit
 from models.models import *
 from agentsComponents.clases.intermediador import Intermediario
 
+
+# sockets_events.py (o donde tengas register_sockets)
+def emitir_resultado_socket(socketio: SocketIO, evento:str,resultado, sala:str):
+    """Emitir resultados de intermediario de forma segura usando el contexto del servidor."""
+    def _emit():
+        try:
+            socketio.emit(evento, resultado, room=sala)
+        except Exception as e:
+            print("Error emitiendo resultado desde background task:", e)
+    # start_background_task corre la función en el contexto del servidor (thread/greenlet según async_mode)
+    socketio.start_background_task(_emit)
+
 def register_sockets(socketio,salas_activas):
 # esta es la funcion para poder usar los socketsEvents  para el chat.
     usuarios_por_sala = {}  # {room_name: set(username1, username2, ...)}
@@ -17,6 +29,7 @@ def register_sockets(socketio,salas_activas):
         if room not in usuarios_por_sala:
             usuarios_por_sala[room] = set()
         join_room(room)
+
         if username not in usuarios_por_sala[room]:
             emit('status', {'msg': f'{username} ha entrado a la sala {room}.'}, room=room)
             #Avisamos al sistema multiagente que ha entrado un participante
@@ -30,6 +43,7 @@ def register_sockets(socketio,salas_activas):
         username = data['username']
         room = data['room']
         leave_room(room)
+
         if room in usuarios_por_sala and username in usuarios_por_sala[room]:
             emit('status', {'msg': f'{username} ha salido de la sala {room}.'}, room=room)
             #Avisamos al sistema multiagente que ha salido un participante
@@ -50,15 +64,11 @@ def register_sockets(socketio,salas_activas):
         room = data['room']
         username = data['username']
         content = data['content']
-        #extraemos la id de la sala 
+        emit('message', {'username': username, 'content': content}, room=room)
         id_room_session = get_active_room_session_id(room)
         if not id_room_session:
             emit('error', {'msg': f"No hay sesión activa para la sala {room}"}, room=room)
             return
-        
-        message_data = {'username': username, 'content': content}
-        emit('message', message_data, room=room)
-        #guardamos en la bd 
         insert_message(
             room_session_id=id_room_session,
             user_id=username,
@@ -66,29 +76,13 @@ def register_sockets(socketio,salas_activas):
             sender_type=SenderType.user,
             content=content
         )
-        
-        intermediario:Intermediario = salas_activas.get(room)
+
+        intermediario: Intermediario = salas_activas.get(room)
         if not intermediario:
             emit('error', {'msg': 'La sala no está inicializada con agentes.'}, room=room)
             return
-        def process_message():
-            # Ejecutar async desde el loop de asyncio
-            resultado = asyncio.run(intermediario.agregarMensage(username, content))
-            # Emitir resultado de evaluación del agente si es que existe 
-            if resultado: 
-                # Guardar en la BD cada respuesta de agente
-                for r in resultado:
-                    insert_message(
-                        room_session_id=id_room_session,
-                        user_id=None,
-                        agent_name=r["agente"],
-                        sender_type=SenderType.agent,
-                        content=r["respuesta"]
-                    )
-                socketio.emit('evaluacion', resultado, room=room)
+        intermediario.enqueue_message(username,content)
 
-        # Lanzar como tarea de fondo de SocketIO
-        socketio.start_background_task(process_message)
 
     @socketio.on('typing')
     def handle_typing(data):
@@ -104,3 +98,15 @@ def register_sockets(socketio,salas_activas):
         room = data['room']
         # Avisamos a todos los demás que este usuario dejó de escribir
         emit('stop_typing', {'username': username}, room=room, include_self=False)
+    
+    @socketio.on('subscribe_monitor')
+    def handle_monitor_subscription(data):
+        room = f"monitor_{data['room']}"
+        print(f"🟢 Cliente  se está uniendo a {room}")
+        join_room(room)
+        emit('status',{'msg':f'Monitor susbrito a la sala {room}'})
+    
+    @socketio.on('unsubscribe_monitor')
+    def handle_monitor_unsubscribe(data):
+        room = f"monitor_{data['room']}"
+        leave_room(f"monitor_{room}")

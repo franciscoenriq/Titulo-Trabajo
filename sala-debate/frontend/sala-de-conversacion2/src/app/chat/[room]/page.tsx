@@ -252,7 +252,8 @@ useEffect(() => {
       ) : (
         <>
           {/* Layout con 2 columnas */}
-          <div className="grid grid-cols-[2fr_1fr] gap-4 mb-4 items-start">
+          <div className="grid grid-cols-[1.5fr_1fr] gap-4 mb-4 items-start">
+
             {/* Columna izquierda - Chat normal */}
             <div className="min-w-0 border p-3 rounded w-[1000px]"> {/* el [500px] arregló el problema del contenedor */}
               <h2 className="font-semibold mb-2">Chat</h2>

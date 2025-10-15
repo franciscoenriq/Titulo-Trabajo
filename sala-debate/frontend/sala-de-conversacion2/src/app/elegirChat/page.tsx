@@ -204,12 +204,20 @@ export default function Home() {
 
     {/* Columna derecha: prompts de agentes */}
     <div className="flex items-center justify-center">
-      <button
-        onClick={() => router.push('/prompts')}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-      >
-        Ver Prompts de Agentes
-      </button>
+      <div className="flex flex-col items-center justify-start space-y-2">
+        <button
+          onClick={() => router.push('/prompts')}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Ver Prompts de Agentes
+        </button>
+        <button
+          onClick={() => router.push('/multiagent-config')}
+          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+        >
+          Configuración Multiagente
+        </button>
+      </div>
     </div>
   </div>
 </main>)

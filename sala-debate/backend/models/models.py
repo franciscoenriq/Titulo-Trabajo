@@ -81,6 +81,15 @@ class AgentPrompt(Base):
     created_at = Column(DateTime, default=datetime.now())
 
 
+class MultiAgentConfig(Base):
+    __tablename__ = 'multiagent_config'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    ventana_mensajes = Column(Integer, nullable=False)
+    fase_1_segundos = Column(Integer, nullable=False)
+    fase_2_segundos = Column(Integer, nullable=False)
+    update_interval = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 #----------------------------- Funciones para la sala ---------------------------------------
 def get_rooms() -> list[dict]:
     'Devuelve todas las salas a las cuales se pueden entrar'
@@ -351,5 +360,81 @@ def get_all_agents() -> list[str]:
         query = select(AgentPrompt.agent_name).distinct()
         results = session.execute(query).scalars().all()
         return results
+    finally:
+        session.close()
+
+
+def get_multiagent_config() -> MultiAgentConfig | None:
+    """
+    Devuelve la fila de configuración actual. 
+    Si no existe, devuelve None.
+    """
+    session = Session()
+    try:
+        config = session.query(MultiAgentConfig).first()
+        return config
+    finally:
+        session.close()
+
+def update_multiagent_config(
+    ventana_mensajes: int,
+    fase_1_segundos: int,
+    fase_2_segundos: int,
+    update_interval: int
+) -> MultiAgentConfig:
+    """
+    Actualiza los valores de la configuración existente.
+    Lanza excepción si no existe ninguna fila de configuración.
+    Todos los parámetros son obligatorios.
+    """
+    if None in (ventana_mensajes, fase_1_segundos, fase_2_segundos, update_interval):
+        raise ValueError("Todos los parámetros son obligatorios y no pueden ser None.")
+
+    session = Session()
+    try:
+        config = session.query(MultiAgentConfig).first()
+        if not config:
+            raise ValueError("No existe ninguna configuración para actualizar. Usa create_multiagent_config primero.")
+
+        config.ventana_mensajes = ventana_mensajes
+        config.fase_1_segundos = fase_1_segundos
+        config.fase_2_segundos = fase_2_segundos
+        config.update_interval = update_interval
+        session.commit()
+        session.refresh(config)
+        return config
+    finally:
+        session.close()
+
+
+def create_multiagent_config(
+    ventana_mensajes: int,
+    fase_1_segundos: int,
+    fase_2_segundos: int,
+    update_interval: int
+) -> MultiAgentConfig:
+    """
+    Crea la fila de configuración con los valores especificados.
+    Lanza excepción si ya existe una configuración.
+    """
+    if None in (ventana_mensajes, fase_1_segundos, fase_2_segundos, update_interval):
+        raise ValueError("Todos los parámetros son obligatorios y no pueden ser None.")
+
+    session = Session()
+    try:
+        existing = session.query(MultiAgentConfig).first()
+        if existing:
+            raise ValueError("Ya existe una configuración de MultiAgentConfig.")
+
+        config = MultiAgentConfig(
+            ventana_mensajes=ventana_mensajes,
+            fase_1_segundos=fase_1_segundos,
+            fase_2_segundos=fase_2_segundos,
+            update_interval=update_interval
+        )
+        session.add(config)
+        session.commit()
+        session.refresh(config)
+        return config
     finally:
         session.close()

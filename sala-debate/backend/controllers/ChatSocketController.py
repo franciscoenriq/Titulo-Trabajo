@@ -25,6 +25,7 @@ def register_sockets(socketio,salas_activas):
     def on_join(data):
         username = data['username']
         room = data['room']
+        intermediario:Intermediario = salas_activas.get(room)
         # Inicializar el set si no existe
         if room not in usuarios_por_sala:
             usuarios_por_sala[room] = set()
@@ -33,10 +34,22 @@ def register_sockets(socketio,salas_activas):
         if username not in usuarios_por_sala[room]:
             emit('status', {'msg': f'{username} ha entrado a la sala {room}.'}, room=room)
             #Avisamos al sistema multiagente que ha entrado un participante
-            intermediario:Intermediario = salas_activas.get(room)
             asyncio.run(intermediario.anunciar_entrada_participante(username))
         # Agregamos al usuario al set, el set no permite duplicados
         usuarios_por_sala[room].add(username)
+        if intermediario:
+            try:
+                timer_state = {}
+                if getattr(intermediario, "timer", None) is not None:
+                    timer_state = intermediario.timer.get_state()
+                # Emitir solo al socket que realizó el join (emit sin room => solo al emisor)
+                emit('timer_user_update', {
+                    "fase_actual": timer_state.get("fase_actual", 0),
+                    "elapsed_phase": timer_state.get("elapsed_phase", 0),
+                    "remaining_phase": timer_state.get("remaining_phase", 0)
+                })
+            except Exception as e:
+                print("Error al enviar estado inicial del timer en on_join:", e)
 
     @socketio.on('leave')
     def on_leave(data):
@@ -102,7 +115,6 @@ def register_sockets(socketio,salas_activas):
     @socketio.on('subscribe_monitor')
     def handle_monitor_subscription(data):
         room = f"monitor_{data['room']}"
-        print(f"🟢 Cliente  se está uniendo a {room}")
         join_room(room)
         emit('status',{'msg':f'Monitor susbrito a la sala {room}'})
     
@@ -110,3 +122,9 @@ def register_sockets(socketio,salas_activas):
     def handle_monitor_unsubscribe(data):
         room = f"monitor_{data['room']}"
         leave_room(f"monitor_{room}")
+
+    @socketio.on('subscribe_timer_user')
+    def handle_user_timer_subscription(data):
+        room = data['room']
+        join_room(room)
+        emit('status',{'msg':f'Usuario suscrito al temporizador de {room}.'})

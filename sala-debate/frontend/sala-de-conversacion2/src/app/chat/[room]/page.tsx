@@ -15,7 +15,10 @@ export default function ChatRoom() {
     agente: string;
     respuesta: string;
   };
-
+  const [faseActual, setFaseActual] = useState<string>('Cargando...')
+  const [remainingPhase, setRemainingPhase] = useState<number>(0)
+  const [elapsedPhase, setElapsedPhase] = useState<number>(0)
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const params = useParams()
   const room = params.room as string
   const [evaluaciones, setEvaluaciones] = useState<string[]>([])
@@ -215,22 +218,54 @@ useEffect(() => {
       sessionStorage.removeItem('chatUser')
     }
   };
-  
+ // sincronización de tiempo
+useEffect(() => {
+  const socket = socketRef.current;
+  if (!socket || !joined) return;
+
+  const handleTimerUpdate = (data: {
+    fase_actual: string;
+    remaining_phase: number;
+    elapsed_phase: number;
+  }) => {
+    const { fase_actual, remaining_phase, elapsed_phase } = data;
+
+    if (!isTimerRunning) setIsTimerRunning(true);
+    setFaseActual(fase_actual);
+
+    // Corrige solo si hay más de 1 segundo de diferencia
+    setRemainingPhase((prev) =>
+      prev === null || Math.abs(remaining_phase - prev) > 1
+        ? remaining_phase
+        : prev
+    );
+    setElapsedPhase(elapsed_phase);
+  };
+
+  // Escuchamos directamente los updates del timer desde la sala
+  socket.on('timer_user_update', handleTimerUpdate);
+
+  return () => {
+    socket.off('timer_user_update', handleTimerUpdate);
+  };
+}, [joined]);
+
+// Intervalo local para decrementar el contador cada segundo
+useEffect(() => {
+  if (!isTimerRunning || remainingPhase === null) return;
+
+  const interval = setInterval(() => {
+    setRemainingPhase((prev) => (prev && prev > 0 ? prev - 1 : 0));
+    setElapsedPhase((prev) => (prev !== null ? prev + 1 : 0));
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, [isTimerRunning, remainingPhase]);
+
 
   return (
     <main className="p-8">
       <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
-
-      {tema && (
-        <div 
-          className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 rounded"
-          style={{ maxHeight: '150px', overflowY: 'auto', whiteSpace: 'pre-wrap' }}
-        >
-          <strong>Tema de la sala:</strong><br />
-          {tema}
-        </div>
-      )}
-
       {!joined ? (
         <div className="flex flex-col gap-2 max-w-sm">
           <label>Nombre de usuario:</label>
@@ -251,6 +286,14 @@ useEffect(() => {
         </div>
       ) : (
         <>
+          <div className="mb-4 text-lg font-semibold text-blue-700 bg-blue-50 p-3 rounded-lg shadow-sm inline-block">
+            🕒 Fase actual: <span className="text-blue-800">{faseActual}</span> — 
+            Tiempo restante:{" "}
+            <span className="text-green-700">
+              {Math.floor((remainingPhase ?? 0) / 60)}:
+              {String((remainingPhase ?? 0) % 60).padStart(2, '0')}
+            </span>
+          </div>
           {/* Layout con 2 columnas */}
           <div className="grid grid-cols-[1.5fr_1fr] gap-4 mb-4 items-start">
 
@@ -368,6 +411,4 @@ useEffect(() => {
       )}
     </main>
   )
-  
-  
 }

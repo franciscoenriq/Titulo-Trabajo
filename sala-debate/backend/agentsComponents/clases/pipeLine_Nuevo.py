@@ -109,15 +109,18 @@ class Pipeline:
     async def avisar_tiempo(self, fase_actual, remaining_phase, elapsed_phase, remaining_total, elapsed_total):
         
         mensaje = f"""
-        Fase_actual:{fase_actual}: \n
+        Fase_actual:{fase_actual}:
         tiempo_transcurrido_fase:{elapsed_phase//60} minutos y {elapsed_phase%60} segundos,
         tiempo_restante_fase:{remaining_phase//60} minutos y {remaining_phase%60} segundos,
         tiempo_total_transcurrido:{elapsed_total//60} minutos y {elapsed_total%60} segundos,
         tiempo_total_restante:{remaining_total//60} minutos y {remaining_total%60} segundos.
         """
         print(mensaje)
+        msg = Msg("Timer",mensaje,"system")
         if self.avisos_timer == 0:
             print("primer timer no se usa")
+            for agente in self.agentes:
+                await agente.observe(msg)
             self.avisos_timer = 1
             return
         print("ya no es el primer aviso")
@@ -126,6 +129,8 @@ class Pipeline:
             await agent.observe(msg)
         
         respuesta_puntuador = await self.agentePuntuador()
+        await self.agenteCurador.observe(respuesta_puntuador)
+        await self.agenteOrientador.observe(respuesta_puntuador)
         puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
         return {
               "score":puntuacion.score,
@@ -252,3 +257,26 @@ class Pipeline:
               memoria_agente.append(serialize_msg_content(msg))
           memoria_total[agente.name] = memoria_agente
       return memoria_total
+
+
+    async def reactiveResponse(self,usuario:str,mensaje:str):
+        msgUsuario = Msg(usuario,mensaje,"user")
+        respuesta = await self.agenteOrientador(msgUsuario)
+        await self.agentePuntuador.observe(msgUsuario)
+        await self.agentePuntuador.observe(respuesta)
+        await self.agenteCurador.observe(msgUsuario)
+        await self.agenteCurador.observe(respuesta)
+        return [{
+            "agente":"Orientador",
+            "respuesta":respuesta.content
+        }]
+    
+    
+    async def timerResponse(self,puntacion:int):
+        msgSystem = f"El puntuador a puntuado muy baja la conversacion con {puntacion} puntos debido a inactividad en la sala. Por tanto debes intervenir "
+        msg = Msg("system",msgSystem,"system")
+        respuesta = await self.agenteOrientador(msg)
+        return [{
+            "agente":"Orientador",
+            "respuesta":respuesta.content
+        }]

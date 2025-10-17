@@ -15,6 +15,8 @@ export default function ChatRoom() {
     agente: string;
     respuesta: string;
   };
+  const [showMentionBar, setShowMentionBar] = useState(false)
+  const [mentionTarget, setMentionTarget] = useState<string | null>(null);
   const [faseActual, setFaseActual] = useState<string>('Cargando...')
   const [remainingPhase, setRemainingPhase] = useState<number>(0)
   const [elapsedPhase, setElapsedPhase] = useState<number>(0)
@@ -180,9 +182,29 @@ useEffect(() => {
       setInput('')
     }
   }
+  const agentesMencionables = ["orientador"]
   // Detectar cuando el usuario escribe
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value)
+   
+
+    const value = e.target.value
+    setInput(value)
+    const mentionMatch = value.match(/@(\w*)$/i); 
+    if (mentionMatch) {
+      const typed = mentionMatch[1].toLowerCase(); // lo que el usuario escribió después del @
+      // Filtrar posibles agentes
+      const matchAgent = agentesMencionables.find(a => a.startsWith(typed));
+      if (matchAgent) {
+        setShowMentionBar(true);
+        setMentionTarget(matchAgent.charAt(0).toUpperCase() + matchAgent.slice(1));
+      } else {
+        setShowMentionBar(false);
+        setMentionTarget(null);
+      }
+    } else {
+      setShowMentionBar(false);
+      setMentionTarget(null);
+    }
 
     if (socketRef.current && username) {
       if (e.target.value.length > 0) {
@@ -286,19 +308,28 @@ useEffect(() => {
         </div>
       ) : (
         <>
-          <div className="mb-4 text-lg font-semibold text-blue-700 bg-blue-50 p-3 rounded-lg shadow-sm inline-block">
-            🕒 Fase actual: <span className="text-blue-800">{faseActual}</span> — 
-            Tiempo restante:{" "}
-            <span className="text-green-700">
-              {Math.floor((remainingPhase ?? 0) / 60)}:
-              {String((remainingPhase ?? 0) % 60).padStart(2, '0')}
-            </span>
+          <div className="mb-4 flex items-center justify-between bg-blue-50 p-3 rounded-lg shadow-sm">
+            <div className="text-lg font-semibold text-blue-700">
+              🕒 Fase actual: <span className="text-blue-800">{faseActual}</span> — 
+              Tiempo restante:{" "}
+              <span className="text-green-700">
+                {Math.floor((remainingPhase ?? 0) / 60)}:
+                {String((remainingPhase ?? 0) % 60).padStart(2, '0')}
+              </span>
+            </div>
+            <button
+              onClick={leaveRoom}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+            >
+              Salir de la sala
+            </button>
           </div>
+
           {/* Layout con 2 columnas */}
           <div className="grid grid-cols-[1.5fr_1fr] gap-4 mb-4 items-start">
 
             {/* Columna izquierda - Chat normal */}
-            <div className="min-w-0 border p-3 rounded w-[1000px]"> {/* el [500px] arregló el problema del contenedor */}
+            <div className="min-w-0 border p-3 rounded w-[1000px]"> 
               <h2 className="font-semibold mb-2">Chat</h2>
               <div  className="mt-5 border h-[500px] overflow-y-auto p-2 break-words"
               style={
@@ -389,24 +420,39 @@ useEffect(() => {
           </div>
 
           {/* Input de mensajes */}
-          <input
-            type="text"
-            value={input}
-            onChange={handleTyping}
-            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Escribe tu mensaje"
-            className="border p-2 w-full"
-          />
-          <button onClick={sendMessage} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-            Enviar
-          </button>
-          <button 
-            onClick={leaveRoom} 
-            className="mt-2 bg-red-600 text-white px-4 py-2 rounded"
-          >
-            Salir de la sala
-          </button>
-
+          <div className="mt-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={handleTyping}
+                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                placeholder="Escribe tu mensaje"
+                className="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <button
+                onClick={sendMessage}
+                className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 transition-colors"
+              >
+                Enviar
+              </button>
+            </div>
+            {showMentionBar && mentionTarget && (
+              <div className="flex items-center gap-2 mb-1 bg-blue-50 border border-blue-300 text-blue-800 px-3 py-2 rounded-t-lg shadow-sm">
+                💡 Mencionando a <b>@{mentionTarget}</b>
+                <button
+                  onClick={() => {
+                    // Autocompleta el tag
+                    setInput(prev => prev.replace(/@\w*$/i, `@${mentionTarget}`));
+                    setShowMentionBar(false);
+                  }}
+                  className="ml-auto text-sm text-blue-600 hover:underline"
+                >
+                  Usar
+                </button>
+              </div>
+            )}
+          </div>
         </>
       )}
     </main>

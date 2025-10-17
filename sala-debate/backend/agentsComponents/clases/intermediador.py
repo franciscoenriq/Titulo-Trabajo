@@ -64,6 +64,16 @@ class Intermediario:
         )
 
     async def agregarMensage(self, userName:str, message:str) -> list[dict] | None:
+        """
+        Este es el punto en que entra cada mensaje al pipeline de agentes. 
+        Primero que todo se comprueba si el mensaje contiene la fras @orientador.
+        Ya que el sistema responde si es que alguien lo llama. 
+        Luego se analiza el mensaje por dos agentes, el puntuador y el clasificador. 
+        De aca se desprenden dos maneras en que se activará la respuesta del curador 
+        - A traves del cumplimiento del tamaño de la ventana.
+        - Cuando el puntaje para un mensaje es demasiado bajo. 
+        """
+        curador_invocado = False
         if self.contiene_mencion_orientador(message):
             respuesta = await self.pipeLine.reactiveResponse(userName,message)
             self.emit_callback('evaluacion',respuesta,self.sala)
@@ -73,16 +83,18 @@ class Intermediario:
         if resultado:
             print(f"Enviando score_update a monitor_{self.sala}")
             self.emit_callback('score_update',resultado,f"monitor_{self.sala}")
-
-
+            score = int(resultado["score"])
+            curador_invocado=await self.evaluacion_score(score,'mensaje')
+            
         self.numeroMensajesTotales += 1 
         print(self.numeroMensajesTotales)
-        if (self.numeroMensajesTotales == self.tamañoVentana):
+        if (self.numeroMensajesTotales == self.tamañoVentana and not curador_invocado):
             result = await self.pipeLine.analizar_argumento_cascada()
             self.numeroMensajesTotales = 0
             return result
-        else: 
-            return 
+        elif self.numeroMensajesTotales == self.tamañoVentana:
+            self.numeroMensajesTotales=0
+    
     
     async def start_session(self,topic:str)->None:
         await self.pipeLine.start_session(topic)
@@ -101,13 +113,17 @@ class Intermediario:
         self.timer.start_periodic(update_interval)
 
     async def callback(self, fase_actual, remaining_phase, elapsed_phase, remaining_total, elapsed_total):
+        """
+        callback que se ejecuta cada vez que el timer avisa el tiempo que ha durado la sala. 
+        La informacion respecto al tiempo es emitida a la sala, mientras que el score producido por el agente 
+        es analizado con self.evaluacion_score()
+        """
         respuesta_puntuador = await self.pipeLine.avisar_tiempo(fase_actual, remaining_phase, elapsed_phase, remaining_total, elapsed_total)
         dataToSala = {
             "fase_actual":fase_actual,
             "elapsed_phase":elapsed_phase,
             "remaining_phase":remaining_phase
         }
-
         if respuesta_puntuador == None: 
             self.emit_callback('timer_user_update',dataToSala,self.sala)
             return
@@ -120,14 +136,12 @@ class Intermediario:
             "score": respuesta_puntuador["score"],
             "diagnostico": respuesta_puntuador["diagnostico"]
         }
-
         self.emit_callback('timer_user_update',dataToSala,self.sala)
-
         self.emit_callback('timer_update',data,f"monitor_{self.sala}")
+
         score = int(respuesta_puntuador["score"])
-        if score < 30:
-            respuesta = await  self.pipeLine.timerResponse(score)
-            self.emit_callback('evaluacion',respuesta,self.sala)
+        await self.evaluacion_score(score,'timer')
+                
     def contiene_mencion_orientador(self,mensaje:str) -> bool:
         """
         Detecta si un mensaje contiene la mencion @orientador o similares
@@ -136,3 +150,26 @@ class Intermediario:
             return False
         patron = r'@orientador\b'
         return re.search(patron,mensaje,re.IGNORECASE) is not None
+    
+    async def evaluacion_score(self, score:int, origen:str):
+        """
+        Evalua si el curador debe dar su opinión respecto a intervenir o no en la conversación. 
+        Esta funcion será llamada cuando ocurra un evento de baja puntuacion. a su vez la puntuacion será 
+        hecha debido a un evento de mensaje, que es cuando el puntuador puntua un mensaje con bajo score 
+        y cuando puntua bajo debido a un mensaje del timer. 
+        - origen: "mensaje", " timer" . mensaje hace referencia a si 
+        """
+        umbral = 30 
+        if score >= umbral:
+            return False
+        if origen == 'timer':
+            respuesta = await self.pipeLine.timerResponse(score)
+            if respuesta:
+                self.emit_callback('evaluacion',respuesta,self.sala)
+                return True
+        if origen == 'mensaje':
+            respuesta=await self.pipeLine.lowScoreMessageRespone(score)
+            if respuesta:
+                self.emit_callback('evaluacion',respuesta,self.sala)
+                return True
+        return False

@@ -73,18 +73,10 @@ export default function Home() {
   const handleEnter = async () =>{
     if (!room || !topic) return
     try {
-      await fetch(`${backend}/api/init-topic`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          room,
-          prompt_inicial: topic,
-        }),
-      })
-      router.push(`/chat/${room}`)
-    } catch (error) {
+      sessionStorage.setItem('chatTopic', topic)
+      sessionStorage.setItem('chatRoom', room)
+      router.push(`/chat/${room}/lobby`)
+    } catch (error) { 
       console.error('Error al inicializar la conversación:', error)
     }
   }

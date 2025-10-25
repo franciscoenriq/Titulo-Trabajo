@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter} from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
 import { io, Socket } from 'socket.io-client'
 
@@ -23,6 +23,7 @@ export default function ChatRoom() {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const params = useParams()
   const room = params.room as string
+  const router = useRouter()
   const [evaluaciones, setEvaluaciones] = useState<string[]>([])
   const [username, setUsername] = useState('')
   const [input, setInput] = useState('')
@@ -32,7 +33,25 @@ export default function ChatRoom() {
   const [tema, setTema] = useState('')
   const [agentMessages, setAgentMessages] = useState<ChatMessage[]>([])
   const [typingUsers,setTypingUsers] = useState<string[]>([])
+  const chatContainerRef = useRef<HTMLDivElement | null>(null); 
+
   const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
+  useEffect(() => {
+    const saved = sessionStorage.getItem('chatUser')
+    if (!saved) {
+      router.push(`/chat/${room}/lobby`)
+      return
+    }
+    try {
+      const parsed = JSON.parse(saved)
+      if (!parsed || parsed.room !== room) {
+        router.push(`/chat/${room}/lobby`)
+      }
+    } catch (e) {
+      router.push(`/chat/${room}/lobby`)
+    }
+  }, [room, router])
+  
   useEffect(() => {
     fetch(`${backend}/api/tema/${room}`)
     .then((res) => res.json())
@@ -155,6 +174,13 @@ useEffect(() => {
       socket.disconnect()
     }
   }, [])
+  useEffect(() => {
+    const container = chatContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [messages]);
+  
 
   const joinRoom = () => {
     if (username && socketRef.current) {
@@ -284,177 +310,178 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, [isTimerRunning, remainingPhase]);
 
+return (
+  <main className="p-4 sm:p-6 md:p-8 w-full max-w-7xl mx-auto min-h-screen flex flex-col">
+    <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
 
-  return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Sala de chat: {room}</h1>
-      {!joined ? (
-        <div className="flex flex-col gap-2 max-w-sm">
-          <label>Nombre de usuario:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Ingresa tu nombre"
-            className="border p-2"
-          />
-          <button
-            onClick={joinRoom}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-            disabled={!username.trim()}
-          >
-            Unirse a la sala
-          </button>
-        </div>
-      ) : (
-        <>
-          <div className="mb-4 flex items-center justify-between bg-blue-50 p-3 rounded-lg shadow-sm">
-            <div className="text-lg font-semibold text-blue-700">
-              🕒 Fase actual: <span className="text-blue-800">{faseActual}</span> — 
-              Tiempo restante:{" "}
-              <span className="text-green-700">
-                {Math.floor((remainingPhase ?? 0) / 60)}:
-                {String((remainingPhase ?? 0) % 60).padStart(2, '0')}
-              </span>
-            </div>
-            <button
-              onClick={leaveRoom}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+    {!joined ? (
+      <div className="flex flex-col gap-3 max-w-sm mx-auto my-auto">
+        <label className="font-medium">Nombre de usuario:</label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Ingresa tu nombre"
+          className="border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button
+          onClick={joinRoom}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          disabled={!username.trim()}
+        >
+          Unirse a la sala
+        </button>
+      </div>
+    ) : (
+      <>
+        {/* Header superior con fase y botón salir */}
+        <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-blue-50 p-3 rounded-lg shadow-sm">
+          <div className="text-xl font-semibold text-blue-700 flex flex-wrap items-baseline gap-2">
+            🕒 Fase actual:
+            <span className="text-blue-900 font-bold ml-1">{faseActual}</span>
+            <span className="text-blue-700 mx-2">—</span>
+            Tiempo restante:
+            <span
+              className="text-green-700 font-mono font-bold ml-1 tracking-tight"
+              style={{ fontVariantNumeric: "tabular-nums" }}
             >
-              Salir de la sala
-            </button>
+              {Math.floor((remainingPhase ?? 0) / 60)}:
+              {String((remainingPhase ?? 0) % 60).padStart(2, "0")}
+            </span>
           </div>
 
-          {/* Layout con 2 columnas */}
-          <div className="grid grid-cols-[1.5fr_1fr] gap-4 mb-4 items-start">
+          <button
+            onClick={leaveRoom}
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+          >
+            Salir de la sala
+          </button>
+        </div>
 
-            {/* Columna izquierda - Chat normal */}
-            <div className="min-w-0 border p-3 rounded w-[1000px]"> 
-              <h2 className="font-semibold mb-2">Chat</h2>
-              <div  className="mt-5 border h-[500px] overflow-y-auto p-2 break-words"
-              style={
-                { marginTop: 20, 
-                border: '1px solid gray', 
-                height: 500, //cambiar esto para poder setear la altura del contenedor
-                maxHeight: 500, // esto igual 
-                width: '100%',
-                overflowY: 'auto', 
-                padding: '10px',
-                overflowWrap: 'break-word',
-                wordBreak: 'break-word'
-                }}>
-                {messages.map((m, i) => {
-                  const isOwn = m.username === username; // mensaje propio
-                  const isSystem = m.system;
-                  return (
-                    <div
-                      key={i}
-                      style={{
-                        display: 'flex',
-                        justifyContent: isSystem ? 'center' : isOwn ? 'flex-end' : 'flex-start',
-                        marginBottom: '5px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          backgroundColor: isSystem ? '#e0e0e0' : isOwn ? '#4caf50' : '#f1f0f0',
-                          color: isOwn ? 'white' : 'black',
-                          padding: '8px 12px',
-                          borderRadius: '20px',
-                          maxWidth: '60%',
-                          wordBreak: 'break-word',
-                        }}
-                      >
-                        {!isSystem && !isOwn && <b>{m.username}: </b>}
-                        {m.content}
-                      </div>
-                    </div>
-                  );
-                })}
-                {typingUsers.length > 0 && (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                    marginBottom: '5px',
-                  }}
-                >
+        {/* Grid principal responsivo */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 flex-grow"
+          style={{
+            minHeight: "calc(100vh - 280px)",
+          }}
+        >
+          {/* Chat principal */}
+          <div className="flex flex-col w-full h-full border rounded-lg bg-white shadow-sm overflow-hidden">
+            {/* Encabezado */}
+            <div className="p-3 border-b bg-gray-100">
+              <h2 className="font-semibold text-gray-800">Chat</h2>
+            </div>
+
+            {/* Área scrollable */}
+            <div
+              ref={chatContainerRef}
+              className="flex-1 overflow-y-auto px-4 py-3 bg-gray-50 break-words scroll-smooth"
+            >
+              {messages.map((m, i) => {
+                const isOwn = m.username === username;
+                const isSystem = m.system;
+                return (
                   <div
-                    style={{
-                      backgroundColor: '#f1f0f0',
-                      color: 'gray',
-                      padding: '6px 10px',
-                      borderRadius: '20px',
-                      fontStyle: 'italic',
-                    }}
+                    key={i}
+                    className={`flex mb-2 ${
+                      isSystem ? "justify-center" : isOwn ? "justify-end" : "justify-start"
+                    }`}
                   >
-                    <span className="mr-2">💬</span>
-                    {typingUsers.join(', ')} {typingUsers.length > 1 ? 'están' : 'está'} escribiendo...
+                    <div
+                      className={`px-3 py-2 rounded-2xl max-w-[80%] break-words ${
+                        isSystem
+                          ? "bg-gray-200 text-gray-700"
+                          : isOwn
+                          ? "bg-green-600 text-white"
+                          : "bg-white border border-gray-200 text-gray-800"
+                      }`}
+                    >
+                      {!isSystem && !isOwn && (
+                        <b className="block text-sm mb-0.5">{m.username}</b>
+                      )}
+                      {m.content}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Usuarios escribiendo */}
+              {typingUsers.length > 0 && (
+                <div className="flex justify-start mb-2">
+                  <div className="bg-gray-200 text-gray-600 px-3 py-1 rounded-2xl italic text-sm">
+                    💬 {typingUsers.join(", ")}{" "}
+                    {typingUsers.length > 1 ? "están" : "está"} escribiendo...
                   </div>
                 </div>
               )}
-
-              </div>
-            </div>
-
-            {/* Columna derecha - Mensajes del agente */}
-            <div className="min-w-0 border p-3 rounded bg-gray-50">
-              <h2 className="font-semibold mb-2 text-blue-700">Agente</h2>
-              <div className="space-y-2 min-w-0 h-[500px] overflow-y-auto overflow-x-hidden break-words">
-
-                {agentMessages.length === 0 ? (
-                  <p className="text-gray-500 text-sm">Sin mensajes del agente todavía.</p>
-                ) : (
-                  agentMessages.map((m, i) => (
-                    <div 
-                    key={i}
-                    className="w-full min-w-0 max-w-full p-2 rounded bg-blue-100 text-sm text-blue-800"
-                    >
-                      <b>{m.username}:</b> {m.content}
-                    </div>
-
-                  ))
-                )}
-              </div>
             </div>
           </div>
 
-          {/* Input de mensajes */}
-          <div className="mt-2">
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={handleTyping}
-                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder="Escribe tu mensaje"
-                className="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+          {/* Panel del agente */}
+          <div className="flex flex-col w-full h-full border rounded-lg bg-white shadow-sm overflow-hidden">
+            <div className="p-3 border-b bg-blue-50">
+              <h2 className="font-semibold text-blue-700">Agente</h2>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 py-3 bg-gray-50 break-words scroll-smooth">
+              {agentMessages.length === 0 ? (
+                <p className="text-gray-500 text-sm">
+                  Sin mensajes del agente todavía.
+                </p>
+              ) : (
+                agentMessages.map((m, i) => (
+                  <div
+                    key={i}
+                    className="p-2 rounded bg-blue-100 text-blue-800 text-sm w-full max-w-full break-words mb-2"
+                  >
+                    <b>{m.username}:</b> {m.content}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Input de mensajes */}
+        <div className="mt-3 w-full">
+          {showMentionBar && mentionTarget && (
+            <div className="flex items-center gap-2 mb-2 bg-blue-50 border border-blue-300 text-blue-800 px-3 py-2 rounded-lg shadow-sm">
+              💡 Mencionando a <b>@{mentionTarget}</b>
               <button
-                onClick={sendMessage}
-                className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 transition-colors"
+                onClick={() => {
+                  setInput((prev) =>
+                    prev.replace(/@\w*$/i, `@${mentionTarget}`)
+                  );
+                  setShowMentionBar(false);
+                }}
+                className="ml-auto text-sm text-blue-600 hover:underline"
               >
-                Enviar
+                Usar
               </button>
             </div>
-            {showMentionBar && mentionTarget && (
-              <div className="flex items-center gap-2 mb-1 bg-blue-50 border border-blue-300 text-blue-800 px-3 py-2 rounded-t-lg shadow-sm">
-                💡 Mencionando a <b>@{mentionTarget}</b>
-                <button
-                  onClick={() => {
-                    // Autocompleta el tag
-                    setInput(prev => prev.replace(/@\w*$/i, `@${mentionTarget}`));
-                    setShowMentionBar(false);
-                  }}
-                  className="ml-auto text-sm text-blue-600 hover:underline"
-                >
-                  Usar
-                </button>
-              </div>
-            )}
+          )}
+
+          <div className="flex items-center gap-2 w-full">
+            <input
+              type="text"
+              value={input}
+              onChange={handleTyping}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              placeholder="Escribe tu mensaje..."
+              className="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+              onClick={sendMessage}
+              className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 transition"
+            >
+              Enviar
+            </button>
           </div>
-        </>
-      )}
-    </main>
-  )
+        </div>
+      </>
+    )}
+  </main>
+);
+
+
 }

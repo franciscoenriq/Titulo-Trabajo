@@ -55,11 +55,12 @@ class Pipeline:
         self.avisos_timer = 0
 
 
-    async def start_session(self, tema_sala:str) -> None:
+    async def start_session(self, tema_sala:str, usuarios_sala:list) -> None:
         """
         Inicializa el msghub con el cual se va a trabajar en una sesion de discusion
         @Hint: mensaje con el cual se inicializan los agentes.
         """
+        
         self.tema_sala = tema_sala
         hint = Msg(
             name="Host",
@@ -150,7 +151,7 @@ class Pipeline:
 
     async def analizar_mensaje(self,userName:str,mensage:str):
         """
-        Esta funcion de ejecuta cada vez que entra un mensaje a la sala. 
+        Esta funcion se ejecuta cada vez que entra un mensaje a la sala. 
         Analiza un mensaje de usuario con los agentes Clasificador y Puntuador,
         y genera una evaluación estructurada para el Curador.
         """

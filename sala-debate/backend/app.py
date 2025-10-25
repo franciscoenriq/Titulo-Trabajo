@@ -20,6 +20,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 Base.metadata.create_all(engine)
 
 salas_activas = {}  # room_name -> Intermediario
+
 #Inicializar Sockets
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 # Cargar eventos de sockets
@@ -63,7 +64,7 @@ def init_topic():
         print(f"id de la sala:{room_session["id"]}")
         #Recuperamos los ultimos promts para cada agente
         current_prompts = get_current_prompts()
-        prompt_clasificador = current_prompts.get("Clasificador","Prompt por defecto del clasificador")
+        #prompt_clasificador = current_prompts.get("Clasificador","Prompt por defecto del clasificador")
         prompt_puntuador = current_prompts.get("Puntuador","Prompt por defecto del puntuador")
         prompt_curador = current_prompts.get("Curador", "Prompt por defecto del curador")
         prompt_orientador = current_prompts.get("Orientador", "Prompt por defecto del orientador")
@@ -76,7 +77,7 @@ def init_topic():
 
         intermediario = Intermediario(
             tamañoVentana=tamaño_ventana_mensajes,
-            prompt_agenteClasificador=prompt_clasificador,
+            #prompt_agenteClasificador=prompt_clasificador,
             prompt_agentePuntuador=prompt_puntuador,
             prompt_agenteCurador=prompt_curador,
             prompt_agenteOrientador=prompt_orientador,
@@ -85,15 +86,29 @@ def init_topic():
             emit_callback=lambda evento, resultado, sala: emitir_resultado_socket(socketio,evento,resultado,sala)
             )
         
-        asyncio.run(intermediario.start_session(topic))
+        usuarios_sala = get_user_list(room_name)
+        asyncio.run(intermediario.start_session(topic,usuarios_sala))
         intermediario.start_processing()
-
-        timer = threading.Thread(target=intermediario.start_timer, args=((tiempo_fase_1, tiempo_fase_2), update_interval))
-        timer.start()
         # Guardar el intermediario en el dict de salas
         salas_activas[room_name] = intermediario
+        emitir_resultado_socket(socketio,'start_session',{"room":room_name},room_name)
+        
+        timer = threading.Thread(target=intermediario.start_timer, args=((tiempo_fase_1, tiempo_fase_2), update_interval))
+        timer.start()
 
-        return jsonify({"status": "initialized"}), 201
+        timer_state = intermediario.get_timer_state()
+        emitir_resultado_socket(
+            socketio,
+            "timer_user_update",
+            {
+                "fase_actual": timer_state["fase_actual"],
+                "elapsed_phase": timer_state["elapsed_phase"],
+                "remaining_phase": timer_state["remaining_phase"],
+            },
+            room_name,
+        )
+        return jsonify({"status":"initialized"}),201
+
     if(room_session["primera_inicializacion"] == False):
         print(f"id de la sala ya inicializada:{room_session["id"]}")
         return jsonify({"status":"ya_inicializado"}),200

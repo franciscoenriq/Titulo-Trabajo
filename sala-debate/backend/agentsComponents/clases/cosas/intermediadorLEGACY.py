@@ -1,14 +1,18 @@
 import re
-from .factory_agents import ReActAgentFactory
-from .pipeline import Pipeline
-from .timer import Timer
-from models.models import *
 import asyncio
-factory = ReActAgentFactory()
 import threading
+from .factory_agents import ReActAgentFactory
+from .pipeline2 import Pipeline
+from .timer1 import Timer
+from models.models import *
+
+
+factory = ReActAgentFactory()
+
 class Intermediario:
     def __init__(self,
                  tamañoVentana:int,
+                 prompt_agenteClasificador:str,
                  prompt_agentePuntuador:str,
                  prompt_agenteCurador:str,
                  prompt_agenteOrientador:str,
@@ -19,13 +23,13 @@ class Intermediario:
         self.mensajesTotales = []
         self.numeroMensajesTotales = 0
         self.pipeLine = Pipeline(factory=factory,
+                                    prompt_agenteClasificador=prompt_agenteClasificador,
                                     prompt_agentePuntuador=prompt_agentePuntuador,
                                     prompt_agenteCurador=prompt_agenteCurador,
                                     promt_agenteOrientador=prompt_agenteOrientador
                                     )
         self.emit_callback = emit_callback
         self.timer = Timer()
-
         self.timer.callback = self.callback
         self.socketIo = socketIo
         self.sala = sala
@@ -61,31 +65,6 @@ class Intermediario:
             self.message_queue.put((username, message)),
             self.loop
         )
-        
-    def get_timer_state(self):
-        """Devuelve el estado actual del timer, o valores iniciales si aún no se ha iniciado."""
-        try:
-            state = self.timer.get_state()
-            if not state or state["fase_actual"] == 0:
-                # Estado inicial por defecto
-                return {
-                    "fase_actual": 1,
-                    "elapsed_phase": 0,
-                    "remaining_phase": 0,
-                    "remaining_total": 0,
-                    "elapsed_total": 0,
-                }
-            return state
-        except Exception as e:
-            print(f"Error al obtener estado del timer: {e}")
-            return {
-                "fase_actual": 1,
-                "elapsed_phase": 0,
-                "remaining_phase": 0,
-                "remaining_total": 0,
-                "elapsed_total": 0,
-            }
-
 
     async def agregarMensage(self, userName:str, message:str) -> list[dict] | None:
         """
@@ -100,33 +79,25 @@ class Intermediario:
         curador_invocado = False
         if self.contiene_mencion_orientador(message):
             respuesta = await self.pipeLine.reactiveResponse(userName,message)
-            id_room_session = get_active_room_session_id(self.sala)
-            insert_message(
-                room_session_id=id_room_session,
-                user_id=None,
-                agent_name="Orientador",
-                sender_type=SenderType.agent,
-                content=respuesta.content
-            )
             self.emit_callback('evaluacion',respuesta,self.sala)
             return
 
-        resultado = await self.pipeLine.entrar_mensaje_a_la_sala(username=userName,mensaje=message)
+        resultado = await self.pipeLine.analizar_mensaje(userName,message)
         if resultado:
             print(f"Enviando score_update a monitor_{self.sala}")
             self.emit_callback('score_update',resultado,f"monitor_{self.sala}")
             score = int(resultado["score"])
             curador_invocado=await self.evaluacion_score(score,'mensaje')
-  
+            
         self.numeroMensajesTotales += 1 
         print(self.numeroMensajesTotales)
-        #Verificamos si el evento ventana se invoca o no. 
         if (self.numeroMensajesTotales == self.tamañoVentana and not curador_invocado):
-            result = await self.pipeLine.evento_ventana()
+            result = await self.pipeLine.analizar_argumento_cascada()
             self.numeroMensajesTotales = 0
             return result
         elif self.numeroMensajesTotales == self.tamañoVentana:
             self.numeroMensajesTotales=0
+    
     
     async def start_session(self,topic:str,usuarios_sala:list)->None:
         await self.pipeLine.start_session(topic,usuarios_sala)
@@ -185,7 +156,7 @@ class Intermediario:
     
     async def evaluacion_score(self, score:int, origen:str):
         """
-        Evalua si el curador debe dar su opinión respecto a intervenir o no en la conversación. 
+        Evalua si el orientador debe dar su opinión respecto a intervenir o no en la conversación. 
         Esta funcion será llamada cuando ocurra un evento de baja puntuacion. a su vez la puntuacion será 
         hecha debido a un evento de mensaje, que es cuando el puntuador puntua un mensaje con bajo score 
         y cuando puntua bajo debido a un mensaje del timer. 
@@ -195,33 +166,29 @@ class Intermediario:
         if score >= umbral:
             return False
         if origen == 'timer':
-            respuesta = await self.pipeLine.evento_timer(score)
+            respuesta = await self.pipeLine.timerResponse(score)
             if respuesta:
-                self.emit_callback('evaluacion',respuesta,self.sala)
-                return True
-        if origen == 'mensaje':
-            respuesta=await self.pipeLine.evento_lowScoreMessage(score)
-            if respuesta:
-                self.emit_callback('evaluacion',respuesta,self.sala)
-                return True
-            
-        # Normalizamos: puede ser una lista o un solo objeto
-        respuestas = respuesta if isinstance(respuesta, list) else [respuesta]
-        id_room_session = get_active_room_session_id(self.sala)
-        for r in respuestas:
-            # Extraemos rol y contenido según formato
-            rol = getattr(r, "role", None) or getattr(r, "agente", None) or "Orientador"
-            content = getattr(r, "content", None)
-            
-            # Guardamos solo si el mensaje es del Orientador
-            if rol.lower() == "orientador" and content:
+                id_room_session = get_active_room_session_id(self.sala)
                 insert_message(
                     room_session_id=id_room_session,
                     user_id=None,
                     agent_name="Orientador",
                     sender_type=SenderType.agent,
-                    content=content
+                    content=respuesta
                 )
-                self.emit_callback("evaluacion", r, self.sala)
+                self.emit_callback('evaluacion',respuesta,self.sala)
+                return True
+        if origen == 'mensaje':
+            respuesta=await self.pipeLine.lowScoreMessageRespone(score)
+            if respuesta:
+                id_room_session = get_active_room_session_id(self.sala)
+                insert_message(
+                    room_session_id=id_room_session,
+                    user_id=None,
+                    agent_name="Orientador",
+                    sender_type=SenderType.agent,
+                    content=respuesta
+                )
+                self.emit_callback('evaluacion',respuesta,self.sala)
                 return True
         return False

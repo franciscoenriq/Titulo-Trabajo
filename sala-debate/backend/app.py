@@ -145,6 +145,36 @@ def obtener_tema(room):
         return jsonify({"tema": "sin tema definido"}), 404
     return jsonify({"tema":topic}), 200
 
+@app.route("/api/temas", methods=["GET","POST"])
+def manejar_temas():
+    '''
+    GET  -> Consultar todos los temas guardados
+    POST -> Crear un nuevo tema # ejemplo {"tema_text": "Nuevo tema de debate"}
+    '''
+    if request.method == "GET":
+        temas = get_temas()
+        return jsonify(temas), 200
+    
+    if request.method == "POST":
+        data = request.json  
+        titulo = data.get("titulo")
+        tema_text = data.get("tema_text")
+        if not titulo or not tema_text:
+            return jsonify({"error": "Los campos 'titulo' y 'tema_text' son obligatorios"}), 400
+        tema_id = insert_tema(titulo, tema_text)
+        return jsonify({"status": "success", "id": tema_id}), 201
+    
+    if request.method == "PUT":
+        data = request.json
+        tema_id = data.get("id")
+        titulo = data.get("titulo")
+        tema_text = data.get("tema_text")
+        if not tema_id or not titulo or not tema_text:
+            return jsonify({"error": "Se requieren los campos 'id', 'titulo' y 'tema_text'"}), 400
+        actualizado = update_tema(tema_id, titulo, tema_text)
+        if not actualizado:
+            return jsonify({"error": "No se encontró el tema con ese ID"}), 404
+        return jsonify({"status": "success", "id": tema_id}), 200
 
 @app.route("/api/prompts",methods=["GET","POST"])
 def get_prompts():

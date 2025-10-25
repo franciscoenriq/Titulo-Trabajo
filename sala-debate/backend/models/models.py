@@ -59,6 +59,13 @@ class RoomSession(Base):
     status = Column(Enum(SessionStatus), nullable=False, default=SessionStatus.active)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+class Tema(Base):
+    __tablename__ = 'temas'
+    id = Column(Integer, primary_key=True)
+    titulo = Column(String(255), nullable=False)
+    tema_text = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 # Tabla: messages
 class Message(Base):
     __tablename__ = 'messages'
@@ -89,6 +96,55 @@ class MultiAgentConfig(Base):
     fase_2_segundos = Column(Integer, nullable=False)
     update_interval = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+#----------------------------- Funciones para los temas -------------------------------------
+
+def insert_tema(titulo:str,tema_text: str) -> int:
+    """
+    Inserta un nuevo tema en la tabla 'temas'.
+    Retorna el ID del tema creado.
+    """
+    session = Session()
+    try:
+        nuevo_tema = Tema(titulo=titulo,tema_text=tema_text)
+        session.add(nuevo_tema)
+        session.commit()
+        session.refresh(nuevo_tema)
+        return nuevo_tema.id
+    except SQLAlchemyError as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+def get_temas() -> list[dict]:
+    """
+    Recupera todos los temas de la tabla 'temas', ordenados por fecha de creación.
+    """
+    session = Session()
+    try:
+        temas = session.query(Tema).order_by(Tema.created_at.desc()).all()
+        return [
+            {"id": t.id,"titulo":t.titulo, "tema_text": t.tema_text, "created_at": t.created_at.isoformat()}
+            for t in temas
+        ]
+    finally:
+        session.close()
+        
+def update_tema(tema_id:int, titulo:str=None, tema_text:str=None) -> bool:
+    session = Session()
+    try:
+        tema = session.query(Tema).filter_by(id=tema_id).first()
+        if not tema:
+            return False
+        if titulo:
+            tema.titulo = titulo
+        if tema_text:
+            tema.tema_text = tema_text
+        session.commit()
+        return True
+    finally:
+        session.close()
 
 #----------------------------- Funciones para la sala ---------------------------------------
 def get_rooms() -> list[dict]:

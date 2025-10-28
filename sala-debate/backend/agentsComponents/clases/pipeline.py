@@ -62,6 +62,17 @@ class Pipeline:
             + tema_sala + participantes
         )
         self.hub = await MsgHub(participants=self.agentes,announcement=hint).__aenter__()
+        mensaje = Msg(
+            name="Host",
+            role="system",
+            content="La sesión de debate ha comenzado. Orientador por favor da un mensaje de bienvenida y explica el objetivo de la actividad."
+        )
+        respuesta_orientador = await self.agenteOrientador(mensaje) 
+        return [{
+            "agente":"Orientador",
+            "respuesta":respuesta_orientador.content
+        }]
+
 
     async def stop_session(self) -> None:
         """

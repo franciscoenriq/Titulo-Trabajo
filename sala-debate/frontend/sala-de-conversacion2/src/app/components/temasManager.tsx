@@ -105,78 +105,74 @@ export default function TemasManager({ backend }: TemasManagerProps) {
       <div className="grid md:grid-cols-2 gap-6 items-start">
         {/* Lista de temas */}
         <div className="self-start bg-white p-4 rounded shadow-sm">
-        <h3 className="font-semibold mb-2">Temas existentes</h3>
-        <ul className="space-y-2 overflow-y-auto max-h-[70vh] pr-2">
-            {temas.map(t => (
-            <li
-                key={t.id}
-                className="border p-3 rounded flex justify-between items-start hover:shadow-md transition"
-            >
-                <div className="overflow-hidden">
-                <p className="font-bold text-blue-900">{t.titulo}</p>
-                <p className="text-sm text-gray-700 whitespace-pre-wrap break-words max-h-60 overflow-y-auto">
-                    {t.tema_text}
-                </p>
-                </div>
-                <button
-                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm ml-2"
-                onClick={() => handleEdit(t)}
+            <h3 className="font-semibold mb-2">Temas existentes</h3>
+            <ul className="space-y-2 overflow-y-auto max-h-[70vh] pr-2">
+                {temas.map(t => (
+                <li
+                    key={t.id}
+                    className="border p-3 rounded flex justify-between items-start hover:shadow-md transition"
                 >
-                Editar
-                </button>
-            </li>
-            ))}
-        </ul>
+                    <div className="overflow-hidden">
+                    <p className="font-bold text-blue-900">{t.titulo}</p>
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap break-words max-h-60 overflow-y-auto">
+                        {t.tema_text}
+                    </p>
+                    </div>
+                    <button
+                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm ml-2"
+                    onClick={() => handleEdit(t)}
+                    >
+                    Editar
+                    </button>
+                </li>
+                ))}
+            </ul>
         </div>
-
-
-        {/* Formulario */}
         <div className="self-start">
-        <h3 className="font-semibold mb-2">
-            {editingId ? 'Editar Tema' : 'Agregar Nuevo Tema'}
-        </h3>
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-2 bg-white p-4 rounded shadow-sm">
-            <input
-            type="text"
-            name="titulo"
-            placeholder="Título del tema"
-            value={form.titulo}
-            onChange={handleChange}
-            className="border p-2 rounded w-full"
-            required
-            />
-            <textarea
-            name="tema_text"
-            placeholder="Texto del tema"
-            value={form.tema_text}
-            onChange={handleChange}
-            rows={4}
-            className="border p-2 rounded w-full"
-            required
-            />
-            <button
-            type="submit"
-            className={`px-4 py-2 rounded text-white ${
-                editingId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'
-            }`}
-            >
-            {editingId ? 'Actualizar Tema' : 'Agregar Tema'}
-            </button>
-            {editingId && (
-            <button
-                type="button"
-                className="px-4 py-2 rounded bg-gray-400 text-white hover:bg-gray-500"
-                onClick={() => {
-                setEditingId(null)
-                setForm({ titulo: '', tema_text: '' })
-                }}
-            >
-                Cancelar
-            </button>
-            )}
-        </form>
+            <h3 className="font-semibold mb-2">
+                {editingId ? 'Editar Tema' : 'Agregar Nuevo Tema'}
+            </h3>
+            <form onSubmit={handleSubmit} className="flex flex-col space-y-2 bg-white p-4 rounded shadow-sm">
+                <input
+                    type="text"
+                    name="titulo"
+                    placeholder="Título del tema"
+                    value={form.titulo}
+                    onChange={handleChange}
+                    className="border p-2 rounded w-full"
+                    required
+                />
+                <textarea
+                    name="tema_text"
+                    placeholder="Texto del tema"
+                    value={form.tema_text}
+                    onChange={handleChange}
+                    rows={4}
+                    className="border p-2 rounded w-full"
+                    required
+                />
+                <button
+                    type="submit"
+                    className={`px-4 py-2 rounded text-white ${
+                        editingId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'
+                    }`}
+                    >
+                    {editingId ? 'Actualizar Tema' : 'Agregar Tema'}
+                </button>
+                {editingId && (
+                <button
+                    type="button"
+                    className="px-4 py-2 rounded bg-gray-400 text-white hover:bg-gray-500"
+                    onClick={() => {
+                    setEditingId(null)
+                    setForm({ titulo: '', tema_text: '' })
+                    }}
+                >
+                    Cancelar
+                </button>
+                )}
+            </form>
         </div>
-
       </div>
     </div>
   )

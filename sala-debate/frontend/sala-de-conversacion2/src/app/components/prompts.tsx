@@ -65,16 +65,16 @@ export default function PromptsPage() {
   const currentAgent = agents[currentIndex] || null
 
   return (
-    <div className="p-8 w-full max-w-4xl mx-auto">
-      <div className="border rounded-lg p-4 shadow">
-        <h2 className="text-lg font-semibold mb-2">
+    <div className="p-8 w-full max-w-6xl mx-auto">
+      <div className="border rounded-2xl p-6 shadow-lg bg-white min-h-[60vh] flex flex-col">
+        <h2 className="text-xl font-semibold mb-4">
           {currentAgent ? `Prompt del agente: ${currentAgent}` : 'Cargando agente...'}
         </h2>
         {loading ? (
           <p>Cargando prompt...</p>
         ) : (
           <textarea
-            className="w-full border p-2 rounded"
+            className="w-full border p-4 rounded-lg min-h-[500px] h-[60vh] text-sm sm:text-base resize-vertical"
             rows={12}
             value={currentAgent ? prompts[currentAgent] || '' : ''}
             onChange={(e) =>
@@ -86,7 +86,7 @@ export default function PromptsPage() {
       </div>
 
       {/* Paginación */}
-      <div className="mt-4 flex justify-center gap-2">
+      <div className="mt-6 flex justify-center gap-2">
         {agents.map((agent, index) => (
           <button
             key={agent}

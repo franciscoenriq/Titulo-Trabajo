@@ -134,7 +134,21 @@ class Intermediario:
             self.numeroMensajesTotales=0
     
     async def start_session(self,topic:str,usuarios_sala:list)->None:
-        await self.pipeLine.start_session(topic,usuarios_sala)
+        respuesta = await self.pipeLine.start_session(topic,usuarios_sala)
+        id_room_session = get_active_room_session_id(self.sala)
+        # respuesta es una lista → tomamos el primer elemento
+        if isinstance(respuesta, list) and len(respuesta) > 0:
+            contenido = respuesta[0].get("respuesta", "")
+        else:
+            contenido = str(respuesta)
+        insert_message(
+            room_session_id=id_room_session,
+            user_id=None,
+            agent_name="Orientador",
+            sender_type=SenderType.agent,
+            content=contenido
+        )
+        self.emit_callback('evaluacion',respuesta,self.sala)
 
     async def stop_session(self):
         await self.pipeLine.stop_session()

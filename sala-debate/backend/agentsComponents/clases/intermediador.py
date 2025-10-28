@@ -101,12 +101,17 @@ class Intermediario:
         if self.contiene_mencion_orientador(message):
             respuesta = await self.pipeLine.reactiveResponse(userName,message)
             id_room_session = get_active_room_session_id(self.sala)
+            # respuesta es una lista → tomamos el primer elemento
+            if isinstance(respuesta, list) and len(respuesta) > 0:
+                contenido = respuesta[0].get("respuesta", "")
+            else:
+                contenido = str(respuesta)
             insert_message(
                 room_session_id=id_room_session,
                 user_id=None,
                 agent_name="Orientador",
                 sender_type=SenderType.agent,
-                content=respuesta.content
+                content=contenido
             )
             self.emit_callback('evaluacion',respuesta,self.sala)
             return

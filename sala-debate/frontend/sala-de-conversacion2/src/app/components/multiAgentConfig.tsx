@@ -52,7 +52,7 @@ export default function MultiAgentConfigPage() {
   }
 
   return (
-    <main className="p-8 max-w-2xl mx-auto">
+    <div className="p-8 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Configuración Multiagente</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -85,6 +85,6 @@ export default function MultiAgentConfigPage() {
           Guardar Configuración
         </button>
       </form>
-    </main>
+    </div>
   )
 }

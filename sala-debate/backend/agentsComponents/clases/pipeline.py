@@ -111,13 +111,19 @@ class Pipeline:
         await self.hub.broadcast(msg)
 
         respuesta_puntuador = await self.agentePuntuador()
-        puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
-
+        try:
+            puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
+            score = puntuacion.score
+            diagnostico = puntuacion.diagnostico
+        except Exception as e:
+            print(f"[Error de validación en entrar_mensaje_a_la_sala]: {e}")
+            score = 0
+            diagnostico = "Error en formato de respuesta del agente."
         return {
             "usuario":username,
             "mensaje":mensaje,
-            "score":puntuacion.score,
-            "diagnostico":puntuacion.diagnostico
+            "score":score,
+            "diagnostico":diagnostico
         }
     
     async def avisar_tiempo(self, fase_actual, remaining_phase, elapsed_phase, remaining_total, elapsed_total):
@@ -182,11 +188,19 @@ class Pipeline:
         )
 
         respuesta_puntuador = await self.agentePuntuador(msg_instruccion)
-        puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
+
+        try:
+            puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
+            score = puntuacion.score
+            diagnostico = puntuacion.diagnostico
+        except Exception as e:
+            print(f"[Error de validación en avisar_tiempo]: {e}")
+            score = 0
+            diagnostico = "Error en formato de respuesta del agente."
 
         return {
-            "score": puntuacion.score,
-            "diagnostico": puntuacion.diagnostico
+            "score": score,
+            "diagnostico": diagnostico
         }
 
     

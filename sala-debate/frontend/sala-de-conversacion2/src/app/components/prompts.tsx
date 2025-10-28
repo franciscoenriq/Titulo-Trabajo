@@ -65,7 +65,7 @@ export default function PromptsPage() {
   const currentAgent = agents[currentIndex] || null
 
   return (
-    <main className="p-8 w-full max-w-4xl mx-auto">
+    <div className="p-8 w-full max-w-4xl mx-auto">
       <div className="border rounded-lg p-4 shadow">
         <h2 className="text-lg font-semibold mb-2">
           {currentAgent ? `Prompt del agente: ${currentAgent}` : 'Cargando agente...'}
@@ -119,6 +119,6 @@ export default function PromptsPage() {
           {saving ? 'Guardando...' : 'Guardar cambios'}
         </button>
       </div>
-    </main>
+    </div>
   )
 }

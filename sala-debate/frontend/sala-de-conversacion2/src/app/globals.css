@@ -71,12 +71,12 @@ a {
 
 button {
 	border-radius: 20px;
-	border: 1px solid #000000;
+	border: 0.5px solid #000000;
 	background-color: #10489b;
 	color: #FFFFFF;
 	font-size: 12px;
 	font-weight: bold;
-	padding: 12px 45px;
+	padding: 6px 50px;
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	transition: transform 80ms ease-in;
@@ -94,6 +94,7 @@ button.ghost {
 	background-color: transparent;
 	border-color: #FFFFFF;
 }
+
 
 form {
 	background-color: #FFFFFF;

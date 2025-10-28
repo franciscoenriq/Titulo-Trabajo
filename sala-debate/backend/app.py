@@ -145,7 +145,7 @@ def obtener_tema(room):
         return jsonify({"tema": "sin tema definido"}), 404
     return jsonify({"tema":topic}), 200
 
-@app.route("/api/temas", methods=["GET","POST"])
+@app.route("/api/temas", methods=["GET","POST","PUT"])
 def manejar_temas():
     '''
     GET  -> Consultar todos los temas guardados

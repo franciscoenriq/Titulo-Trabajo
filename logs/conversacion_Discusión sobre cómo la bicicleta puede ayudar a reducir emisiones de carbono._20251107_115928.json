@@ -1,0 +1,1390 @@
+{
+  "tema": "Discusión sobre cómo la bicicleta puede ayudar a reducir emisiones de carbono.",
+  "timestamp_exportacion": "2025-11-07T11:59:28.756949",
+  "mensajes": [
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 1 ---\nTimestamp: 2025-11-07 11:56:12.077\nRol: system\nAutor: Puntuador\nContenido:\n\n    El tema que los estudiantes discutirán es el siguiente:\n    Discusión sobre cómo la bicicleta puede ayudar a reducir emisiones de carbono.\n        En esta sesion hay (1) usuarios.\n        Los participantes en la discusión son los siguientes:\n        - fr\n        \n        El idioma principal de esta conversación es **español**.\n        Por lo tanto:\n        1. Todos los análisis lingüísticos y semánticos (incluido el reconocimiento de argumentos según el modelo de Toulmin) deben realizarse en este idioma.\n        2. Las respuestas, mensajes y retroalimentaciones generadas por el agente Orientador deben estar redactadas completamente en español.\n        3. No traduzcas ni interpretes al inglés u otros idiomas a menos que el sistema o los participantes lo soliciten explícitamente.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 1
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 2 ---\nTimestamp: 2025-11-07 11:56:12.079\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 0 segundos\n- Tiempo restante: 3 minutos y 59 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 2
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 3 ---\nTimestamp: 2025-11-07 11:56:15.053\nRol: assistant\nAutor: Puntuador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 3
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 4 ---\nTimestamp: 2025-11-07 11:56:17.569\nRol: assistant\nAutor: Puntuador\nContenido:\n¡Hola, fr! Bienvenido a la discusión sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono. El objetivo de esta actividad es analizar y compartir ideas sobre los beneficios de usar la bicicleta en lugar de otros medios de transporte, así como su impacto en el medio ambiente. ¡Empecemos!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 4
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 5 ---\nTimestamp: 2025-11-07 11:56:18.590\nRol: user\nAutor: Puntuador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:18:\n{\"contenido\": \"hola que tal a todos\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 5
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 6 ---\nTimestamp: 2025-11-07 11:56:21.196\nRol: assistant\nAutor: Puntuador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 6
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 7 ---\nTimestamp: 2025-11-07 11:56:21.196\nRol: user\nAutor: Puntuador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:21:\n{\"contenido\": \"como estais\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 7
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 8 ---\nTimestamp: 2025-11-07 11:56:25.496\nRol: assistant\nAutor: Puntuador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 8
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 9 ---\nTimestamp: 2025-11-07 11:56:25.497\nRol: user\nAutor: Puntuador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:25:\n{\"contenido\": \"que bien\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 9
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 10 ---\nTimestamp: 2025-11-07 11:56:28.057\nRol: assistant\nAutor: Puntuador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 10
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 11 ---\nTimestamp: 2025-11-07 11:56:28.354\nRol: user\nAutor: Puntuador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:28:\n{\"contenido\": \"como va todo\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 11
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 12 ---\nTimestamp: 2025-11-07 11:56:32.080\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 20 segundos\n- Tiempo restante: 3 minutos y 39 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 12
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 13 ---\nTimestamp: 2025-11-07 11:56:32.080\nRol: system\nAutor: Puntuador\nContenido:\nAhora que se ha actualizado el tiempo, debes dar tu score.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 13
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 14 ---\nTimestamp: 2025-11-07 11:56:33.587\nRol: assistant\nAutor: Puntuador\nContenido:\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 14
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 15 ---\nTimestamp: 2025-11-07 11:56:33.588\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 15
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 16 ---\nTimestamp: 2025-11-07 11:56:33.588\nRol: assistant\nAutor: Puntuador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 16
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 17 ---\nTimestamp: 2025-11-07 11:56:44.954\nRol: assistant\nAutor: Puntuador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 17
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 18 ---\nTimestamp: 2025-11-07 11:56:44.954\nRol: system\nAutor: Puntuador\nContenido:\n\n                    Se a cumplido el tamaño de la ventana, por tanto el agente Curador debe decidir si hay que intervenir o no.\n                  \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 18
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 19 ---\nTimestamp: 2025-11-07 11:56:48.435\nRol: assistant\nAutor: Puntuador\nContenido:\n{\n  \"intervenir\": \"No\",\n  \"call_orientador\": \"\",\n  \"mensaje_para_orientador\": \"\",\n  \"razon_general\": \"Aunque hay interacción, la conversación no ha avanzado hacia el tema de discusión. Aun hay tiempo para que fr aporte argumentos sobre el uso de la bicicleta.\",\n  \"estado_estudiantes\": {\n    \"fr\": {\n      \"completo\": false,\n      \"pendientes\": [\"Claim\", \"Evidence\", \"Warrant\"],\n      \"recomendacion\": \"Necesita realizar un aporte sustantivo sobre cómo la bicicleta puede reducir emisiones de carbono.\"\n    }\n  }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 19
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 20 ---\nTimestamp: 2025-11-07 11:56:53.589\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 41 segundos\n- Tiempo restante: 3 minutos y 18 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 20
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 21 ---\nTimestamp: 2025-11-07 11:56:53.589\nRol: system\nAutor: Puntuador\nContenido:\nAhora que se ha actualizado el tiempo, debes dar tu score.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 21
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 22 ---\nTimestamp: 2025-11-07 11:56:54.886\nRol: assistant\nAutor: Puntuador\nContenido:\n[TOOL_USE]\n{ \n    \"score_dinamico\": 0,\n    \"diagnostico_dinamico\": \"Han pasado 40 segundos sin actividad humana en la sala.\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 22
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 23 ---\nTimestamp: 2025-11-07 11:56:54.886\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 23
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 24 ---\nTimestamp: 2025-11-07 11:56:54.886\nRol: assistant\nAutor: Puntuador\nContenido:\n{ \n    \"score_dinamico\": 0,\n    \"diagnostico_dinamico\": \"Han pasado 40 segundos sin actividad humana en la sala.\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 24
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 25 ---\nTimestamp: 2025-11-07 11:56:54.887\nRol: system\nAutor: Puntuador\nContenido:\nEl puntuador a puntuado muy baja la conversacion con 0 puntos debido a que se le preguntó su opinion \n        luego de una actualizacion del timer.\n        El Agente Curador debe decidir si pertinente o no intervenir. \n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 25
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 26 ---\nTimestamp: 2025-11-07 11:57:00.462\nRol: assistant\nAutor: Puntuador\nContenido:\n{\n  \"intervenir\": \"Sí\",\n  \"call_orientador\": \"@Orientador\",\n  \"mensaje_para_orientador\": \"Orientador, es necesario reactivar la discusión. Pide a fr que comparta su opinión sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono.\",\n  \"razon_general\": \"La conversación ha estado inactiva durante un tiempo prolongado y es crucial que fr se enfoque en el tema de discusión para fomentar la participación.\",\n  \"estado_estudiantes\": {\n    \"fr\": {\n      \"completo\": false,\n      \"pendientes\": [\"Claim\", \"Evidence\", \"Warrant\"],\n      \"recomendacion\": \"Debería centrar su mensaje en cómo la bicicleta ayuda a reducir las emisiones de carbono para avanzar en la discusión.\"\n    }\n  }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 26
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 27 ---\nTimestamp: 2025-11-07 11:57:01.850\nRol: assistant\nAutor: Puntuador\nContenido:\nfr, ¿qué opinas sobre cómo el uso de la bicicleta puede ayudar a reducir las emisiones de carbono? Sería interesante escuchar tu perspectiva.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 27
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 28 ---\nTimestamp: 2025-11-07 11:57:21.851\nRol: system\nAutor: Puntuador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 25% del tiempo completado**\n        \n        Tiempo transcurrido: 1 minuto y 9 segundos\n        Tiempo restante: 2 minutos y 50 segundos\n        \n        Se ha cumplido un cuarto del tiempo de la sesión. Es un buen momento para verificar que todos estén participando y que las ideas fluyan con claridad.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 28
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 29 ---\nTimestamp: 2025-11-07 11:57:24.276\nRol: assistant\nAutor: Puntuador\nContenido:\nEstamos en la primera parte de nuestra discusión y es un buen momento para reflexionar. Hasta ahora, hemos estado interactuando, pero necesitamos enfocarnos más en cómo la bicicleta puede reducir las emisiones de carbono. Aprovechemos el tiempo restante para que cada uno exponga su visión. ¡Sigue adelante, fr!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 29
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 30 ---\nTimestamp: 2025-11-07 11:57:24.287\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 9 segundos\n- Tiempo restante: 2 minutos y 50 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 30
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 31 ---\nTimestamp: 2025-11-07 11:57:24.287\nRol: system\nAutor: Puntuador\nContenido:\nAhora que se ha actualizado el tiempo, debes dar tu score.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 31
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 32 ---\nTimestamp: 2025-11-07 11:57:26.938\nRol: assistant\nAutor: Puntuador\nContenido:\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 32
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 33 ---\nTimestamp: 2025-11-07 11:57:26.938\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 33
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 34 ---\nTimestamp: 2025-11-07 11:57:26.939\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 34
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 35 ---\nTimestamp: 2025-11-07 11:57:26.938\nRol: assistant\nAutor: Puntuador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 35
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 36 ---\nTimestamp: 2025-11-07 11:57:46.940\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 34 segundos\n- Tiempo restante: 2 minutos y 25 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 36
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 37 ---\nTimestamp: 2025-11-07 11:57:46.940\nRol: system\nAutor: Puntuador\nContenido:\nAhora que se ha actualizado el tiempo, debes dar tu score.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 37
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 38 ---\nTimestamp: 2025-11-07 11:57:49.467\nRol: assistant\nAutor: Puntuador\nContenido:\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 38
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 39 ---\nTimestamp: 2025-11-07 11:57:49.468\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 39
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 40 ---\nTimestamp: 2025-11-07 11:57:49.468\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 40
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 41 ---\nTimestamp: 2025-11-07 11:57:49.468\nRol: assistant\nAutor: Puntuador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 41
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 42 ---\nTimestamp: 2025-11-07 11:58:09.469\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 57 segundos\n- Tiempo restante: 2 minutos y 2 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 42
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 43 ---\nTimestamp: 2025-11-07 11:58:09.469\nRol: system\nAutor: Puntuador\nContenido:\nAhora que se ha actualizado el tiempo, debes dar tu score.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 43
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 44 ---\nTimestamp: 2025-11-07 11:58:12.099\nRol: assistant\nAutor: Puntuador\nContenido:\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 44
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 45 ---\nTimestamp: 2025-11-07 11:58:12.099\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 45
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 46 ---\nTimestamp: 2025-11-07 11:58:12.099\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 46
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 47 ---\nTimestamp: 2025-11-07 11:58:12.099\nRol: assistant\nAutor: Puntuador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 47
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 48 ---\nTimestamp: 2025-11-07 11:58:32.100\nRol: system\nAutor: Puntuador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 50% del tiempo completado**\n        \n        Tiempo transcurrido: 2 minutos y 20 segundos\n        Tiempo restante: 1 minuto y 39 segundos\n        \n        Hemos llegado a la mitad del tiempo disponible. Asegúrense de que los argumentos principales ya hayan sido presentados y que el debate esté bien encaminado para llegar a un consenso, sobre todo si los participantes discrepan ayudalos converger a un consenso comun.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 48
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 49 ---\nTimestamp: 2025-11-07 11:58:35.758\nRol: assistant\nAutor: Puntuador\nContenido:\nHemos llegado a la mitad de nuestra sesión, y es momento de centrarnos más en los argumentos sobre el uso de la bicicleta y su impacto en las emisiones de carbono. Aún tenemos tiempo para profundizar, así que animo a que compartas tus ideas, fr. Juntos podemos trabajar hacia un consenso y construir un diálogo productivo. ¡Adelante!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 49
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 50 ---\nTimestamp: 2025-11-07 11:58:35.762\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 2 minutos y 20 segundos\n- Tiempo restante: 1 minuto y 39 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 50
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 51 ---\nTimestamp: 2025-11-07 11:58:35.762\nRol: system\nAutor: Puntuador\nContenido:\nAhora que se ha actualizado el tiempo, debes dar tu score.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 51
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 52 ---\nTimestamp: 2025-11-07 11:58:39.952\nRol: assistant\nAutor: Puntuador\nContenido:\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 52
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 53 ---\nTimestamp: 2025-11-07 11:58:39.953\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 53
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 54 ---\nTimestamp: 2025-11-07 11:58:39.953\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 54
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 55 ---\nTimestamp: 2025-11-07 11:58:39.953\nRol: assistant\nAutor: Puntuador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 55
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 56 ---\nTimestamp: 2025-11-07 11:58:59.954\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 2 minutos y 47 segundos\n- Tiempo restante: 1 minuto y 12 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 56
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 57 ---\nTimestamp: 2025-11-07 11:58:59.954\nRol: system\nAutor: Puntuador\nContenido:\nAhora que se ha actualizado el tiempo, debes dar tu score.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 57
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 58 ---\nTimestamp: 2025-11-07 11:59:01.765\nRol: assistant\nAutor: Puntuador\nContenido:\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 58
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 59 ---\nTimestamp: 2025-11-07 11:59:01.765\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 59
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 60 ---\nTimestamp: 2025-11-07 11:59:01.765\nRol: assistant\nAutor: Puntuador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 60
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 61 ---\nTimestamp: 2025-11-07 11:59:11.012\nRol: user\nAutor: Puntuador\nContenido:\n{'contenido': '@Orientador como estas', 'timeStamp': datetime.datetime(2025, 11, 7, 11, 59, 11, 12361)}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 61
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 62 ---\nTimestamp: 2025-11-07 11:59:14.669\nRol: assistant\nAutor: Puntuador\nContenido:\nEstoy bien, gracias, fr. Pero, volvamos al tema. ¿Qué opinas sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono?\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 62
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 63 ---\nTimestamp: 2025-11-07 11:59:21.766\nRol: system\nAutor: Puntuador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 75% del tiempo completado**\n        \n        Tiempo transcurrido: 3 minutos y 9 segundos\n        Tiempo restante: 50 segundos\n        \n        Se han completado tres cuartos de la sesión. Este es el momento clave para consolidar sus posiciones y preparar conclusiones.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 63
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 64 ---\nTimestamp: 2025-11-07 11:59:25.011\nRol: assistant\nAutor: Puntuador\nContenido:\nEstamos en el último tramo de nuestra sesión y es esencial que consolidemos lo que hemos discutido. Animo a que compartas tu opinión sobre cómo la bicicleta puede impactar positivamente en la reducción de emisiones de carbono. ¡Es momento de considerar todo lo que hemos aprendido y llegar a una conclusión a partir de ello!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 64
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 65 ---\nTimestamp: 2025-11-07 11:59:25.020\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 3 minutos y 9 segundos\n- Tiempo restante: 50 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 65
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 66 ---\nTimestamp: 2025-11-07 11:59:25.020\nRol: system\nAutor: Puntuador\nContenido:\nAhora que se ha actualizado el tiempo, debes dar tu score.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 66
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 67 ---\nTimestamp: 2025-11-07 11:59:25.072\nRol: system\nAutor: Puntuador\nContenido:\nHa salido de la sala el participante llamado: fr\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 67
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 68 ---\nTimestamp: 2025-11-07 11:59:28.026\nRol: assistant\nAutor: Puntuador\nContenido:\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n[TOOL_USE]\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 68
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 69 ---\nTimestamp: 2025-11-07 11:59:28.027\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 69
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 70 ---\nTimestamp: 2025-11-07 11:59:28.027\nRol: system\nAutor: Puntuador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 70
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 71 ---\nTimestamp: 2025-11-07 11:59:28.027\nRol: assistant\nAutor: Puntuador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 71
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 1 ---\nTimestamp: 2025-11-07 11:56:12.077\nRol: system\nAutor: Curador\nContenido:\n\n    El tema que los estudiantes discutirán es el siguiente:\n    Discusión sobre cómo la bicicleta puede ayudar a reducir emisiones de carbono.\n        En esta sesion hay (1) usuarios.\n        Los participantes en la discusión son los siguientes:\n        - fr\n        \n        El idioma principal de esta conversación es **español**.\n        Por lo tanto:\n        1. Todos los análisis lingüísticos y semánticos (incluido el reconocimiento de argumentos según el modelo de Toulmin) deben realizarse en este idioma.\n        2. Las respuestas, mensajes y retroalimentaciones generadas por el agente Orientador deben estar redactadas completamente en español.\n        3. No traduzcas ni interpretes al inglés u otros idiomas a menos que el sistema o los participantes lo soliciten explícitamente.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 1
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 2 ---\nTimestamp: 2025-11-07 11:56:12.079\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 0 segundos\n- Tiempo restante: 3 minutos y 59 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 2
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 3 ---\nTimestamp: 2025-11-07 11:56:15.053\nRol: assistant\nAutor: Curador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 3
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 4 ---\nTimestamp: 2025-11-07 11:56:17.569\nRol: assistant\nAutor: Curador\nContenido:\n¡Hola, fr! Bienvenido a la discusión sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono. El objetivo de esta actividad es analizar y compartir ideas sobre los beneficios de usar la bicicleta en lugar de otros medios de transporte, así como su impacto en el medio ambiente. ¡Empecemos!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 4
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 5 ---\nTimestamp: 2025-11-07 11:56:18.590\nRol: user\nAutor: Curador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:18:\n{\"contenido\": \"hola que tal a todos\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 5
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 6 ---\nTimestamp: 2025-11-07 11:56:21.196\nRol: assistant\nAutor: Curador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 6
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 7 ---\nTimestamp: 2025-11-07 11:56:21.196\nRol: user\nAutor: Curador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:21:\n{\"contenido\": \"como estais\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 7
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 8 ---\nTimestamp: 2025-11-07 11:56:25.496\nRol: assistant\nAutor: Curador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 8
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 9 ---\nTimestamp: 2025-11-07 11:56:25.497\nRol: user\nAutor: Curador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:25:\n{\"contenido\": \"que bien\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 9
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 10 ---\nTimestamp: 2025-11-07 11:56:28.057\nRol: assistant\nAutor: Curador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 10
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 11 ---\nTimestamp: 2025-11-07 11:56:28.354\nRol: user\nAutor: Curador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:28:\n{\"contenido\": \"como va todo\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 11
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 12 ---\nTimestamp: 2025-11-07 11:56:32.080\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 20 segundos\n- Tiempo restante: 3 minutos y 39 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 12
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 13 ---\nTimestamp: 2025-11-07 11:56:33.588\nRol: assistant\nAutor: Curador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 13
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 14 ---\nTimestamp: 2025-11-07 11:56:44.954\nRol: assistant\nAutor: Curador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 14
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 15 ---\nTimestamp: 2025-11-07 11:56:44.954\nRol: system\nAutor: Curador\nContenido:\n\n                    Se a cumplido el tamaño de la ventana, por tanto el agente Curador debe decidir si hay que intervenir o no.\n                  \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 15
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 16 ---\nTimestamp: 2025-11-07 11:56:48.435\nRol: assistant\nAutor: Curador\nContenido:\n[TOOL_USE]\n{\n  \"intervenir\": \"No\",\n  \"call_orientador\": \"\",\n  \"mensaje_para_orientador\": \"\",\n  \"razon_general\": \"Aunque hay interacción, la conversación no ha avanzado hacia el tema de discusión. Aun hay tiempo para que fr aporte argumentos sobre el uso de la bicicleta.\",\n  \"estado_estudiantes\": {\n    \"fr\": {\n      \"completo\": false,\n      \"pendientes\": [\"Claim\", \"Evidence\", \"Warrant\"],\n      \"recomendacion\": \"Necesita realizar un aporte sustantivo sobre cómo la bicicleta puede reducir emisiones de carbono.\"\n    }\n  }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 16
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 17 ---\nTimestamp: 2025-11-07 11:56:48.435\nRol: system\nAutor: Curador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 17
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 18 ---\nTimestamp: 2025-11-07 11:56:48.435\nRol: assistant\nAutor: Curador\nContenido:\n{\n  \"intervenir\": \"No\",\n  \"call_orientador\": \"\",\n  \"mensaje_para_orientador\": \"\",\n  \"razon_general\": \"Aunque hay interacción, la conversación no ha avanzado hacia el tema de discusión. Aun hay tiempo para que fr aporte argumentos sobre el uso de la bicicleta.\",\n  \"estado_estudiantes\": {\n    \"fr\": {\n      \"completo\": false,\n      \"pendientes\": [\"Claim\", \"Evidence\", \"Warrant\"],\n      \"recomendacion\": \"Necesita realizar un aporte sustantivo sobre cómo la bicicleta puede reducir emisiones de carbono.\"\n    }\n  }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 18
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 19 ---\nTimestamp: 2025-11-07 11:56:53.589\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 41 segundos\n- Tiempo restante: 3 minutos y 18 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 19
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 20 ---\nTimestamp: 2025-11-07 11:56:54.886\nRol: assistant\nAutor: Curador\nContenido:\n{ \n    \"score_dinamico\": 0,\n    \"diagnostico_dinamico\": \"Han pasado 40 segundos sin actividad humana en la sala.\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 20
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 21 ---\nTimestamp: 2025-11-07 11:56:54.887\nRol: system\nAutor: Curador\nContenido:\nEl puntuador a puntuado muy baja la conversacion con 0 puntos debido a que se le preguntó su opinion \n        luego de una actualizacion del timer.\n        El Agente Curador debe decidir si pertinente o no intervenir. \n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 21
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 22 ---\nTimestamp: 2025-11-07 11:57:00.461\nRol: assistant\nAutor: Curador\nContenido:\n[TOOL_USE]\n{\n  \"intervenir\": \"Sí\",\n  \"call_orientador\": \"@Orientador\",\n  \"mensaje_para_orientador\": \"Orientador, es necesario reactivar la discusión. Pide a fr que comparta su opinión sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono.\",\n  \"razon_general\": \"La conversación ha estado inactiva durante un tiempo prolongado y es crucial que fr se enfoque en el tema de discusión para fomentar la participación.\",\n  \"estado_estudiantes\": {\n    \"fr\": {\n      \"completo\": false,\n      \"pendientes\": [\"Claim\", \"Evidence\", \"Warrant\"],\n      \"recomendacion\": \"Debería centrar su mensaje en cómo la bicicleta ayuda a reducir las emisiones de carbono para avanzar en la discusión.\"\n    }\n  }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 22
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 23 ---\nTimestamp: 2025-11-07 11:57:00.462\nRol: system\nAutor: Curador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 23
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 24 ---\nTimestamp: 2025-11-07 11:57:00.462\nRol: assistant\nAutor: Curador\nContenido:\n{\n  \"intervenir\": \"Sí\",\n  \"call_orientador\": \"@Orientador\",\n  \"mensaje_para_orientador\": \"Orientador, es necesario reactivar la discusión. Pide a fr que comparta su opinión sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono.\",\n  \"razon_general\": \"La conversación ha estado inactiva durante un tiempo prolongado y es crucial que fr se enfoque en el tema de discusión para fomentar la participación.\",\n  \"estado_estudiantes\": {\n    \"fr\": {\n      \"completo\": false,\n      \"pendientes\": [\"Claim\", \"Evidence\", \"Warrant\"],\n      \"recomendacion\": \"Debería centrar su mensaje en cómo la bicicleta ayuda a reducir las emisiones de carbono para avanzar en la discusión.\"\n    }\n  }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 24
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 25 ---\nTimestamp: 2025-11-07 11:57:01.850\nRol: assistant\nAutor: Curador\nContenido:\nfr, ¿qué opinas sobre cómo el uso de la bicicleta puede ayudar a reducir las emisiones de carbono? Sería interesante escuchar tu perspectiva.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 25
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 26 ---\nTimestamp: 2025-11-07 11:57:21.851\nRol: system\nAutor: Curador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 25% del tiempo completado**\n        \n        Tiempo transcurrido: 1 minuto y 9 segundos\n        Tiempo restante: 2 minutos y 50 segundos\n        \n        Se ha cumplido un cuarto del tiempo de la sesión. Es un buen momento para verificar que todos estén participando y que las ideas fluyan con claridad.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 26
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 27 ---\nTimestamp: 2025-11-07 11:57:24.276\nRol: assistant\nAutor: Curador\nContenido:\nEstamos en la primera parte de nuestra discusión y es un buen momento para reflexionar. Hasta ahora, hemos estado interactuando, pero necesitamos enfocarnos más en cómo la bicicleta puede reducir las emisiones de carbono. Aprovechemos el tiempo restante para que cada uno exponga su visión. ¡Sigue adelante, fr!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 27
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 28 ---\nTimestamp: 2025-11-07 11:57:24.287\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 9 segundos\n- Tiempo restante: 2 minutos y 50 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 28
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 29 ---\nTimestamp: 2025-11-07 11:57:26.938\nRol: assistant\nAutor: Curador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 29
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 30 ---\nTimestamp: 2025-11-07 11:57:46.940\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 34 segundos\n- Tiempo restante: 2 minutos y 25 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 30
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 31 ---\nTimestamp: 2025-11-07 11:57:49.468\nRol: assistant\nAutor: Curador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 31
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 32 ---\nTimestamp: 2025-11-07 11:58:09.469\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 57 segundos\n- Tiempo restante: 2 minutos y 2 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 32
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 33 ---\nTimestamp: 2025-11-07 11:58:12.099\nRol: assistant\nAutor: Curador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 33
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 34 ---\nTimestamp: 2025-11-07 11:58:32.100\nRol: system\nAutor: Curador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 50% del tiempo completado**\n        \n        Tiempo transcurrido: 2 minutos y 20 segundos\n        Tiempo restante: 1 minuto y 39 segundos\n        \n        Hemos llegado a la mitad del tiempo disponible. Asegúrense de que los argumentos principales ya hayan sido presentados y que el debate esté bien encaminado para llegar a un consenso, sobre todo si los participantes discrepan ayudalos converger a un consenso comun.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 34
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 35 ---\nTimestamp: 2025-11-07 11:58:35.758\nRol: assistant\nAutor: Curador\nContenido:\nHemos llegado a la mitad de nuestra sesión, y es momento de centrarnos más en los argumentos sobre el uso de la bicicleta y su impacto en las emisiones de carbono. Aún tenemos tiempo para profundizar, así que animo a que compartas tus ideas, fr. Juntos podemos trabajar hacia un consenso y construir un diálogo productivo. ¡Adelante!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 35
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 36 ---\nTimestamp: 2025-11-07 11:58:35.762\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 2 minutos y 20 segundos\n- Tiempo restante: 1 minuto y 39 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 36
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 37 ---\nTimestamp: 2025-11-07 11:58:39.953\nRol: assistant\nAutor: Curador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 37
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 38 ---\nTimestamp: 2025-11-07 11:58:59.954\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 2 minutos y 47 segundos\n- Tiempo restante: 1 minuto y 12 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 38
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 39 ---\nTimestamp: 2025-11-07 11:59:01.765\nRol: assistant\nAutor: Curador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 39
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 40 ---\nTimestamp: 2025-11-07 11:59:11.012\nRol: user\nAutor: Curador\nContenido:\n{'contenido': '@Orientador como estas', 'timeStamp': datetime.datetime(2025, 11, 7, 11, 59, 11, 12361)}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 40
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 41 ---\nTimestamp: 2025-11-07 11:59:14.669\nRol: assistant\nAutor: Curador\nContenido:\nEstoy bien, gracias, fr. Pero, volvamos al tema. ¿Qué opinas sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono?\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 41
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 42 ---\nTimestamp: 2025-11-07 11:59:21.766\nRol: system\nAutor: Curador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 75% del tiempo completado**\n        \n        Tiempo transcurrido: 3 minutos y 9 segundos\n        Tiempo restante: 50 segundos\n        \n        Se han completado tres cuartos de la sesión. Este es el momento clave para consolidar sus posiciones y preparar conclusiones.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 42
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 43 ---\nTimestamp: 2025-11-07 11:59:25.011\nRol: assistant\nAutor: Curador\nContenido:\nEstamos en el último tramo de nuestra sesión y es esencial que consolidemos lo que hemos discutido. Animo a que compartas tu opinión sobre cómo la bicicleta puede impactar positivamente en la reducción de emisiones de carbono. ¡Es momento de considerar todo lo que hemos aprendido y llegar a una conclusión a partir de ello!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 43
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 44 ---\nTimestamp: 2025-11-07 11:59:25.020\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 3 minutos y 9 segundos\n- Tiempo restante: 50 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 44
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 45 ---\nTimestamp: 2025-11-07 11:59:25.072\nRol: system\nAutor: Curador\nContenido:\nHa salido de la sala el participante llamado: fr\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 45
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 46 ---\nTimestamp: 2025-11-07 11:59:28.027\nRol: assistant\nAutor: Curador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 46
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 1 ---\nTimestamp: 2025-11-07 11:56:12.077\nRol: system\nAutor: Orientador\nContenido:\n\n    El tema que los estudiantes discutirán es el siguiente:\n    Discusión sobre cómo la bicicleta puede ayudar a reducir emisiones de carbono.\n        En esta sesion hay (1) usuarios.\n        Los participantes en la discusión son los siguientes:\n        - fr\n        \n        El idioma principal de esta conversación es **español**.\n        Por lo tanto:\n        1. Todos los análisis lingüísticos y semánticos (incluido el reconocimiento de argumentos según el modelo de Toulmin) deben realizarse en este idioma.\n        2. Las respuestas, mensajes y retroalimentaciones generadas por el agente Orientador deben estar redactadas completamente en español.\n        3. No traduzcas ni interpretes al inglés u otros idiomas a menos que el sistema o los participantes lo soliciten explícitamente.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 1
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 2 ---\nTimestamp: 2025-11-07 11:56:12.079\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 0 segundos\n- Tiempo restante: 3 minutos y 59 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 2
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 3 ---\nTimestamp: 2025-11-07 11:56:15.053\nRol: assistant\nAutor: Orientador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 3
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 4 ---\nTimestamp: 2025-11-07 11:56:12.077\nRol: system\nAutor: Orientador\nContenido:\nLa sesión de debate ha comenzado. Orientador por favor da un mensaje de bienvenida y explica el objetivo de la actividad.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 4
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 5 ---\nTimestamp: 2025-11-07 11:56:17.568\nRol: assistant\nAutor: Orientador\nContenido:\n[TOOL_USE]\n¡Hola, fr! Bienvenido a la discusión sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono. El objetivo de esta actividad es analizar y compartir ideas sobre los beneficios de usar la bicicleta en lugar de otros medios de transporte, así como su impacto en el medio ambiente. ¡Empecemos!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 5
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 6 ---\nTimestamp: 2025-11-07 11:56:17.569\nRol: system\nAutor: Orientador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 6
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 7 ---\nTimestamp: 2025-11-07 11:56:17.569\nRol: assistant\nAutor: Orientador\nContenido:\n¡Hola, fr! Bienvenido a la discusión sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono. El objetivo de esta actividad es analizar y compartir ideas sobre los beneficios de usar la bicicleta en lugar de otros medios de transporte, así como su impacto en el medio ambiente. ¡Empecemos!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 7
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 8 ---\nTimestamp: 2025-11-07 11:56:18.590\nRol: user\nAutor: Orientador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:18:\n{\"contenido\": \"hola que tal a todos\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 8
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 9 ---\nTimestamp: 2025-11-07 11:56:21.196\nRol: assistant\nAutor: Orientador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 9
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 10 ---\nTimestamp: 2025-11-07 11:56:21.196\nRol: user\nAutor: Orientador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:21:\n{\"contenido\": \"como estais\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 10
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 11 ---\nTimestamp: 2025-11-07 11:56:25.496\nRol: assistant\nAutor: Orientador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 11
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 12 ---\nTimestamp: 2025-11-07 11:56:25.497\nRol: user\nAutor: Orientador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:25:\n{\"contenido\": \"que bien\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 12
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 13 ---\nTimestamp: 2025-11-07 11:56:28.057\nRol: assistant\nAutor: Orientador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 13
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 14 ---\nTimestamp: 2025-11-07 11:56:28.354\nRol: user\nAutor: Orientador\nContenido:\n Mensaje enviado por fr a las 2025-11-07 11:56:28:\n{\"contenido\": \"como va todo\"}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 14
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 15 ---\nTimestamp: 2025-11-07 11:56:32.080\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 20 segundos\n- Tiempo restante: 3 minutos y 39 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 15
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 16 ---\nTimestamp: 2025-11-07 11:56:33.588\nRol: assistant\nAutor: Orientador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 16
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 17 ---\nTimestamp: 2025-11-07 11:56:44.954\nRol: assistant\nAutor: Orientador\nContenido:\n{\n    \"fr\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 17
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 18 ---\nTimestamp: 2025-11-07 11:56:44.954\nRol: system\nAutor: Orientador\nContenido:\n\n                    Se a cumplido el tamaño de la ventana, por tanto el agente Curador debe decidir si hay que intervenir o no.\n                  \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 18
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 19 ---\nTimestamp: 2025-11-07 11:56:48.435\nRol: assistant\nAutor: Orientador\nContenido:\n{\n  \"intervenir\": \"No\",\n  \"call_orientador\": \"\",\n  \"mensaje_para_orientador\": \"\",\n  \"razon_general\": \"Aunque hay interacción, la conversación no ha avanzado hacia el tema de discusión. Aun hay tiempo para que fr aporte argumentos sobre el uso de la bicicleta.\",\n  \"estado_estudiantes\": {\n    \"fr\": {\n      \"completo\": false,\n      \"pendientes\": [\"Claim\", \"Evidence\", \"Warrant\"],\n      \"recomendacion\": \"Necesita realizar un aporte sustantivo sobre cómo la bicicleta puede reducir emisiones de carbono.\"\n    }\n  }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 19
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 20 ---\nTimestamp: 2025-11-07 11:56:53.589\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 41 segundos\n- Tiempo restante: 3 minutos y 18 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 20
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 21 ---\nTimestamp: 2025-11-07 11:56:54.886\nRol: assistant\nAutor: Orientador\nContenido:\n{ \n    \"score_dinamico\": 0,\n    \"diagnostico_dinamico\": \"Han pasado 40 segundos sin actividad humana en la sala.\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 21
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 22 ---\nTimestamp: 2025-11-07 11:56:54.887\nRol: system\nAutor: Orientador\nContenido:\nEl puntuador a puntuado muy baja la conversacion con 0 puntos debido a que se le preguntó su opinion \n        luego de una actualizacion del timer.\n        El Agente Curador debe decidir si pertinente o no intervenir. \n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 22
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 23 ---\nTimestamp: 2025-11-07 11:57:00.462\nRol: assistant\nAutor: Orientador\nContenido:\n{\n  \"intervenir\": \"Sí\",\n  \"call_orientador\": \"@Orientador\",\n  \"mensaje_para_orientador\": \"Orientador, es necesario reactivar la discusión. Pide a fr que comparta su opinión sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono.\",\n  \"razon_general\": \"La conversación ha estado inactiva durante un tiempo prolongado y es crucial que fr se enfoque en el tema de discusión para fomentar la participación.\",\n  \"estado_estudiantes\": {\n    \"fr\": {\n      \"completo\": false,\n      \"pendientes\": [\"Claim\", \"Evidence\", \"Warrant\"],\n      \"recomendacion\": \"Debería centrar su mensaje en cómo la bicicleta ayuda a reducir las emisiones de carbono para avanzar en la discusión.\"\n    }\n  }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 23
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 24 ---\nTimestamp: 2025-11-07 11:57:01.850\nRol: assistant\nAutor: Orientador\nContenido:\n[TOOL_USE]\nfr, ¿qué opinas sobre cómo el uso de la bicicleta puede ayudar a reducir las emisiones de carbono? Sería interesante escuchar tu perspectiva.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 24
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 25 ---\nTimestamp: 2025-11-07 11:57:01.850\nRol: system\nAutor: Orientador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 25
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 26 ---\nTimestamp: 2025-11-07 11:57:01.850\nRol: assistant\nAutor: Orientador\nContenido:\nfr, ¿qué opinas sobre cómo el uso de la bicicleta puede ayudar a reducir las emisiones de carbono? Sería interesante escuchar tu perspectiva.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 26
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 27 ---\nTimestamp: 2025-11-07 11:57:21.851\nRol: system\nAutor: Orientador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 25% del tiempo completado**\n        \n        Tiempo transcurrido: 1 minuto y 9 segundos\n        Tiempo restante: 2 minutos y 50 segundos\n        \n        Se ha cumplido un cuarto del tiempo de la sesión. Es un buen momento para verificar que todos estén participando y que las ideas fluyan con claridad.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 27
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 28 ---\nTimestamp: 2025-11-07 11:57:24.276\nRol: assistant\nAutor: Orientador\nContenido:\n[TOOL_USE]\nEstamos en la primera parte de nuestra discusión y es un buen momento para reflexionar. Hasta ahora, hemos estado interactuando, pero necesitamos enfocarnos más en cómo la bicicleta puede reducir las emisiones de carbono. Aprovechemos el tiempo restante para que cada uno exponga su visión. ¡Sigue adelante, fr!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 28
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 29 ---\nTimestamp: 2025-11-07 11:57:24.276\nRol: system\nAutor: Orientador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 29
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 30 ---\nTimestamp: 2025-11-07 11:57:24.276\nRol: assistant\nAutor: Orientador\nContenido:\nEstamos en la primera parte de nuestra discusión y es un buen momento para reflexionar. Hasta ahora, hemos estado interactuando, pero necesitamos enfocarnos más en cómo la bicicleta puede reducir las emisiones de carbono. Aprovechemos el tiempo restante para que cada uno exponga su visión. ¡Sigue adelante, fr!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 30
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 31 ---\nTimestamp: 2025-11-07 11:57:24.287\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 9 segundos\n- Tiempo restante: 2 minutos y 50 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 31
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 32 ---\nTimestamp: 2025-11-07 11:57:26.938\nRol: assistant\nAutor: Orientador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 32
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 33 ---\nTimestamp: 2025-11-07 11:57:46.940\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 34 segundos\n- Tiempo restante: 2 minutos y 25 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 33
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 34 ---\nTimestamp: 2025-11-07 11:57:49.468\nRol: assistant\nAutor: Orientador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 34
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 35 ---\nTimestamp: 2025-11-07 11:58:09.469\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 1 minuto y 57 segundos\n- Tiempo restante: 2 minutos y 2 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 35
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 36 ---\nTimestamp: 2025-11-07 11:58:12.099\nRol: assistant\nAutor: Orientador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 36
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 37 ---\nTimestamp: 2025-11-07 11:58:32.100\nRol: system\nAutor: Orientador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 50% del tiempo completado**\n        \n        Tiempo transcurrido: 2 minutos y 20 segundos\n        Tiempo restante: 1 minuto y 39 segundos\n        \n        Hemos llegado a la mitad del tiempo disponible. Asegúrense de que los argumentos principales ya hayan sido presentados y que el debate esté bien encaminado para llegar a un consenso, sobre todo si los participantes discrepan ayudalos converger a un consenso comun.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 37
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 38 ---\nTimestamp: 2025-11-07 11:58:35.758\nRol: assistant\nAutor: Orientador\nContenido:\n[TOOL_USE]\nHemos llegado a la mitad de nuestra sesión, y es momento de centrarnos más en los argumentos sobre el uso de la bicicleta y su impacto en las emisiones de carbono. Aún tenemos tiempo para profundizar, así que animo a que compartas tus ideas, fr. Juntos podemos trabajar hacia un consenso y construir un diálogo productivo. ¡Adelante!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 38
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 39 ---\nTimestamp: 2025-11-07 11:58:35.758\nRol: system\nAutor: Orientador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 39
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 40 ---\nTimestamp: 2025-11-07 11:58:35.758\nRol: assistant\nAutor: Orientador\nContenido:\nHemos llegado a la mitad de nuestra sesión, y es momento de centrarnos más en los argumentos sobre el uso de la bicicleta y su impacto en las emisiones de carbono. Aún tenemos tiempo para profundizar, así que animo a que compartas tus ideas, fr. Juntos podemos trabajar hacia un consenso y construir un diálogo productivo. ¡Adelante!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 40
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 41 ---\nTimestamp: 2025-11-07 11:58:35.762\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 2 minutos y 20 segundos\n- Tiempo restante: 1 minuto y 39 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 41
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 42 ---\nTimestamp: 2025-11-07 11:58:39.953\nRol: assistant\nAutor: Orientador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 42
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 43 ---\nTimestamp: 2025-11-07 11:58:59.954\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 2 minutos y 47 segundos\n- Tiempo restante: 1 minuto y 12 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 43
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 44 ---\nTimestamp: 2025-11-07 11:59:01.765\nRol: assistant\nAutor: Orientador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 44
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 45 ---\nTimestamp: 2025-11-07 11:59:11.012\nRol: user\nAutor: Orientador\nContenido:\n{'contenido': '@Orientador como estas', 'timeStamp': datetime.datetime(2025, 11, 7, 11, 59, 11, 12361)}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 45
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 46 ---\nTimestamp: 2025-11-07 11:59:14.668\nRol: assistant\nAutor: Orientador\nContenido:\n[TOOL_USE]\nEstoy bien, gracias, fr. Pero, volvamos al tema. ¿Qué opinas sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono?\n[TOOL_USE]\n¿Podrías compartir tu perspectiva o ejemplos sobre cómo la bicicleta contribuye a este objetivo?\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 46
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 47 ---\nTimestamp: 2025-11-07 11:59:14.669\nRol: system\nAutor: Orientador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 47
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 48 ---\nTimestamp: 2025-11-07 11:59:14.669\nRol: system\nAutor: Orientador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 48
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 49 ---\nTimestamp: 2025-11-07 11:59:14.669\nRol: assistant\nAutor: Orientador\nContenido:\nEstoy bien, gracias, fr. Pero, volvamos al tema. ¿Qué opinas sobre cómo la bicicleta puede ayudar a reducir las emisiones de carbono?\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 49
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 50 ---\nTimestamp: 2025-11-07 11:59:21.766\nRol: system\nAutor: Orientador\nContenido:\n\n        **HITO TEMPORAL ALCANZADO: 75% del tiempo completado**\n        \n        Tiempo transcurrido: 3 minutos y 9 segundos\n        Tiempo restante: 50 segundos\n        \n        Se han completado tres cuartos de la sesión. Este es el momento clave para consolidar sus posiciones y preparar conclusiones.\n        \n        Por favor, como Orientador:\n        1. Haz una breve reflexión sobre el progreso del debate hasta ahora\n        2. Motiva a los participantes según el momento de la sesión\n        3. Da recomendaciones específicas para aprovechar el tiempo restante\n        4. Mantén un tono alentador y energizante\n        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).\n        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 50
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 51 ---\nTimestamp: 2025-11-07 11:59:25.011\nRol: assistant\nAutor: Orientador\nContenido:\n[TOOL_USE]\nEstamos en el último tramo de nuestra sesión y es esencial que consolidemos lo que hemos discutido. Animo a que compartas tu opinión sobre cómo la bicicleta puede impactar positivamente en la reducción de emisiones de carbono. ¡Es momento de considerar todo lo que hemos aprendido y llegar a una conclusión a partir de ello!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 51
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 52 ---\nTimestamp: 2025-11-07 11:59:25.011\nRol: system\nAutor: Orientador\nContenido:\n[TOOL_RESULT]\nSuccessfully generated response.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 52
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 53 ---\nTimestamp: 2025-11-07 11:59:25.011\nRol: assistant\nAutor: Orientador\nContenido:\nEstamos en el último tramo de nuestra sesión y es esencial que consolidemos lo que hemos discutido. Animo a que compartas tu opinión sobre cómo la bicicleta puede impactar positivamente en la reducción de emisiones de carbono. ¡Es momento de considerar todo lo que hemos aprendido y llegar a una conclusión a partir de ello!\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 53
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 54 ---\nTimestamp: 2025-11-07 11:59:25.020\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 3 minutos y 9 segundos\n- Tiempo restante: 50 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 54
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 55 ---\nTimestamp: 2025-11-07 11:59:25.072\nRol: system\nAutor: Orientador\nContenido:\nHa salido de la sala el participante llamado: fr\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 55
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 56 ---\nTimestamp: 2025-11-07 11:59:28.027\nRol: assistant\nAutor: Orientador\nContenido:\n{ \n    \"score_dinamico\":50,\n    \"diagnostico_dinamico\": \"Esperando participación humana\"\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 56
+    }
+  ]
+}

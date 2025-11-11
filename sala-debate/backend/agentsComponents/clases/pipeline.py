@@ -1,26 +1,37 @@
+import os
 import time
+import json, re
 from datetime import datetime
 from pydantic import BaseModel, Field, conint
 from typing import Literal
 from .factory_agents import ReActAgentFactory
 from agentscope.message import Msg
 from agentscope.pipeline import MsgHub, fanout_pipeline
+from .BaseModels.baseModel import *
 from utils.groupchat_utils import *
+from.utils.utilsForAgents import *
 
 DEFAULT_TOPIC = """
     El tema que los estudiantes discutirán es el siguiente:
     """
+
+
+
 class PuntuacionModel(BaseModel):
-    score: int = Field(..., ge=0, le=100, description="Un número entero entre 0 y 100")
-    diagnostico: str = Field(..., description="Breve explicación (15 palabras maximo) del score")
+    score_dinamico: int = Field(..., ge=0, le=100, description="Un número entero entre 0 y 100")
+    diagnostico_dinamico: str = Field(..., description="Breve explicación (15 palabras maximo) del score")
 
 class Pipeline:
     def __init__(self,factory: ReActAgentFactory,
+                 prompt_agenteValidador:str,
                  prompt_agentePuntuador:str,
                  prompt_agenteCurador:str,
                  promt_agenteOrientador:str
                  ):
-        
+        self.agenteValidador = factory.create_agent(
+            name="Validador",
+            sys_prompt=prompt_agenteValidador
+        )
         self.agentePuntuador = factory.create_agent(
             name="Puntuador",
             sys_prompt=prompt_agentePuntuador
@@ -38,9 +49,10 @@ class Pipeline:
         self.hub = None
         self.msg_id = 0
         self.avisos_timer = 0
+        self.baseModelValidador = None
 
 
-    async def start_session(self, tema_sala:str,usuarios_sala:list) -> None:
+    async def start_session(self, tema_sala:str,usuarios_sala:list,idioma:str) -> None:
         """
         Inicializa el msghub con el cual se va a trabajar en una sesion de discusion
         @Hint: mensaje con el cual se inicializan los agentes.
@@ -53,20 +65,47 @@ class Pipeline:
         Los participantes en la discusión son los siguientes:
         {participantes_text}
         """
+        idioma_prompt = f"""
+        El idioma principal de esta conversación es **{idioma}**.
+        Por lo tanto:
+        1. Todos los análisis lingüísticos y semánticos (incluido el reconocimiento de argumentos según el modelo de Toulmin) deben realizarse en este idioma.
+        2. Las respuestas, mensajes y retroalimentaciones generadas por el agente Orientador deben estar redactadas completamente en {idioma}.
+        3. No traduzcas ni interpretes al inglés u otros idiomas a menos que el sistema o los participantes lo soliciten explícitamente.
+        """
+
+
+        self.baseModelValidador = BaseModelValidador.crear_modelo_inicial(usuarios_sala)
 
         self.tema_sala = tema_sala
         hint = Msg(
             name="Host",
             role="system",
             content=DEFAULT_TOPIC
-            + tema_sala + participantes
+            + tema_sala + participantes + idioma_prompt
         )
+
         self.hub = await MsgHub(participants=self.agentes,announcement=hint).__aenter__()
+        await self.agenteValidador.observe(hint)
+
         mensaje = Msg(
             name="Host",
             role="system",
             content="La sesión de debate ha comenzado. Orientador por favor da un mensaje de bienvenida y explica el objetivo de la actividad."
         )
+        participantesMsg = Msg(
+            name="Host",
+            role="system",
+            content=participantes
+        )
+        respuesta_validador = await self.agenteValidador(participantesMsg)
+        try:
+            #validacion_inicial = self.baseModelValidador.model_validate_json(respuesta_validador.content)
+            validacion_inicial = safe_parse_json(respuesta_validador.content, self.baseModelValidador)
+            print(validacion_inicial)
+        except Exception as e:
+            print(f"[Error de validación en start_session]: {e}")
+
+        await self.hub.broadcast(respuesta_validador) 
         respuesta_orientador = await self.agenteOrientador(mensaje) 
         return [{
             "agente":"Orientador",
@@ -81,6 +120,14 @@ class Pipeline:
         #tokens_totales = await self.contar_tokens_memoria()
         #print(tokens_totales)
         if self.hub:
+            try:
+                ruta = f"./logs/conversacion_{self.tema_sala[:100]}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+                os.makedirs(os.path.dirname(ruta), exist_ok=True)
+                await self.guardar_conversacion_json(ruta)
+                print(f"[✅ Conversación exportada antes de cerrar hub]: {ruta}")
+            except Exception as e:
+                print(f"[❌ Error exportando conversación antes del cierre]: {e}")
+
             await self.hub.__aexit__(None, None, None)
             self.hub = None
         memoria = await self.show_memory()
@@ -109,35 +156,23 @@ class Pipeline:
 
     async def entrar_mensaje_a_la_sala(self,username:str,mensaje:str):
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+        contenido_json = json.dumps({"contenido": mensaje}, ensure_ascii=False)
+        username_sanitized = sanitize_name(username)
         mensaje_formateado = (
         f" Mensaje enviado por {username} a las {now}:\n"
         f'{{"contenido": "{mensaje}"}}'
         )
 
-        msg = Msg(name=username,
+        msg = Msg(name=username_sanitized,
                   role='user',
                   content=mensaje_formateado)
         
         await self.hub.broadcast(msg)
+        respuesta_validador = await self.agenteValidador(msg)
+        await self.hub.broadcast(respuesta_validador)
 
-        respuesta_puntuador = await self.agentePuntuador()
-        try:
-            puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
-            score = puntuacion.score
-            diagnostico = puntuacion.diagnostico
-        except Exception as e:
-            print(f"[Error de validación en entrar_mensaje_a_la_sala]: {e}")
-            score = 0
-            diagnostico = "Error en formato de respuesta del agente."
-        return {
-            "usuario":username,
-            "mensaje":mensaje,
-            "score":score,
-            "diagnostico":diagnostico
-        }
     
-    async def avisar_tiempo(self, fase_actual, remaining_phase, elapsed_phase, remaining_total, elapsed_total):
+    async def avisar_tiempo(self, elapsed_time, remaining_time):
         """
         Envía un aviso de tiempo legible para los agentes, informando cuánto ha transcurrido y cuánto queda
         tanto en la fase actual como en la sesión total. En el primer aviso solo informa; en los siguientes,
@@ -155,15 +190,12 @@ class Pipeline:
 
         mensaje_tiempo = (
             f"**Actualización del tiempo**\n"
-            f"- Fase actual: {fase_actual}\n"
-            f"- Tiempo transcurrido en la fase: {formato_tiempo(elapsed_phase)}\n"
-            f"- Tiempo restante en la fase: {formato_tiempo(remaining_phase)}\n"
-            f"- Tiempo total transcurrido: {formato_tiempo(elapsed_total)}\n"
-            f"- Tiempo total restante: {formato_tiempo(remaining_total)}\n\n"
+            f"- Tiempo transcurrido: {formato_tiempo(elapsed_time)}\n"
+            f"- Tiempo restante: {formato_tiempo(remaining_time)}\n\n"
             f"Por favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones."
         )
 
-        print(mensaje_tiempo)
+        print("ACTUALIZACION DEL TIMER")
 
         msg_tiempo = Msg(
             name="Timer",
@@ -182,15 +214,8 @@ class Pipeline:
         print("Aviso de timer con evaluación solicitada al Puntuador.")
         await self.hub.broadcast(msg_tiempo)
 
-        instruccion_puntuador = (
-            "Ahora que se ha actualizado el tiempo, evalúa brevemente cómo ha evolucionado la conversación.\n\n"
-            "Ten en cuenta los siguientes criterios:\n"
-            " **Ritmo del debate:** ¿Los participantes intervienen con frecuencia o hay largos periodos sin mensajes?\n"
-            " **Calidad y coherencia:** ¿Las respuestas mantienen el hilo del tema y aportan ideas relevantes?\n"
-            " **Gestión del tiempo:** ¿El progreso de la conversación es adecuado considerando el tiempo restante en la fase?\n"
-            "**Inactividad:** Si notas que no ha habido mensajes recientes o que la sala parece detenida, "
-            "refleja eso en una puntuación baja y menciónalo en tu diagnóstico.\n\n"
-        )
+        instruccion_puntuador = "Ahora que se ha actualizado el tiempo, debes dar tu score." 
+        
 
         msg_instruccion = Msg(
             name="Host",
@@ -201,9 +226,10 @@ class Pipeline:
         respuesta_puntuador = await self.agentePuntuador(msg_instruccion)
 
         try:
-            puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
-            score = puntuacion.score
-            diagnostico = puntuacion.diagnostico
+            #puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
+            puntuacion = safe_parse_json(respuesta_puntuador.content, PuntuacionModel)
+            score = puntuacion.score_dinamico
+            diagnostico = puntuacion.diagnostico_dinamico
         except Exception as e:
             print(f"[Error de validación en avisar_tiempo]: {e}")
             score = 0
@@ -217,14 +243,17 @@ class Pipeline:
     
     async def evaluar_intervencion_en_cascada(self,mensaje:Msg):
         await self.hub.broadcast(mensaje)
+        print("se llama al curador PIPELINE")
         curador_msg = await self.agenteCurador(mensaje)
+        print("respuesta del curador obtenida")
         respuestas = [{
             "agente":"Curador",
             "respuesta":curador_msg.content
         }]
         next_agent = filter_agents(curador_msg.content, self.agentes)
         if next_agent and next_agent[0].name == "Orientador":
-            orientador_msg = await self.agenteOrientador()            
+            orientador_msg = await self.agenteOrientador()
+            await self.agenteValidador.observe(orientador_msg)            
             respuestas.append({
                 "agente":"Orientador",
                 "respuesta":orientador_msg.content
@@ -239,11 +268,13 @@ class Pipeline:
             "contenido":mensaje,
             "timeStamp":datetime.now()
         })
-        msgUsuario = Msg(name=usuario,
+        nombre_limpio = sanitize_name(usuario)
+        msgUsuario = Msg(name=nombre_limpio,
                          role="user",
                          content=mensaje)
         await self.hub.broadcast(msgUsuario)
         respuesta = await self.agenteOrientador()
+        await self.agenteValidador.observe(respuesta)
         return [{
             "agente":"Orientador",
             "respuesta":respuesta.content
@@ -293,46 +324,178 @@ class Pipeline:
         respuestas = await self.evaluar_intervencion_en_cascada(msg)
         return respuestas
     
+    async def mensaje_hito_temporal(self, hito: int, mensaje_base: str, elapsed_time: int, remaining_time: int):
+        """
+        Genera un mensaje del Orientador contextualizado para un hito temporal específico.
+        
+        Args:
+            hito: Porcentaje del tiempo completado (25, 50, 75, 100)
+            mensaje_base: Mensaje predefinido para este hito
+            elapsed_time: Tiempo transcurrido en segundos
+            remaining_time: Tiempo restante en segundos
+        """
+        def formato_tiempo(segundos: int) -> str:
+            minutos = segundos // 60
+            segs = segundos % 60
+            partes = []
+            if minutos > 0:
+                partes.append(f"{minutos} minuto{'s' if minutos != 1 else ''}")
+            if segs > 0:
+                partes.append(f"{segs} segundo{'s' if segs != 1 else ''}")
+            return " y ".join(partes) if partes else "0 segundos"
+
+        instruccion = f"""
+        **HITO TEMPORAL ALCANZADO: {hito}% del tiempo completado**
+        
+        Tiempo transcurrido: {formato_tiempo(elapsed_time)}
+        Tiempo restante: {formato_tiempo(remaining_time)}
+        
+        {mensaje_base}
+        
+        Por favor, como Orientador:
+        1. Haz una breve reflexión sobre el progreso del debate hasta ahora
+        2. Motiva a los participantes según el momento de la sesión
+        3. Da recomendaciones específicas para aprovechar el tiempo {"restante" if hito < 100 else "que tuvieron"}
+        4. Mantén un tono {'alentador y energizante' if hito < 100 else 'de cierre y reflexión final'}
+        5. Debes indicarle en que momento de la sesión se encuentran (inicio, mitad, casi finalizado, finalización).
+        Tu mensaje debe ser conciso (máximo 3-4 oraciones) y estar en el idioma de la conversación.
+        """
+
+        msg_hito = Msg(
+            name="Host",
+            role="system",
+            content=instruccion
+        )
+
+        try:
+            # Broadcast del contexto temporal
+            await self.hub.broadcast(msg_hito)
+            
+            # Solicitar respuesta del Orientador
+            respuesta_orientador = await self.agenteOrientador(msg_hito)
+            
+            if not respuesta_orientador or not respuesta_orientador.content:
+                return [{
+                    "agente": "Orientador",
+                    "respuesta": mensaje_base  # Fallback al mensaje base
+                }]
+            
+            return [{
+                "agente": "Orientador",
+                "respuesta": respuesta_orientador.content
+            }]
+            
+        except Exception as e:
+            print(f"[Error generando mensaje de hito temporal]: {e}")
+            return [{
+                "agente": "Orientador",
+                "respuesta": mensaje_base
+            }]
+    
+        
     async def show_memory(self) -> dict:
-      """
-    Retorna la memoria de los agentes como texto legible
-    """
-      def serialize_msg_content(content):
-        if isinstance(content, str):
-            return content
-        elif isinstance(content, BaseModel):
-            return content.model_dump_json(indent=2)
-        elif isinstance(content, Msg):
-            # Extraemos el contenido real del Msg
-            if isinstance(content.content, list):
-                # Si es una lista de tool_use/tool_result, extraemos solo el texto
-                texts = []
-                for block in content.content:
+        """
+        Retorna la memoria de los agentes como texto legible, estructurando los mensajes para análisis de un nuevo agente.
+        """
+        def serialize_msg_content(msg):
+            """
+            Convierte el contenido de un mensaje a texto legible.
+            """
+            content_texts = []
+            if isinstance(msg.content, str):
+                content_texts.append(msg.content)
+            elif isinstance(msg.content, list):
+                # lista de tool_use/tool_result
+                for block in msg.content:
                     if isinstance(block, dict):
                         if block.get("type") == "tool_use":
                             response = block.get("input", {}).get("response")
                             if response:
-                                texts.append(response)
+                                content_texts.append(f"[TOOL_USE]\n{response}")
                         elif block.get("type") == "tool_result":
                             output_blocks = block.get("output", [])
                             for ob in output_blocks:
                                 if ob.get("type") == "text":
-                                    texts.append(ob.get("text"))
-                return "\n".join(texts)
+                                    content_texts.append(f"[TOOL_RESULT]\n{ob.get('text')}")
             else:
-                return serialize_msg_content(content.content)
-        else:
-            return str(content)
+                try:
+                    # Intentamos serializar JSON si es BaseModel o dict
+                    content_texts.append(json.dumps(msg.content, indent=2, ensure_ascii=False))
+                except:
+                    content_texts.append(str(msg.content))
+            return "\n".join(content_texts)
 
+        memoria_total = {}
+        for agente in self.agentes:
+            memoria_agente = []
+            mensajes_historial = await agente.memory.get_memory()
+            for idx, msg in enumerate(mensajes_historial, start=1):
+                timestamp = getattr(msg, "timestamp", "")
+                role = getattr(msg, "role", "unknown")
+                author = getattr(msg, "author", agente.name)
+                content = serialize_msg_content(msg)
+                memoria_agente.append(
+                    f"--- Mensaje {idx} ---\n"
+                    f"Timestamp: {timestamp}\n"
+                    f"Rol: {role}\n"
+                    f"Autor: {author}\n"
+                    f"Contenido:\n{content}\n"
+                )
+            memoria_total[agente.name] = memoria_agente
+        return memoria_total
+    
 
-      memoria_total = {}
-      for agente in self.agentes:
-          memoria_agente = []
-          mensajes_historial = await agente.memory.get_memory() 
-          for msg in mensajes_historial:
-              memoria_agente.append(serialize_msg_content(msg))
-          memoria_total[agente.name] = memoria_agente
-      return memoria_total
+    async def exportar_conversacion_completa(self) -> dict:
+        """
+        Devuelve la conversación completa (mensajes humanos + agentes)
+        en formato estructurado y cronológico
+        """
+        if not self.hub:
+            raise RuntimeError("No hay sesión activa para exportar.")
+
+        registro = {
+            "tema": getattr(self, "tema_sala", ""),
+            "timestamp_exportacion": datetime.now().isoformat(),
+            "mensajes": []
+        }
+
+        #  Recuperar los mensajes históricos del hub (orden cronológico real)
+        if hasattr(self.hub, "history"):
+            for msg in self.hub.history:
+                registro["mensajes"].append({
+                    "timestamp": getattr(msg, "timestamp", None),
+                    "autor": getattr(msg, "name", "Desconocido"),
+                    "rol": getattr(msg, "role", "unknown"),
+                    "contenido": str(msg.content),
+                    "tipo": "hub_message"
+                })
+
+        #  Agregar la memoria interna de los agentes
+        memoria = await self.show_memory()
+        for agente, mensajes in memoria.items():
+            for idx, msg_texto in enumerate(mensajes, start=1):
+                registro["mensajes"].append({
+                    "timestamp": None,
+                    "autor": agente,
+                    "rol": "agent_memory",
+                    "contenido": msg_texto,
+                    "tipo": "memoria_agente",
+                    "orden_memoria": idx
+                })
+
+        #  Ordenar por timestamp si existe
+        registro["mensajes"].sort(key=lambda m: m.get("timestamp") or "", reverse=False)
+
+        return registro
+
+    async def guardar_conversacion_json(self, ruta_archivo: str) -> str:
+        """
+        Guarda la conversación exportada como archivo JSON ordenado.
+        """
+        datos = await self.exportar_conversacion_completa()
+        with open(ruta_archivo, "w", encoding="utf-8") as f:
+            json.dump(datos, f, indent=2, ensure_ascii=False)
+        return ruta_archivo
         
 
     

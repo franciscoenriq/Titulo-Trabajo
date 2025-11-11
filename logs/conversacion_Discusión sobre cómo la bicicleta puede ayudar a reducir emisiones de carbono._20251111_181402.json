@@ -1,0 +1,110 @@
+{
+  "tema": "Discusión sobre cómo la bicicleta puede ayudar a reducir emisiones de carbono.",
+  "timestamp_exportacion": "2025-11-11T18:14:02.214573",
+  "mensajes": [
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 1 ---\nTimestamp: 2025-11-11 18:13:56.448\nRol: system\nAutor: Puntuador\nContenido:\n\n    El tema que los estudiantes discutirán es el siguiente:\n    Discusión sobre cómo la bicicleta puede ayudar a reducir emisiones de carbono.\n        En esta sesion hay (1) usuarios.\n        Los participantes en la discusión son los siguientes:\n        - FEFE\n        \n        El idioma principal de esta conversación es **español**.\n        Por lo tanto:\n        1. Todos los análisis lingüísticos y semánticos (incluido el reconocimiento de argumentos según el modelo de Toulmin) deben realizarse en este idioma.\n        2. Las respuestas, mensajes y retroalimentaciones generadas por el agente Orientador deben estar redactadas completamente en español.\n        3. No traduzcas ni interpretes al inglés u otros idiomas a menos que el sistema o los participantes lo soliciten explícitamente.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 1
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 2 ---\nTimestamp: 2025-11-11 18:13:56.449\nRol: system\nAutor: Puntuador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 0 segundos\n- Tiempo restante: 3 minutos y 59 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 2
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 3 ---\nTimestamp: 2025-11-11 18:13:57.981\nRol: system\nAutor: Puntuador\nContenido:\nHa salido de la sala el participante llamado: FEFE\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 3
+    },
+    {
+      "timestamp": null,
+      "autor": "Puntuador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 4 ---\nTimestamp: 2025-11-11 18:14:00.228\nRol: assistant\nAutor: Puntuador\nContenido:\n{\n    \"FEFE\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 4
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 1 ---\nTimestamp: 2025-11-11 18:13:56.448\nRol: system\nAutor: Curador\nContenido:\n\n    El tema que los estudiantes discutirán es el siguiente:\n    Discusión sobre cómo la bicicleta puede ayudar a reducir emisiones de carbono.\n        En esta sesion hay (1) usuarios.\n        Los participantes en la discusión son los siguientes:\n        - FEFE\n        \n        El idioma principal de esta conversación es **español**.\n        Por lo tanto:\n        1. Todos los análisis lingüísticos y semánticos (incluido el reconocimiento de argumentos según el modelo de Toulmin) deben realizarse en este idioma.\n        2. Las respuestas, mensajes y retroalimentaciones generadas por el agente Orientador deben estar redactadas completamente en español.\n        3. No traduzcas ni interpretes al inglés u otros idiomas a menos que el sistema o los participantes lo soliciten explícitamente.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 1
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 2 ---\nTimestamp: 2025-11-11 18:13:56.449\nRol: system\nAutor: Curador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 0 segundos\n- Tiempo restante: 3 minutos y 59 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 2
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 3 ---\nTimestamp: 2025-11-11 18:13:57.981\nRol: system\nAutor: Curador\nContenido:\nHa salido de la sala el participante llamado: FEFE\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 3
+    },
+    {
+      "timestamp": null,
+      "autor": "Curador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 4 ---\nTimestamp: 2025-11-11 18:14:00.228\nRol: assistant\nAutor: Curador\nContenido:\n{\n    \"FEFE\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 4
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 1 ---\nTimestamp: 2025-11-11 18:13:56.448\nRol: system\nAutor: Orientador\nContenido:\n\n    El tema que los estudiantes discutirán es el siguiente:\n    Discusión sobre cómo la bicicleta puede ayudar a reducir emisiones de carbono.\n        En esta sesion hay (1) usuarios.\n        Los participantes en la discusión son los siguientes:\n        - FEFE\n        \n        El idioma principal de esta conversación es **español**.\n        Por lo tanto:\n        1. Todos los análisis lingüísticos y semánticos (incluido el reconocimiento de argumentos según el modelo de Toulmin) deben realizarse en este idioma.\n        2. Las respuestas, mensajes y retroalimentaciones generadas por el agente Orientador deben estar redactadas completamente en español.\n        3. No traduzcas ni interpretes al inglés u otros idiomas a menos que el sistema o los participantes lo soliciten explícitamente.\n        \n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 1
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 2 ---\nTimestamp: 2025-11-11 18:13:56.449\nRol: system\nAutor: Orientador\nContenido:\n**Actualización del tiempo**\n- Tiempo transcurrido: 0 segundos\n- Tiempo restante: 3 minutos y 59 segundos\n\nPor favor, tengan en cuenta este avance temporal para sus decisiones y evaluaciones.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 2
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 3 ---\nTimestamp: 2025-11-11 18:13:57.981\nRol: system\nAutor: Orientador\nContenido:\nHa salido de la sala el participante llamado: FEFE\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 3
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 4 ---\nTimestamp: 2025-11-11 18:14:00.228\nRol: assistant\nAutor: Orientador\nContenido:\n{\n    \"FEFE\":{\n        \"Claim\": 0,\n        \"Evidence\": -1,\n        \"Warrant\": -1,\n        \"Qualifier\":0,\n        \"fuentes\": {\n            \"Claim\": [],\n            \"Evidence\": [],\n            \"Warrant\": [],\n            \"Qualifier\": []\n        },\n        \"explicacion\": \"\"\n    }\n}\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 4
+    },
+    {
+      "timestamp": null,
+      "autor": "Orientador",
+      "rol": "agent_memory",
+      "contenido": "--- Mensaje 5 ---\nTimestamp: 2025-11-11 18:13:56.448\nRol: system\nAutor: Orientador\nContenido:\nLa sesión de debate ha comenzado. Orientador por favor da un mensaje de bienvenida y explica el objetivo de la actividad.\n",
+      "tipo": "memoria_agente",
+      "orden_memoria": 5
+    }
+  ]
+}

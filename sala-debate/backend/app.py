@@ -54,6 +54,7 @@ def init_topic():
     data =request.json
     room_name = data["room"]
     topic = data["prompt_inicial"]
+    idioma = data.get("idioma","español")
 
     if room_name in salas_activas:
         print("sala ya inicializada")
@@ -64,7 +65,7 @@ def init_topic():
         print(f"id de la sala:{room_session["id"]}")
         #Recuperamos los ultimos promts para cada agente
         current_prompts = get_current_prompts()
-        #prompt_clasificador = current_prompts.get("Clasificador","Prompt por defecto del clasificador")
+        prompt_validador = current_prompts.get("Clasificador","Prompt por defecto del clasificador")
         prompt_puntuador = current_prompts.get("Puntuador","Prompt por defecto del puntuador")
         prompt_curador = current_prompts.get("Curador", "Prompt por defecto del curador")
         prompt_orientador = current_prompts.get("Orientador", "Prompt por defecto del orientador")
@@ -73,11 +74,12 @@ def init_topic():
         tamaño_ventana_mensajes = configuracion_multiagente.ventana_mensajes
         tiempo_fase_1 = configuracion_multiagente.fase_1_segundos 
         tiempo_fase_2 = configuracion_multiagente.fase_2_segundos
+        duracion_sesion = tiempo_fase_1 + tiempo_fase_2
         update_interval = configuracion_multiagente.update_interval
 
         intermediario = Intermediario(
             tamañoVentana=tamaño_ventana_mensajes,
-            #prompt_agenteClasificador=prompt_clasificador,
+            prompt_agenteValidador=prompt_validador,
             prompt_agentePuntuador=prompt_puntuador,
             prompt_agenteCurador=prompt_curador,
             prompt_agenteOrientador=prompt_orientador,
@@ -87,23 +89,27 @@ def init_topic():
             )
         
         usuarios_sala = get_user_list(room_name)
-        asyncio.run(intermediario.start_session(topic,usuarios_sala))
+        #asyncio.run(intermediario.start_session(topic,usuarios_sala, idioma))
+        asyncio.run_coroutine_threadsafe(
+            intermediario.start_session(topic, usuarios_sala, idioma),
+            intermediario.loop
+        )
+
         intermediario.start_processing()
         # Guardar el intermediario en el dict de salas
         salas_activas[room_name] = intermediario
         emitir_resultado_socket(socketio,'start_session',{"room":room_name},room_name)
         
-        timer = threading.Thread(target=intermediario.start_timer, args=((tiempo_fase_1, tiempo_fase_2), update_interval))
+        timer = threading.Thread(target=intermediario.start_timer, args=(duracion_sesion, update_interval))
         timer.start()
-
+        intermediario.timer._update_state()
         timer_state = intermediario.get_timer_state()
         emitir_resultado_socket(
             socketio,
             "timer_user_update",
             {
-                "fase_actual": timer_state["fase_actual"],
-                "elapsed_phase": timer_state["elapsed_phase"],
-                "remaining_phase": timer_state["remaining_phase"],
+                "elapsed_time": timer_state["elapsed_time"],
+                "remaining_time": timer_state["remaining_time"],
             },
             room_name,
         )
@@ -299,4 +305,13 @@ def multiagent_config():
 
 if __name__ == "__main__":
     #app.run(debug=True)
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    #socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    socketio.run(
+        app,
+        host=os.getenv("HOST", "0.0.0.0"),
+        port=int(os.getenv("PORT", 5000)),
+        debug=True,
+        use_reloader=True
+    )
+
+

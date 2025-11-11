@@ -12,34 +12,45 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'sala' | 'prompts' | 'multiagente' | 'temas'>('sala')
   
   return (
-    <main className="flex justify-center items-center min-h-screen ">
-      <div className="relative bg-white shadow-lg rounded-2xl max-w-7xl w-[150vh] h-[90vh] p-6 overflow-y-auto">
+    <main className="flex justify-center items-start min-h-screen pt-12">
+      <div className="relative bg-white shadow-lg rounded-2xl max-w-7xl w-[150vh] h-[90vh] p-6 overflow-y-auto mt-6 md:mt-8">
         
         {/* Barra superior con botones de pestañas */}
-        <div className="flex space-x-4 border-b pb-2 mb-4">
+        <div className="flex items-center gap-2 border-b pb-2 mb-4">
           <button
             onClick={() => setActiveTab('prompts')}
-            className={`px-4 py-1 rounded-t-md font-medium ${activeTab === 'prompts' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+            className={`px-3 py-1 text-sm rounded-md font-medium transition ${
+              activeTab === 'prompts' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'
+            }`}
           >
-            Ver Prompts de Agentes
+            Prompts
           </button>
+
           <button
             onClick={() => setActiveTab('multiagente')}
-            className={`px-4 py-1 rounded-t-md font-medium ${activeTab === 'multiagente' ? 'bg-purple-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+            className={`px-3 py-1 text-sm rounded-md font-medium transition ${
+              activeTab === 'multiagente' ? 'bg-purple-600 text-white' : 'bg-gray-100 hover:bg-gray-200'
+            }`}
           >
-            Configuración Multiagente
+            Multiagente
           </button>
+
           <button
             onClick={() => setActiveTab('sala')}
-            className={`px-4 py- rounded-t-md font-medium ${activeTab === 'sala' ? 'bg-green-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+            className={`px-3 py-1 text-sm rounded-md font-medium transition ${
+              activeTab === 'sala' ? 'bg-green-600 text-white' : 'bg-gray-100 hover:bg-gray-200'
+            }`}
           >
-            Configuración de la Sala
+            Sala
           </button>
+
           <button
-          onClick={() => setActiveTab('temas')}
-          className={`px-4 py- rounded-t-md font-medium ${activeTab === 'temas' ? 'bg-green-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+            onClick={() => setActiveTab('temas')}
+            className={`px-3 py-1 text-sm rounded-md font-medium transition ${
+              activeTab === 'temas' ? 'bg-green-600 text-white' : 'bg-gray-100 hover:bg-gray-200'
+            }`}
           >
-            Temas para Debates
+            Temas
           </button>
         </div>
 

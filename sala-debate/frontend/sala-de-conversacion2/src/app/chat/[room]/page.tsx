@@ -17,9 +17,9 @@ export default function ChatRoom() {
   };
   const [showMentionBar, setShowMentionBar] = useState(false)
   const [mentionTarget, setMentionTarget] = useState<string | null>(null);
-  const [faseActual, setFaseActual] = useState<string>('Cargando...')
-  const [remainingPhase, setRemainingPhase] = useState<number>(0)
-  const [elapsedPhase, setElapsedPhase] = useState<number>(0)
+  const [elapsedTime, setElapsedTime] = useState<number>(0)
+  const [remainingTime, setRemainingTime] = useState<number>(0)
+
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const params = useParams()
   const room = params.room as string
@@ -272,22 +272,18 @@ useEffect(() => {
   if (!socket || !joined) return;
 
   const handleTimerUpdate = (data: {
-    fase_actual: string;
-    remaining_phase: number;
-    elapsed_phase: number;
+    elapsed_time: number;
+    remaining_time: number;
   }) => {
-    const { fase_actual, remaining_phase, elapsed_phase } = data;
+    const { elapsed_time, remaining_time} = data;
 
     if (!isTimerRunning) setIsTimerRunning(true);
-    setFaseActual(fase_actual);
-
-    // Corrige solo si hay más de 1 segundo de diferencia
-    setRemainingPhase((prev) =>
-      prev === null || Math.abs(remaining_phase - prev) > 1
-        ? remaining_phase
+    setRemainingTime((prev) =>
+      prev === null || Math.abs(remaining_time - prev) > 1
+        ? remaining_time
         : prev
     );
-    setElapsedPhase(elapsed_phase);
+    setElapsedTime(elapsed_time);
   };
 
   // Escuchamos directamente los updates del timer desde la sala
@@ -300,15 +296,15 @@ useEffect(() => {
 
 // Intervalo local para decrementar el contador cada segundo
 useEffect(() => {
-  if (!isTimerRunning || remainingPhase === null) return;
+  if (!isTimerRunning || remainingTime === null) return;
 
   const interval = setInterval(() => {
-    setRemainingPhase((prev) => (prev && prev > 0 ? prev - 1 : 0));
-    setElapsedPhase((prev) => (prev !== null ? prev + 1 : 0));
+    setRemainingTime((prev) => (prev && prev > 0 ? prev - 1 : 0));
+    setElapsedTime((prev) => (prev !== null ? prev + 1 : 0));
   }, 1000);
 
   return () => clearInterval(interval);
-}, [isTimerRunning, remainingPhase]);
+}, [isTimerRunning, remainingTime]);
 
 return (
   <main className="p-4 sm:p-6 md:p-8 w-full max-w-7xl mx-auto min-h-screen flex flex-col">
@@ -336,27 +332,24 @@ return (
       <>
         {/* Header superior con fase y botón salir */}
         <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-blue-50 p-3 rounded-lg shadow-sm">
-          <div className="text-xl font-semibold text-blue-700 flex flex-wrap items-baseline gap-2">
-            🕒 Fase actual:
-            <span className="text-blue-900 font-bold ml-1">{faseActual}</span>
-            <span className="text-blue-700 mx-2">—</span>
-            Tiempo restante:
-            <span
-              className="text-green-700 font-mono font-bold ml-1 tracking-tight"
-              style={{ fontVariantNumeric: "tabular-nums" }}
-            >
-              {Math.floor((remainingPhase ?? 0) / 60)}:
-              {String((remainingPhase ?? 0) % 60).padStart(2, "0")}
-            </span>
-          </div>
+  <div className="text-xl font-semibold text-blue-700 flex flex-wrap items-baseline gap-2">
+    🕒 Tiempo restante:
+    <span
+      className="text-green-700 font-mono font-bold ml-1 tracking-tight"
+      style={{ fontVariantNumeric: "tabular-nums" }}
+    >
+      {Math.floor((remainingTime ?? 0) / 60)}:
+      {String((remainingTime ?? 0) % 60).padStart(2, "0")}
+    </span>
+  </div>
 
-          <button
-            onClick={leaveRoom}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-          >
-            Salir de la sala
-          </button>
-        </div>
+  <button
+    onClick={leaveRoom}
+    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+  >
+    Salir de la sala
+  </button>
+</div>
 
         {/* Grid principal responsivo */}
         <div
@@ -380,6 +373,7 @@ return (
               {messages.map((m, i) => {
                 const isOwn = m.username === username;
                 const isSystem = m.system;
+                const isOrientador = m.username?.toLowerCase() === 'orientador';
                 return (
                   <div
                     key={i}
@@ -397,7 +391,9 @@ return (
                       }`}
                     >
                       {!isSystem && !isOwn && (
-                        <b className="block text-sm mb-0.5">{m.username}</b>
+                        <b className="block text-sm mb-0.5">
+                          {isOrientador ? '🤖' :""}
+                          {m.username}</b>
                       )}
                       {m.content}
                     </div>

@@ -33,6 +33,7 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
   const [room, setRoom] = useState('')
   const [topic, setTopic] = useState('')
   const [selectedCaseKey, setSelectedCaseKey] = useState('')
+  const [idioma, setIdioma] = useState('español')
 
   // Fetch de salas
   const fetchRooms = async () => {
@@ -91,6 +92,7 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
 
   const handleEnter = () => {
     if (!room || !topic) return
+    sessionStorage.setItem('chatIdioma', idioma)
     sessionStorage.setItem('chatTopic', topic)
     sessionStorage.setItem('chatRoom', room)
     router.push(`/chat/${room}/lobby`)
@@ -122,7 +124,7 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* Estado de salas */}
+      {/* Panel izquierdo - Estado de salas */}
       <div className="border rounded-lg p-4 shadow bg-gray-50">
         <h2 className="text-lg font-semibold mb-2">Estado de salas</h2>
         {roomStatuses.length === 0 ? (
@@ -155,7 +157,7 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
         )}
       </div>
 
-      {/* Formulario central */}
+      {/* Panel central - Configuración */}
       <div>
         <h1 className="text-2xl font-bold mb-6">Configuración de la Sala</h1>
 
@@ -175,7 +177,7 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
           </select>
         </div>
 
-        <div className="mb-4">
+        <div className="mb-6">
           <label className="block mb-2 text-sm font-medium">Elige un tema:</label>
           <select
             className="border p-2 w-full rounded"
@@ -191,27 +193,38 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
           </select>
         </div>
 
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-medium">O escribe tu propio tema:</label>
-          <textarea
-            className="border p-2 w-full rounded"
-            rows={5}
-            value={topic}
-            onChange={(e) => {
-              setTopic(e.target.value)
-              setSelectedCaseKey('')
-            }}
-            placeholder="Tema inicial de la discusión"
-          />
-        </div>
-
         <div>
           <button
             onClick={handleEnter}
-            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition w-full"
           >
-            Entrar
+            Entrar a la Sala
           </button>
+        </div>
+        
+        <div className="mb-4">
+          <label className="block mb-2 text-sm font-medium">Seleccionar idioma:</label>
+          <select
+            className="border p-2 w-full rounded cursor-pointer"
+            value={idioma}
+            onChange={(e) => setIdioma(e.target.value)}
+          >
+            <option value="español">Español</option>
+            <option value="inglés">Inglés</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Panel derecho - Texto del tema */}
+      <div className="border rounded-lg p-5 shadow-lg bg-white h-[500px] flex flex-col">
+        <h2 className="text-xl font-semibold mb-3 text-blue-800">Tema seleccionado</h2>
+
+        <div className="border rounded-md bg-gray-50 p-4 flex-grow overflow-y-auto text-gray-800 whitespace-pre-wrap leading-relaxed shadow-inner">
+          {topic ? (
+            <p>{topic}</p>
+          ) : (
+            <p className="text-gray-400 italic">Selecciona un tema para visualizarlo aquí.</p>
+          )}
         </div>
       </div>
     </div>

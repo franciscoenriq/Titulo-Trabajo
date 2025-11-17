@@ -134,7 +134,7 @@ def register_sockets(socketio,salas_activas):
         if not id_room_session:
             emit('error', {'msg': f"No hay sesión activa para la sala {room}"}, room=room)
             return
-        insert_message(
+        user_message_id = insert_message(
             room_session_id=id_room_session,
             user_id=username,
             agent_name=None,
@@ -146,7 +146,7 @@ def register_sockets(socketio,salas_activas):
         if not intermediario:
             emit('error', {'msg': 'La sala no está inicializada con agentes.'}, room=room)
             return
-        intermediario.enqueue_message(username,content)
+        intermediario.enqueue_message(username,content,user_message_id)
 
 
     @socketio.on('typing')

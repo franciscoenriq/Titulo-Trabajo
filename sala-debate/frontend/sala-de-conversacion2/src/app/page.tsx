@@ -28,12 +28,14 @@ export default function LoginPage() {
               className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-600"
             > Debatir </button>
             <p></p>
+            {/* 
             <button
               type="button"
               onClick={entrarComoMonitor}
               className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-green-700"
             > Monitorear </button>
             <p></p>
+            */}
           </form>
         </div>
 

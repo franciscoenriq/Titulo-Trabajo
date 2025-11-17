@@ -4,52 +4,83 @@ from .pipeline import Pipeline
 from .timer import Timer
 from models.models import *
 import asyncio
-factory = ReActAgentFactory()
+
 import threading
 class Intermediario:
     def __init__(self,
                  tamañoVentana:int,
                  prompt_agenteValidador:str,
-                 prompt_agentePuntuador:str,
+                 #prompt_agentePuntuador:str,
                  prompt_agenteCurador:str,
                  prompt_agenteOrientador:str,
                  socketIo,
                  sala:str,
                  emit_callback):
         self.tamañoVentana = tamañoVentana
-        self.mensajesTotales = []
         self.numeroMensajesTotales = 0
-        self.pipeLine = Pipeline(factory=factory,
+        self.ids_mensajes_ventana = []
+        self.factory = ReActAgentFactory()
+        self.pipeLine = Pipeline(factory=self.factory,
                                  prompt_agenteValidador=prompt_agenteValidador,
-                                    prompt_agentePuntuador=prompt_agentePuntuador,
+                                    #prompt_agentePuntuador=prompt_agentePuntuador,
                                     prompt_agenteCurador=prompt_agenteCurador,
                                     promt_agenteOrientador=prompt_agenteOrientador
                                     )
         self.emit_callback = emit_callback
+
+        self.loop = asyncio.new_event_loop()
+        self.loop_started = threading.Event()
+
+        threading.Thread(
+            target=self._run_event_loop,
+            daemon=True
+        ).start()
+
+        self.message_queue = asyncio.Queue()
+
+
         self.timer = Timer()
 
         self.timer.callback = self.callback
+        self.timer.set_scheduler(lambda coro: asyncio.run_coroutine_threadsafe(coro, self.loop))
+
         self.socketIo = socketIo
         self.sala = sala
-        self.message_queue = asyncio.Queue()
+
+        #self.message_queue = asyncio.Queue()
         self.processing_task = None
-        self.loop = asyncio.new_event_loop()
-        threading.Thread(target=self._run_event_loop,daemon=True).start()
+        
+        self.timer_silencio_consecutivo = 0
+        self.hubo_mensaje_desde_ultimo_callback = False
+        self.el_el_primer_callback = True
+ #       self.loop_started = threading.Event()
+
+#        threading.Thread(target=self._run_event_loop,daemon=True).start()
 
     def _run_event_loop(self):
         asyncio.set_event_loop(self.loop)
+        self.loop_started.set()
         self.loop.run_forever()
 
 
     def start_processing(self):
         if not self.processing_task:
-            self.processing_task = asyncio.run_coroutine_threadsafe(self._process_messages(), self.loop)
-
+            self.loop_started.wait()  # esperar que el loop esté listo
+            self.processing_task = asyncio.run_coroutine_threadsafe(
+                self._process_messages(),
+                self.loop
+            ) 
+    """
+        if not self.processing_task:
+            #self.processing_task = asyncio.run_coroutine_threadsafe(self._process_messages(), self.loop)
+            loop = asyncio.get_event_loop()
+            self.processing_task = loop.create_task(self._process_messages())
+    """
     async def _process_messages(self):
         while True:
-            username, message = await self.message_queue.get()
+            username, message, user_message_id = await self.message_queue.get()
             try:
-                resultado = await self.agregarMensage(username, message)
+                resultado = await self.agregarMensage(username, message, user_message_id)
                 if resultado:
                     self.emit_callback('evaluacion',resultado,self.sala)
             except Exception as e:
@@ -57,12 +88,15 @@ class Intermediario:
             finally:
                 self.message_queue.task_done()
 
-    def enqueue_message(self, username: str, message: str):
+    def enqueue_message(self, username: str, message: str, user_message_id: int):
         """Permite encolar mensajes desde hilos externos (por ejemplo, el socket)."""
+        #asyncio.get_event_loop().create_task(
+        #    self.message_queue.put((username, message, user_message_id))
+        #)
         asyncio.run_coroutine_threadsafe(
-            self.message_queue.put((username, message)),
-            self.loop
-        )
+        self.message_queue.put((username, message, user_message_id)),
+        self.loop
+    )
         
     def get_timer_state(self):
         """Devuelve el estado actual del timer, o valores iniciales si aún no se ha iniciado."""
@@ -80,7 +114,7 @@ class Intermediario:
             }
 
 
-    async def agregarMensage(self, userName:str, message:str) -> list[dict] | None:
+    async def agregarMensage(self, userName:str, message:str, user_message_id:int) -> list[dict] | None:
         """
         Este es el punto en que entra cada mensaje al pipeline de agentes. 
         Primero que todo se comprueba si el mensaje contiene la fras @orientador.
@@ -90,10 +124,12 @@ class Intermediario:
         - A traves del cumplimiento del tamaño de la ventana.
         - Cuando el puntaje para un mensaje es demasiado bajo. 
         """
+        id_room_session = get_active_room_session_id(self.sala)
+        self.hubo_mensaje_desde_ultimo_callback = True
 
         if self.contiene_mencion_orientador(message):
             respuesta = await self.pipeLine.reactiveResponse(userName,message)
-            id_room_session = get_active_room_session_id(self.sala)
+            
             
             contenido = respuesta[0]["respuesta"] if respuesta and "respuesta" in respuesta[0] else ""
 
@@ -107,15 +143,48 @@ class Intermediario:
             self.emit_callback('evaluacion',respuesta,self.sala)
             return
 
-        await self.pipeLine.entrar_mensaje_a_la_sala(username=userName,mensaje=message)
-        self.numeroMensajesTotales += 1 
+        respuesta_validador = await self.pipeLine.entrar_mensaje_a_la_sala(username=userName,mensaje=message)
+        insert_message(
+            room_session_id=id_room_session,
+            user_id=None,
+            agent_name="Validador",
+            sender_type=SenderType.agent,
+            content=str(respuesta_validador),
+            parent_message_id=user_message_id
+        )
+        self.numeroMensajesTotales += 1
+        self.ids_mensajes_ventana.append(user_message_id)
         print(f"AUMENTA EL NUMERO DE MENSAJES:{self.numeroMensajesTotales}")
         #Verificamos si el evento ventana se invoca o no. 
-        if (self.numeroMensajesTotales == self.tamañoVentana ):
+        if (self.numeroMensajesTotales >= self.tamañoVentana ):
             print("se llama al curador")
-            result = await self.pipeLine.evento_ventana()
+            respuesta_cascada = await self.pipeLine.evento_ventana()
             self.numeroMensajesTotales = 0
-            return result
+            
+            for r in respuesta_cascada: 
+                agente = r.get("agente","").lower()
+                contenido = r.get("respuesta","")
+                if agente == "curador":
+                    insert_message(
+                        room_session_id=id_room_session,
+                        user_id=None,
+                        agent_name="Curador",
+                        sender_type=SenderType.agent,
+                        content=contenido,
+                        used_message_ids=self.ids_mensajes_ventana.copy()
+                    )
+                else: 
+                    insert_message(
+                        room_session_id=id_room_session,
+                        user_id=None,
+                        agent_name=agente.capitalize(),
+                        sender_type=SenderType.agent,
+                        content=contenido
+                    )
+
+
+            self.ids_mensajes_ventana = []
+            return respuesta_cascada
     
     async def start_session(self,topic:str,usuarios_sala:list,idioma:str)->None:
         respuesta = await self.pipeLine.start_session(topic,usuarios_sala,idioma)
@@ -154,38 +223,37 @@ class Intermediario:
         es analizado con self.evaluacion_score()
         """
         try:
+            if self.el_el_primer_callback:
+                self.el_el_primer_callback = False
+                return  # ignorar el primer callback
             if hito_alcanzado:
                 await self._manejar_hito_temporal(hito_alcanzado, elapsed_time, remaining_time)
 
-            respuesta_puntuador = await self.pipeLine.avisar_tiempo(elapsed_time, remaining_time)
+            await self.pipeLine.avisar_tiempo(elapsed_time, remaining_time)
             dataToSala = {
                 "elapsed_time": elapsed_time,
                 "remaining_time": remaining_time
             }
-            if respuesta_puntuador == None: 
-                self.emit_callback('timer_user_update',dataToSala,self.sala)
-                return
-            
-            # Validar formato de respuesta
-            if not isinstance(respuesta_puntuador, dict):
-                print(f"[Warning] Respuesta puntuador no es dict: {type(respuesta_puntuador)}")
-                self.emit_callback('timer_user_update', dataToSala, self.sala)
-                return
-            
-            score = respuesta_puntuador.get("score", 0)
-            diagnostico = respuesta_puntuador.get("diagnostico", "Sin diagnóstico")
 
-            data = {
-                "elapsed_time": elapsed_time,
-                "remaining_time": remaining_time,
-                "score": score,
-                "diagnostico": diagnostico
-            }
             self.emit_callback('timer_user_update',dataToSala,self.sala)
-            self.emit_callback('timer_update',data,f"monitor_{self.sala}")
 
-            
-            await self.evaluacion_score(int(score),'timer')
+            # --- DETECCIÓN DE SILENCIO EN EL CHAT ---
+            if self.hubo_mensaje_desde_ultimo_callback:
+                self.timer_silencio_consecutivo = 0
+                self.hubo_mensaje_desde_ultimo_callback = False
+            else:
+                # no hubo mensajes desde el último callback
+                self.timer_silencio_consecutivo += 1
+
+            # si ya van 2 callbacks sin mensajes, activar orientador
+            if self.timer_silencio_consecutivo >= 2:
+                print("🟡 Activando Orientador por silencio prolongado")
+                self.timer_silencio_consecutivo = 0       # reinicias para evitar repetición
+                resultado = await self.pipeLine.evento_timer()
+                
+                self.emit_callback('evaluacion',resultado,self.sala)
+
+
 
         except Exception as e:
             print(f"[Error crítico en callback timer]: {e}")
@@ -266,7 +334,7 @@ class Intermediario:
         if score >= umbral:
             return False
         if origen == 'timer':
-            respuesta = await self.pipeLine.evento_timer(score)
+            respuesta = await self.pipeLine.evento_timer()
             if respuesta:
                 self.emit_callback('evaluacion',respuesta,self.sala)
                 return True

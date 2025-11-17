@@ -19,3 +19,5 @@ __pycache__/
 # Otros
 model_configs.json
 runs/
+logs/
+*txt

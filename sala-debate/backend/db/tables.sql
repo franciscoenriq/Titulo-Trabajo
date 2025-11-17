@@ -31,3 +31,18 @@ CREATE TABLE temas (
     tema_text TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+
+CREATE TABLE agent_prompt_templates (
+    id SERIAL PRIMARY KEY,
+    agent_name VARCHAR NOT NULL UNIQUE,
+
+    system_layer TEXT,
+    context_layer TEXT,
+    input_layer TEXT,
+    output_layer TEXT,
+    restriction_layer TEXT,
+
+    parameters JSONB,
+    updated_at TIMESTAMP DEFAULT NOW()
+);

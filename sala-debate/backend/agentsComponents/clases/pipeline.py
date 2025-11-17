@@ -11,12 +11,6 @@ from .BaseModels.baseModel import *
 from utils.groupchat_utils import *
 from.utils.utilsForAgents import *
 
-DEFAULT_TOPIC = """
-    El tema que los estudiantes discutirán es el siguiente:
-    """
-
-
-
 class PuntuacionModel(BaseModel):
     score_dinamico: int = Field(..., ge=0, le=100, description="Un número entero entre 0 y 100")
     diagnostico_dinamico: str = Field(..., description="Breve explicación (15 palabras maximo) del score")
@@ -24,7 +18,7 @@ class PuntuacionModel(BaseModel):
 class Pipeline:
     def __init__(self,factory: ReActAgentFactory,
                  prompt_agenteValidador:str,
-                 prompt_agentePuntuador:str,
+                 #prompt_agentePuntuador:str,
                  prompt_agenteCurador:str,
                  promt_agenteOrientador:str
                  ):
@@ -32,10 +26,10 @@ class Pipeline:
             name="Validador",
             sys_prompt=prompt_agenteValidador
         )
-        self.agentePuntuador = factory.create_agent(
-            name="Puntuador",
-            sys_prompt=prompt_agentePuntuador
-        )
+        #self.agentePuntuador = factory.create_agent(
+        #    name="Puntuador",
+        #    sys_prompt=prompt_agentePuntuador
+        #)
         self.agenteCurador = factory.create_agent(
             name="Curador",
             sys_prompt=prompt_agenteCurador
@@ -45,7 +39,7 @@ class Pipeline:
             sys_prompt=promt_agenteOrientador
         )
 
-        self.agentes = list([self.agentePuntuador,self.agenteCurador,self.agenteOrientador])
+        self.agentes = list([self.agenteCurador,self.agenteOrientador])
         self.hub = None
         self.msg_id = 0
         self.avisos_timer = 0
@@ -80,8 +74,7 @@ class Pipeline:
         hint = Msg(
             name="Host",
             role="system",
-            content=DEFAULT_TOPIC
-            + tema_sala + participantes + idioma_prompt
+            content= participantes + idioma_prompt
         )
 
         self.hub = await MsgHub(participants=self.agentes,announcement=hint).__aenter__()
@@ -170,6 +163,7 @@ class Pipeline:
         await self.hub.broadcast(msg)
         respuesta_validador = await self.agenteValidador(msg)
         await self.hub.broadcast(respuesta_validador)
+        return respuesta_validador.content
 
     
     async def avisar_tiempo(self, elapsed_time, remaining_time):
@@ -178,6 +172,9 @@ class Pipeline:
         tanto en la fase actual como en la sesión total. En el primer aviso solo informa; en los siguientes,
         también solicita al Puntuador una evaluación.
         """
+        if not self.hub:
+            print("[Pipeline] Hub no disponible en avisar_tiempo")
+            return None
         def formato_tiempo(segundos: int) -> str:
             minutos = segundos // 60
             segs = segundos % 60
@@ -202,43 +199,13 @@ class Pipeline:
             role="system",
             content=mensaje_tiempo
         )
-
-        # Primer aviso solo informa
-        if self.avisos_timer == 0:
-            print("Primer aviso del timer: solo se informa el estado del tiempo.")
-            await self.hub.broadcast(msg_tiempo)
-            self.avisos_timer = 1
-            return
-
-        # Avisos siguientes piden evaluación al Puntuador
-        print("Aviso de timer con evaluación solicitada al Puntuador.")
-        await self.hub.broadcast(msg_tiempo)
-
-        instruccion_puntuador = "Ahora que se ha actualizado el tiempo, debes dar tu score." 
-        
-
-        msg_instruccion = Msg(
-            name="Host",
-            role="system",
-            content=instruccion_puntuador
-        )
-
-        respuesta_puntuador = await self.agentePuntuador(msg_instruccion)
-
+        print("AVISO TIMER ENVIADO AL HUB")
         try:
-            #puntuacion = PuntuacionModel.model_validate_json(respuesta_puntuador.content)
-            puntuacion = safe_parse_json(respuesta_puntuador.content, PuntuacionModel)
-            score = puntuacion.score_dinamico
-            diagnostico = puntuacion.diagnostico_dinamico
+            await self.hub.broadcast(msg_tiempo)
         except Exception as e:
-            print(f"[Error de validación en avisar_tiempo]: {e}")
-            score = 0
-            diagnostico = "Error en formato de respuesta del agente."
+            print(f"[Pipeline] Error broadcast msg_tiempo: {e}")
+        return None
 
-        return {
-            "score": score,
-            "diagnostico": diagnostico
-        }
 
     
     async def evaluar_intervencion_en_cascada(self,mensaje:Msg):
@@ -300,18 +267,23 @@ class Pipeline:
         return respuestas
         
 
-    async def evento_timer(self,puntuacion:int):
-
-        msgSystem = f"""El puntuador a puntuado muy baja la conversacion con {puntuacion} puntos debido a que se le preguntó su opinion 
-        luego de una actualizacion del timer.
-        El Agente Curador debe decidir si pertinente o no intervenir. 
+    async def evento_timer(self):
+        """
+        Evento que se usa cuando se detecta inactividad en la sala de debate. Se devuelve un mensaje del Orientador. 
+        """
+        msgSystem = f"""
+        Se a detectado inactividad en la sala por parte de los estudiantes, por tanto agente Orientador debes intervenir para motivar la participación.
         """
 
         msg = Msg(name="host",
                   role="system",
                   content=msgSystem)
-        respuestas = await self.evaluar_intervencion_en_cascada(msg)
-        return respuestas
+        respuesta_orientador = await self.agenteOrientador(msg)
+        respuesta = [{
+            "agente":"Orientador",
+            "respuesta":respuesta_orientador.content
+        }]
+        return respuesta
     
     async def evento_lowScoreMessage(self, puntuacion:int):
         msgSystem = f"""

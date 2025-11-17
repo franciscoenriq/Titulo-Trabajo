@@ -10,7 +10,7 @@ from models.models import Base, engine
 from controllers.auth_controller import auth_bp
 from controllers.ChatSocketController import *
 from agentsComponents.clases.intermediador import Intermediario
-
+import time
 
 load_dotenv()
 app = Flask(__name__)
@@ -18,8 +18,12 @@ CORS(app)
 app.register_blueprint(auth_bp)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") 
 Base.metadata.create_all(engine)
+GLOBAL_LOOP = asyncio.new_event_loop()
+asyncio.set_event_loop(GLOBAL_LOOP)
 
-salas_activas = {}  # room_name -> Intermediario
+# Guardamos las salas activas , room_name -> Intermediario
+salas_activas: dict[str, Intermediario] = {}
+
 
 #Inicializar Sockets
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
@@ -65,10 +69,11 @@ def init_topic():
         print(f"id de la sala:{room_session["id"]}")
         #Recuperamos los ultimos promts para cada agente
         current_prompts = get_current_prompts()
-        prompt_validador = current_prompts.get("Clasificador","Prompt por defecto del clasificador")
-        prompt_puntuador = current_prompts.get("Puntuador","Prompt por defecto del puntuador")
-        prompt_curador = current_prompts.get("Curador", "Prompt por defecto del curador")
-        prompt_orientador = current_prompts.get("Orientador", "Prompt por defecto del orientador")
+        prompt_validador = (current_prompts.get("Clasificador","Prompt por defecto del clasificador")).replace("{tema}",topic)
+        #prompt_puntuador = (current_prompts.get("Puntuador","Prompt por defecto del puntuador")).replace("{tema}",topic)
+        prompt_curador = (current_prompts.get("Curador", "Prompt por defecto del curador")).replace("{tema}",topic)
+        prompt_orientador = (current_prompts.get("Orientador", "Prompt por defecto del orientador")).replace("{tema}",topic)
+        #print(f"puntuador prompt: {prompt_puntuador}")
         #Recuperamos la configuracion del sistema multiagente 
         configuracion_multiagente = get_multiagent_config()
         tamaño_ventana_mensajes = configuracion_multiagente.ventana_mensajes
@@ -80,7 +85,7 @@ def init_topic():
         intermediario = Intermediario(
             tamañoVentana=tamaño_ventana_mensajes,
             prompt_agenteValidador=prompt_validador,
-            prompt_agentePuntuador=prompt_puntuador,
+            #prompt_agentePuntuador=prompt_puntuador,
             prompt_agenteCurador=prompt_curador,
             prompt_agenteOrientador=prompt_orientador,
             socketIo=socketio,
@@ -89,21 +94,31 @@ def init_topic():
             )
         
         usuarios_sala = get_user_list(room_name)
-        #asyncio.run(intermediario.start_session(topic,usuarios_sala, idioma))
+        salas_activas[room_name] = intermediario
+        # 🔵 Iniciar sesión async
         asyncio.run_coroutine_threadsafe(
             intermediario.start_session(topic, usuarios_sala, idioma),
             intermediario.loop
         )
 
+        # 🔵 Iniciar worker de mensajes
         intermediario.start_processing()
-        # Guardar el intermediario en el dict de salas
-        salas_activas[room_name] = intermediario
-        emitir_resultado_socket(socketio,'start_session',{"room":room_name},room_name)
-        
-        timer = threading.Thread(target=intermediario.start_timer, args=(duracion_sesion, update_interval))
-        timer.start()
-        intermediario.timer._update_state()
+
+        # 🔵 Iniciar timer
+        intermediario.start_timer(duracion_sesion, update_interval)
+
         timer_state = intermediario.get_timer_state()
+
+        emitir_resultado_socket(
+            socketio,
+            "start_session",
+            {
+                "room": room_name,
+                "users": get_user_list(room_name),
+            },
+            room_name,
+        )
+
         emitir_resultado_socket(
             socketio,
             "timer_user_update",
@@ -205,6 +220,58 @@ def get_prompts():
             "status": "success", 
             "updated": created_ids}), 201
     
+
+@app.route("/api/prompt-template/<agent_name>", methods=["GET"])
+def api_get_template(agent_name):
+    """
+    Endpoint: Retorna el template completo de un agente en formato JSON.
+    Si no existe, retorna error 404.
+    """
+    try:
+        template = get_agent_template(agent_name)
+        return jsonify(template), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    
+@app.route("/api/prompt-template", methods=["POST"])
+def api_create_template():
+    data = request.json
+    agent_name = data.get("agent_name")
+
+    if not agent_name:
+        return jsonify({"error": "agent_name is required"}), 400
+
+
+    try:
+        template = create_agent_template(agent_name)
+        return jsonify({"status": "created", "agent_name": template.agent_name}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+@app.route("/api/prompt-template/<agent_name>", methods=["PUT"])
+def api_update_template(agent_name):
+    data = request.json
+
+    if not isinstance(data, dict):
+        return jsonify({"error": "Invalid payload"}), 400
+    try:
+        updated_prompt = update_agent_layers(agent_name, data)
+        return jsonify({"status": "updated", "prompt": updated_prompt}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+@app.route("/api/prompt/<agent_name>", methods=["GET"])
+def api_get_final_prompt(agent_name):
+
+    try:
+        prompts = get_current_prompts()
+        return jsonify({
+            "agent_name": agent_name,
+            "prompt": prompts.get(agent_name)
+        }), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
 @app.route("/api/cuantosagentes", methods=["GET"])
 def get_agents():
     """

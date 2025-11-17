@@ -17,6 +17,7 @@ export default function Home() {
         
         {/* Barra superior con botones de pestañas */}
         <div className="flex items-center gap-2 border-b pb-2 mb-4">
+          {/*  
           <button
             onClick={() => setActiveTab('prompts')}
             className={`px-3 py-1 text-sm rounded-md font-medium transition ${
@@ -34,7 +35,7 @@ export default function Home() {
           >
             Multiagente
           </button>
-
+          */}
           <button
             onClick={() => setActiveTab('sala')}
             className={`px-3 py-1 text-sm rounded-md font-medium transition ${

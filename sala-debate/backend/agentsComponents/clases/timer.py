@@ -10,7 +10,7 @@ class Timer:
         self.end_time = None                # Momento en que debería finalizar
         self.duration_seconds = 0           # Duración total del temporizador en segundos
         self.callback = None                # Función async a ejecutar periódicamente
-
+        self._scheduler = None
         # Estado accesible desde otros hilos
         self.elapsed_seconds: int = 0       # Segundos transcurridos desde el inicio
         self.remaining_seconds: int = 0     # Segundos restantes
@@ -21,6 +21,13 @@ class Timer:
         # Control de concurrencia
         self._lock = threading.Lock()
 
+    def set_scheduler(self, scheduler_func):
+        """
+        Recibe una función que permita ejecutar una corrutina en el event loop
+        del intermediario:
+            scheduler_func(coroutine)
+        """
+        self._scheduler = scheduler_func
     def start(self, duration_seconds: int):
         """
         Inicia el temporizador con la duración total especificada.
@@ -93,38 +100,34 @@ class Timer:
 
     def start_periodic(self, update_interval: int):
         """
-        Ejecuta periódicamente el callback cada `update_interval` segundos
-        hasta que el tiempo se agote.
-        Este método debe correrse en un hilo separado.
+        Corre en un hilo separado.
+        NO usa event loops.
+        Solo calcula el estado y delega la ejecución del callback async
+        al event loop del intermediario.
         """
         if not self.start_time:
-            raise RuntimeError("El temporizador no ha sido iniciado. Llama a start() primero.")
+            raise RuntimeError("Timer no iniciado. Llamar a start() primero.")
 
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+        if not self._scheduler:
+            raise RuntimeError("Timer no tiene scheduler configurado.")
 
-        try:
+        def run():
             while True:
                 self._update_state()
-                print(f"⏱️ Ciclo del timer ejecutado - Elapsed: {self.elapsed_seconds}s, Remaining: {self.remaining_seconds}s")
-                hito_alcanzado = self._check_hitos()
+                hito = self._check_hitos()
+
                 if self.callback:
-                    loop.run_until_complete(
-                        self.callback(
-                            self.elapsed_seconds,
-                            self.remaining_seconds,
-                            hito_alcanzado
-                        )
+                    coro = self.callback(
+                        self.elapsed_seconds,
+                        self.remaining_seconds,
+                        hito
                     )
+                    self._scheduler(coro)  # delegar al loop del intermediario
 
                 if self.remaining_seconds <= 0:
-                    print("⏰ Tiempo finalizado")
                     break
 
                 time.sleep(update_interval)
-        finally:
-            try:
-                loop.stop()
-                loop.close()
-            except Exception:
-                pass
+
+        threading.Thread(target=run, daemon=True).start()
+

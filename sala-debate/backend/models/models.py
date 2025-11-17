@@ -1,8 +1,8 @@
 from sqlalchemy import (
-    Column, Integer, String, Text, DateTime, ForeignKey, func, select
+    Column, Integer, String, Text, DateTime, ForeignKey, func, select, JSON
 )
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.orm import declarative_base, relationship, scoped_session, sessionmaker
 from sqlalchemy import create_engine, Enum
 import uuid
@@ -76,6 +76,12 @@ class Message(Base):
     agent_name = Column(String(50), nullable=True)
     sender_type = Column(Enum(SenderType),nullable=False)
     content = Column(Text, nullable=False)
+    parent_message_id = Column(
+        Integer,
+        ForeignKey('messages.id', ondelete='SET NULL'),
+        nullable=True
+    )
+    used_message_ids = Column(ARRAY(Integer), nullable=True)    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -97,6 +103,33 @@ class MultiAgentConfig(Base):
     update_interval = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+class AgentPromptTemplate(Base):
+    __tablename__ = 'agent_prompt_templates'
+    id = Column(Integer, primary_key=True)
+    agent_name = Column(String, unique=True, nullable=False)
+
+    system_layer = Column(Text, nullable=True)
+    context_layer = Column(Text, nullable=True)
+    input_layer = Column(Text, nullable=True)
+    output_layer = Column(Text, nullable=True)
+    restriction_layer = Column(Text, nullable=True)
+
+    parameters = Column(JSON, nullable=True)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+class PromptBuilder:
+    def __init__(self, template: AgentPromptTemplate):
+        self.template = template
+
+    def build(self) -> str:
+        parts = [
+            ("System Layer", self.template.system_layer),
+            ("Context Layer", self.template.context_layer),
+            ("Input Layer", self.template.input_layer),
+            ("Output Layer", self.template.output_layer),
+            ("Restriction Layer", self.template.restriction_layer),
+        ]
+        return "\n\n".join([f"### {title}:\n{content}" for title, content in parts if content])
 #----------------------------- Funciones para los temas -------------------------------------
 
 def insert_tema(titulo:str,tema_text: str) -> int:
@@ -301,7 +334,14 @@ def create_room_name(name: str) -> int:
 
 #----------------------------- Funciones para mensajes --------------------------------------
         
-def insert_message(room_session_id: str, user_id: str | None, agent_name: str | None, content: str, sender_type:SenderType) :
+def insert_message(
+        room_session_id: str, 
+        user_id: str | None, 
+        agent_name: str | None, 
+        content: str, 
+        sender_type:SenderType, 
+        parent_message_id: int | None = None,
+        used_message_ids: list[int] | None = None ) -> int:
     """
     Inserta un mensaje en la BD.
     - Si sender_type = user => guarda user_id
@@ -315,10 +355,14 @@ def insert_message(room_session_id: str, user_id: str | None, agent_name: str | 
             user_id=user_id if sender_type == SenderType.user else None,
             agent_name=agent_name if sender_type == SenderType.agent else None,
             sender_type=sender_type,
-            content=content
+            content=content,
+            parent_message_id=parent_message_id,
+            used_message_ids=used_message_ids
         )
         session.add(nuevo_mensaje)
         session.commit()
+        session.refresh(nuevo_mensaje)
+        return nuevo_mensaje.id
     except Exception as e:
         session.rollback()
         raise e
@@ -419,6 +463,87 @@ def get_all_agents() -> list[str]:
     finally:
         session.close()
 
+def create_agent_template(agent_name: str):
+    """
+    Crea una plantilla vacía para un agente (si no existe).
+    """
+    session = Session()
+    existing = session.query(AgentPromptTemplate).filter_by(agent_name=agent_name).first()
+    if existing:
+        print(f"⚠️ Ya existe una plantilla para '{agent_name}'.")
+        return existing
+
+    new_template = AgentPromptTemplate(agent_name=agent_name)
+    session.add(new_template)
+    session.commit()
+
+    # Crear también su registro en AgentPrompt
+    session.add(AgentPrompt(agent_name=agent_name, prompt=""))
+    session.commit()
+
+    print(f"✅ Agente '{agent_name}' creado con capas vacías.")
+    return new_template
+
+def update_agent_layers(agent_name: str, updates: dict):
+    """
+    Modifica una o más capas de AgentPromptTemplate y actualiza el AgentPrompt final.
+    Ejemplo de uso:
+    update_agent_layers(session, "Curador", {
+        "system_layer": "Eres un agente que evalúa coherencia.",
+        "context_layer": "Tema: ética en inteligencia artificial.",
+        "output_layer": "Devuelve un resumen evaluativo breve."
+    })
+    """
+    session = Session()
+    valid_layers = {
+        "system_layer", "context_layer", "input_layer", "output_layer", "restriction_layer"
+    }
+
+    template = session.query(AgentPromptTemplate).filter_by(agent_name=agent_name).first()
+    if not template:
+        raise ValueError(f"No existe una plantilla para el agente '{agent_name}'.")
+
+    # Actualizar capas
+    for layer, content in updates.items():
+        if layer not in valid_layers:
+            raise ValueError(f"'{layer}' no es una capa válida.")
+        setattr(template, layer, content)
+
+    # Recalcular el prompt final
+    final_prompt = PromptBuilder(template).build()
+
+    # Actualizar o crear registro en AgentPrompt
+    prompt_entry = session.query(AgentPrompt).filter_by(agent_name=agent_name).first()
+    if prompt_entry:
+        prompt_entry.prompt = final_prompt
+    else:
+        session.add(AgentPrompt(agent_name=agent_name, prompt=final_prompt))
+
+    session.commit()
+    print(f" {len(updates)} capa(s) actualizada(s) para '{agent_name}'. Prompt regenerado.")
+    return final_prompt
+
+def get_agent_template(agent_name: str) -> dict:
+    """
+    Retorna el template completo de un agente en formato dict.
+    Si no existe, lanza ValueError.
+    """
+    session = Session()
+    template = session.query(AgentPromptTemplate).filter_by(agent_name=agent_name).first()
+
+    if not template:
+        raise ValueError(f"No existe plantilla registrada para el agente '{agent_name}'.")
+
+    return {
+        "agent_name": template.agent_name,
+        "system_layer": template.system_layer,
+        "context_layer": template.context_layer,
+        "input_layer": template.input_layer,
+        "output_layer": template.output_layer,
+        "restriction_layer": template.restriction_layer,
+        "parameters": template.parameters,
+        "updated_at": template.updated_at.isoformat() if template.updated_at else None
+    }
 
 def get_multiagent_config() -> MultiAgentConfig | None:
     """

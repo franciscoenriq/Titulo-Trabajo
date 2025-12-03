@@ -21,3 +21,6 @@ model_configs.json
 runs/
 logs/
 *txt
+
+
+.csv

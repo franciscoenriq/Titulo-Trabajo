@@ -1,0 +1,456 @@
+import socketio
+import io
+import matplotlib.pyplot as plt
+from datetime import datetime
+from uuid import UUID
+from fastapi import FastAPI,Request, Query
+from fastapi import HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
+from dotenv import load_dotenv
+from app.controllers.ChatSocketController import register_sockets, get_user_list
+from app.agentComponents.intermediario import Intermediario
+from app.agentComponents.intermediarioToulmin import IntermediarioToulmin   
+from app.models.models import (
+    get_latest_room_statuses,
+    get_or_create_Active_room_session,
+    get_all_agents_by_pipeline,
+    get_multiagent_config,
+    close_active_room_session,
+    get_temas,
+    get_active_room_topic,
+    get_rooms,
+    get_active_room_session_id,
+    get_messages_by_room,
+    get_prompts_by_system,
+    create_prompt_for_system,
+    update_multiagent_config,
+    get_all_session_days_from_db,
+    get_sessions_by_day_from_db,
+    get_messages_by_session_from_db,
+    insert_tema,
+    update_tema
+    )
+from pydantic import BaseModel
+
+class MultiAgentConfigSchema(BaseModel):
+    ventana_mensajes: int
+    fase_segundos: int
+    update_interval: int
+class TemaCreate(BaseModel):
+    titulo: str
+    tema_text: str
+
+class TemaUpdate(BaseModel):
+    id: int
+    titulo: str
+    tema_text: str
+
+
+load_dotenv()
+# Guardamos las salas activas , room_name -> Intermediario
+salas_activas: dict[str, Intermediario] = {}
+
+# ---------------------------------------------------------
+# 1) Crear servidor socket.io en modo ASGI (async nativo)
+# ---------------------------------------------------------
+sio = socketio.AsyncServer(
+    async_mode="asgi",
+    cors_allowed_origins="*"
+)
+
+# Adapter ASGI → permite montar socketio dentro de FastAPI
+socket_app = socketio.ASGIApp(sio)
+
+# ---------------------------------------------------------
+# 2) Crear instancia FastAPI
+# ---------------------------------------------------------
+app = FastAPI()
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ---------------------------------------------------------
+# 3) Registrar eventos de sockets
+# ---------------------------------------------------------
+register_sockets(sio, salas_activas)
+
+
+# ---------------------------------------------------------
+# 4) Montar socketio dentro de FastAPI
+# ---------------------------------------------------------
+# NOTA: /socket.io será manejado por python-socketio
+app.mount("/socket.io", socket_app)
+
+
+@app.get("/api/estado-salas")
+def estado_salas():
+    try:
+        statuses = get_latest_room_statuses()
+        return statuses
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/init-topic")
+async def init_topic(payload: dict):
+    """
+    Inicializa la sala y crea su Intermediario async si corresponde.
+    """
+
+    room_name = payload.get("room")
+    topic = payload.get("prompt_inicial")
+    idioma = payload.get("idioma", "español")
+    pipeline_type = payload.get("pipeline_type", "standard")
+
+
+    if not room_name or not topic:
+        raise HTTPException(status_code=400, detail="Faltan 'room' o 'prompt_inicial'")
+
+    # Si ya existe el intermediario, devolvemos que ya está inicializada
+    if room_name in salas_activas:
+        return {"status": "ya_inicializado"}
+
+    # Crear o recuperar session DB
+    room_session = get_or_create_Active_room_session(room_name, topic)
+    room_session_id = room_session["id"]
+    primera = room_session.get("primera_inicializacion", False)
+
+    if not primera:
+        # ya existía
+        return {"status": "ya_inicializado"}
+
+    # Recuperar prompts desde DB / config
+    current_prompts = get_prompts_by_system(pipeline_type)
+    configuracion_multiagente = get_multiagent_config()
+    duracion_sesion = configuracion_multiagente.fase_segundos
+    update_interval = configuracion_multiagente.update_interval
+    if pipeline_type.lower() == "toulmin":
+        print("toulmin pipeline seleccionado")  
+        prompt_validador = (current_prompts.get("Validador")).replace("{tema}", topic)
+        prompt_orientador = (current_prompts.get("Orientador")).replace("{tema}", topic)
+        promtp_curador = (current_prompts.get("Curador")).replace("{tema}", topic)
+        # Config multiagente
+        tamaño_ventana_mensajes = configuracion_multiagente.ventana_mensajes
+        intermediario = IntermediarioToulmin(
+            prompt_agenteValidador=prompt_validador,
+            prompt_agenteOrientador=prompt_orientador,
+            prompt_agenteCurador=promtp_curador,
+            sio=sio,
+            sala=room_name,
+            room_session_id=room_session_id,
+            tamañoVentana=tamaño_ventana_mensajes
+        )
+
+
+    elif pipeline_type.lower() == "standard":
+        print("se eligio standard pipeline")
+        prompt_validador = (current_prompts.get("Validador")).replace("{tema}", topic)
+        prompt_orientador = (current_prompts.get("Orientador")).replace("{tema}", topic)
+        
+
+        intermediario = Intermediario(
+            prompt_agenteValidador=prompt_validador,
+            prompt_agenteOrientador=prompt_orientador,
+            sio=sio,
+            sala=room_name,
+            room_session_id=room_session_id
+        )
+
+    # Guardar en memoria
+    salas_activas[room_name] = intermediario
+
+    # Obtener usuarios (helper async de ChatSocketController)
+    usuarios_sala = await get_user_list(room_name)
+
+    # Iniciar sesión 
+    await intermediario.start_session(topic, usuarios_sala, idioma)
+
+    # start timer (no bloqueante): crea task que corre el timer de forma asíncrona
+    # La función start_timer devuelve inmediatamente y lanza internamente una tarea
+    await intermediario.start_timer(duracion_sesion, update_interval)
+
+    # Emitir start_session y estado timer a la sala (igual lógica que antes)
+    await sio.emit("start_session", {"room": room_name, "users": usuarios_sala}, room=room_name)
+
+
+    return {"status": "initialized"}
+
+@app.post("/api/close-room")
+async def close_room(payload: dict):
+    room_name = payload.get("room")
+
+    if not room_name:
+        raise HTTPException(status_code=400, detail="Se requiere el nombre de la sala")
+
+    try:
+        result = close_active_room_session(room_name)
+        if not result:
+            raise HTTPException(
+                status_code=404, 
+                detail={"status": "no_active_session", "message": "No hay sesión activa para esta sala"}
+            )
+
+        # Limpiar instancia del Intermediario en memoria
+        if room_name in salas_activas:
+            intermediario = salas_activas[room_name]
+            await intermediario.stop_session()
+            del salas_activas[room_name]
+
+        return {"status": "closed", **result}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/api/temas")
+def listar_temas():
+    """
+    GET -> Obtener todos los temas guardados
+    """
+    temas = get_temas()
+    return temas
+
+@app.get("/api/tema/{room}")
+def obtener_tema(room: str):
+    topic = get_active_room_topic(room)
+    if topic is None:
+        raise HTTPException(status_code=404, detail={"tema": "sin tema definido"})
+    return {"tema": topic}
+
+@app.get("/api/rooms")
+def listar_salas():
+    rooms = get_rooms()
+    return rooms
+
+@app.get("/api/room-messages/{room_name}")
+def get_room_messages(room_name: str):
+
+    id_session = get_active_room_session_id(room_name)
+
+    if not id_session:
+        raise HTTPException(status_code=404, detail="No hay sesión activa")
+
+    messages = get_messages_by_room(id_session)
+
+    return messages
+
+
+@app.get("/api/timer-state/{room}")
+async def timer_state(room: str):
+    if room not in salas_activas:
+        raise HTTPException(404, "Sala no encontrada")
+    return salas_activas[room].get_timer_state()
+
+
+
+
+@app.get("/api/prompts")
+async def get_prompts(request: Request):
+    """
+    GET /api/prompts?pipeline=standard
+    Devuelve los prompts del tipo de sistema seleccionado.
+    """
+    pipeline = request.query_params.get("pipeline", "standard")
+
+    try:
+        prompts = get_prompts_by_system(pipeline)
+        return JSONResponse(prompts)
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.post("/api/prompts")
+async def save_prompt(request: Request):
+    """
+    Guarda un nuevo prompt asociándolo al tipo de sistema (pipeline)
+    Body esperado:
+      { "agent_name": "...", "prompt": "texto..." }
+    Header:
+      X-Pipeline: standard | toulmin
+    """
+    pipeline = request.headers.get("X-Pipeline", "standard")
+
+    try:
+        payload = await request.json()
+
+        if "agent_name" not in payload or "prompt" not in payload:
+            raise HTTPException(status_code=400, detail="Formato inválido")
+
+        agent_name = payload["agent_name"]
+        prompt_text = payload["prompt"]
+
+        create_prompt_for_system(agent_name, prompt_text, pipeline)
+
+        return {"status": "ok"}
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@app.get("/api/cuantosagentes")
+def cuantos_agentes(system_type: str = Query("standard")):
+    """
+    Retorna los agentes disponibles filtrados por pipeline.
+    """
+    agents = get_all_agents_by_pipeline(system_type)
+    return {"agents": agents}
+
+
+
+
+@app.get("/api/multiagent-config",response_model=MultiAgentConfigSchema)
+def get_config():
+    config = get_multiagent_config()
+    if not config:
+        raise HTTPException(status_code=404, detail="No existe configuración")
+    return {
+        "ventana_mensajes": config.ventana_mensajes,
+        "fase_segundos": config.fase_segundos,
+        "update_interval": config.update_interval
+    }
+
+@app.post("/api/multiagent-config",response_model=MultiAgentConfigSchema)
+def post_config(data: MultiAgentConfigSchema):
+    try:
+        config = update_multiagent_config(
+            ventana_mensajes=data.ventana_mensajes,
+            fase_segundos=data.fase_segundos,
+            update_interval=data.update_interval
+        )
+        return {
+            "ventana_mensajes": config.ventana_mensajes,
+            "fase_segundos": config.fase_segundos,
+            "update_interval": config.update_interval
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+
+@app.get("/api/sessions/days")
+def get_all_session_days():
+    try:
+        days = get_all_session_days_from_db()
+        return {"days": days}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/sessions/by-day/{day}")
+def get_sessions_by_day(day: str):
+    """
+    day = 'YYYY-MM-DD'
+    """
+    try:
+        sessions = get_sessions_by_day_from_db(day)
+        return {"sessions": sessions}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/sessions/messages/{session_id}")
+def get_messages_by_session(session_id: UUID):
+    try:
+        msgs = get_messages_by_session_from_db(session_id)
+        return {"messages": msgs}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
+
+def generate_day_plot(day: str) -> io.BytesIO:
+    # 1. Obtener sesiones del día
+    sessions = get_sessions_by_day_from_db(day)
+    if not sessions:
+        raise ValueError("No hay sesiones para este día")
+
+    plt.figure(figsize=(13, max(len(sessions) * 1.5, 4)))
+    plt.title(f"Timeline de sesiones del día {day}")
+    plt.xlabel("Timestamp")
+    plt.ylabel("Sesiones")
+
+    session_labels = []
+    all_points = {"x": [], "y": [], "color": [], "marker": []}
+
+    user_color = "blue"
+    orientador_color = "orange"
+    other_agents_color = "green"
+
+    for idx, s in enumerate(sessions):
+        created_at = s.created_at
+        if isinstance(created_at, str):
+            created_at = datetime.fromisoformat(created_at)
+        session_labels.append(f"{s.room_name} ({created_at.strftime('%H:%M')})")
+
+        msgs = get_messages_by_session_from_db(s.id)
+        for m in msgs:
+            ts = m["created_at"]
+            if isinstance(ts, str):
+                ts = datetime.fromisoformat(ts)
+
+            if m.get("agent_name") and m["agent_name"].lower() == "orientador":
+                color = orientador_color
+                marker = "o"
+            elif m.get("agent_name"):
+                color = other_agents_color
+                marker = "s"
+            else:
+                color = user_color
+                marker = "o"
+
+            all_points["x"].append(ts)
+            all_points["y"].append(idx)
+            all_points["color"].append(color)
+            all_points["marker"].append(marker)
+
+    for x, y, c, m in zip(all_points["x"], all_points["y"], all_points["color"], all_points["marker"]):
+        plt.scatter(x, y, color=c, marker=m, s=80, edgecolor="black" if m=="s" else "none")
+
+    plt.yticks(range(len(session_labels)), session_labels)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png")
+    buf.seek(0)
+    plt.close()
+    return buf
+
+@app.get("/api/sessions/plot-day/{day}")
+def plot_sessions_day(day: str):
+    """
+    Devuelve un gráfico PNG con todas las sesiones de un día.
+    day = 'YYYY-MM-DD'
+    """
+    try:
+        buf = generate_day_plot(day)
+        return StreamingResponse(buf, media_type="image/png")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+
+@app.get("/api/temas")
+def obtener_temas():
+    temas = get_temas()
+    return temas
+
+
+@app.post("/api/temas", status_code=201)
+def crear_tema(data: TemaCreate):
+    tema_id = insert_tema(data.titulo, data.tema_text)
+    return {"status": "success", "id": tema_id}
+
+
+@app.put("/api/temas")
+def actualizar_tema(data: TemaUpdate):
+    actualizado = update_tema(data.id, data.titulo, data.tema_text)
+    
+    if not actualizado:
+        raise HTTPException(status_code=404, detail="No se encontró el tema con ese ID")
+
+    return {"status": "success", "id": data.id}

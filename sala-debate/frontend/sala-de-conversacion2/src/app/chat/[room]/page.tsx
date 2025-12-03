@@ -293,6 +293,28 @@ useEffect(() => {
     socket.off('timer_user_update', handleTimerUpdate);
   };
 }, [joined]);
+// Obtener el estado inicial del timer al unirse
+useEffect(() => {
+  if (!joined) return;
+
+  async function fetchTimer() {
+    try {
+      const res = await fetch(`${backend}/api/timer-state/${room}`);
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      setElapsedTime(data.elapsed_time);
+      setRemainingTime(data.remaining_time);
+      setIsTimerRunning(true);
+    } catch (err) {
+      console.error("Error obteniendo timer inicial", err);
+    }
+  }
+
+  fetchTimer();
+}, [joined]);
+
 
 // Intervalo local para decrementar el contador cada segundo
 useEffect(() => {

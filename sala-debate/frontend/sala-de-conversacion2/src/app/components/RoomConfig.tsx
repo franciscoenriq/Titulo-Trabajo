@@ -34,6 +34,8 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
   const [topic, setTopic] = useState('')
   const [selectedCaseKey, setSelectedCaseKey] = useState('')
   const [idioma, setIdioma] = useState('español')
+  const [pipeline, setPipeline] = useState("standard")
+ 
 
   // Fetch de salas
   const fetchRooms = async () => {
@@ -95,6 +97,8 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
     sessionStorage.setItem('chatIdioma', idioma)
     sessionStorage.setItem('chatTopic', topic)
     sessionStorage.setItem('chatRoom', room)
+    sessionStorage.setItem("pipelineType", pipeline)
+
     router.push(`/chat/${room}/lobby`)
   }
 
@@ -213,6 +217,18 @@ export default function RoomConfig({ backend }: RoomConfigProps) {
             <option value="inglés">Inglés</option>
           </select>
         </div>
+        <div className="mb-4">
+          <label className="block mb-2 text-sm font-medium">Seleccionar tipo de sistema:</label>
+          <select
+            className="border p-2 w-full rounded cursor-pointer"
+            value={pipeline}
+            onChange={(e) => setPipeline(e.target.value)}
+          >
+            <option value="standard">Pipeline estándar</option>
+            <option value="toulmin">Pipeline Toulmin</option>
+          </select>
+        </div>
+
       </div>
 
       {/* Panel derecho - Texto del tema */}

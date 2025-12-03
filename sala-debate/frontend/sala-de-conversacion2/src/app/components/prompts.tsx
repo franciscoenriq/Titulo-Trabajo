@@ -12,13 +12,16 @@ export default function PromptsPage() {
   const [prompts, setPrompts] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [pipelineType, setPipelineType] = useState("standard")
 
 
 
   // Obtener lista de agentes disponibles
   const fetchAgents = async () => {
     try {
-      const res = await fetch(`${backend}/api/cuantosagentes`)
+      const res = await fetch(`${backend}/api/cuantosagentes?system_type=${pipelineType}`)
+
+
       if (!res.ok) throw new Error('Error al obtener agentes')
       const data = await res.json()
       setAgents(data.agents || []) 
@@ -29,16 +32,17 @@ export default function PromptsPage() {
   const fetchPrompts = async () => {
     try {
       setLoading(true)
-      const res = await fetch(`${backend}/api/prompts`)
+      const res = await fetch(`${backend}/api/prompts?pipeline=${pipelineType}`)
       if (!res.ok) throw new Error('Error al obtener prompts')
       const data = await res.json()
-      setPrompts(data) // data debería ser un objeto con claves = nombre de agente
+      setPrompts(data)
     } catch (error) {
       console.error('Error al cargar prompts:', error)
     } finally {
       setLoading(false)
     }
   }
+  
 
   const handleSavePrompt = async () => {
     if (agents.length === 0) return
@@ -47,9 +51,16 @@ export default function PromptsPage() {
       setSaving(true)
       await fetch(`${backend}/api/prompts`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ [currentAgent]: prompts[currentAgent] }),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Pipeline': pipelineType,
+        },
+        body: JSON.stringify({
+          agent_name: currentAgent,
+          prompt: prompts[currentAgent],
+        }),
       })
+      
       await fetchPrompts()
     } catch (error) {
       console.error('Error al guardar prompt:', error)
@@ -57,11 +68,14 @@ export default function PromptsPage() {
       setSaving(false)
     }
   }
-
+  useEffect(() => {
+    fetchPrompts()
+  }, [pipelineType])
+  
   useEffect(() => {
     fetchAgents()
-    fetchPrompts()
-  }, [backend])
+    setCurrentIndex(0) 
+  }, [pipelineType])
   const currentAgent = agents[currentIndex] || null
 
   return (
@@ -118,6 +132,30 @@ export default function PromptsPage() {
         >
           {saving ? 'Guardando...' : 'Guardar cambios'}
         </button>
+        <div className="flex gap-3 mb-6">
+        <button
+          onClick={() => setPipelineType("standard")}
+          className={`px-4 py-2 rounded-lg border ${
+            pipelineType === "standard"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          Standard
+        </button>
+
+        <button
+          onClick={() => setPipelineType("toulmin")}
+          className={`px-4 py-2 rounded-lg border ${
+            pipelineType === "toulmin"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          Toulmin
+        </button>
+      </div>
+
       </div>
     </div>
   )

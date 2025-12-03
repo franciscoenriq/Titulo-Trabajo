@@ -10,6 +10,7 @@ import TemasManager from '../components/temasManager'
 export default function Home() {
   const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [activeTab, setActiveTab] = useState<'sala' | 'prompts' | 'multiagente' | 'temas'>('sala')
+  const router = useRouter()
   
   return (
     <main className="flex justify-center items-start min-h-screen pt-12">
@@ -17,7 +18,7 @@ export default function Home() {
         
         {/* Barra superior con botones de pestañas */}
         <div className="flex items-center gap-2 border-b pb-2 mb-4">
-          {/*  
+          
           <button
             onClick={() => setActiveTab('prompts')}
             className={`px-3 py-1 text-sm rounded-md font-medium transition ${
@@ -35,7 +36,7 @@ export default function Home() {
           >
             Multiagente
           </button>
-          */}
+          
           <button
             onClick={() => setActiveTab('sala')}
             className={`px-3 py-1 text-sm rounded-md font-medium transition ${
@@ -52,6 +53,18 @@ export default function Home() {
             }`}
           >
             Temas
+          </button>
+          <button
+            onClick={() => router.push('/historicalChatConversation')}
+            className="px-3 py-1 text-sm rounded-md font-medium bg-yellow-600 text-white hover:bg-yellow-700 transition"
+          >
+            Histórico
+          </button>
+          <button
+            onClick={() => router.push('/visualizacion')}
+            className="px-3 py-1 text-sm rounded-md font-medium bg-yellow-600 text-white hover:bg-yellow-700 transition"
+          >
+            Graficos
           </button>
         </div>
 

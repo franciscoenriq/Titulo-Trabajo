@@ -70,10 +70,12 @@ export default function LobbyPage() {
     try {
       const prompt = sessionStorage.getItem('chatTopic') || ''
       const idioma = sessionStorage.getItem('chatIdioma') || 'español'
+      const pipelineType = sessionStorage.getItem('pipelineType') || 'standard'
+
       const res = await fetch(`${backend}/api/init-topic`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room, prompt_inicial: prompt,idioma }),
+        body: JSON.stringify({ room, prompt_inicial: prompt,idioma,pipeline_type: pipelineType }),
       })
       if (!res.ok) {
         const err = await res.json().catch(()=>({}))

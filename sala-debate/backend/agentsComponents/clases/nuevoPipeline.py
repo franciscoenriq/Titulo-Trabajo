@@ -11,14 +11,9 @@ from .BaseModels.baseModel import *
 from utils.groupchat_utils import *
 from.utils.utilsForAgents import *
 
-class PuntuacionModel(BaseModel):
-    score_dinamico: int = Field(..., ge=0, le=100, description="Un número entero entre 0 y 100")
-    diagnostico_dinamico: str = Field(..., description="Breve explicación (15 palabras maximo) del score")
-
 class Pipeline:
     def __init__(self,factory: ReActAgentFactory,
                  prompt_agenteValidador:str,
-                 #prompt_agentePuntuador:str,
                  prompt_agenteCurador:str,
                  promt_agenteOrientador:str
                  ):
@@ -26,10 +21,6 @@ class Pipeline:
             name="Validador",
             sys_prompt=prompt_agenteValidador
         )
-        #self.agentePuntuador = factory.create_agent(
-        #    name="Puntuador",
-        #    sys_prompt=prompt_agentePuntuador
-        #)
         self.agenteCurador = factory.create_agent(
             name="Curador",
             sys_prompt=prompt_agenteCurador
@@ -38,7 +29,7 @@ class Pipeline:
             name="Orientador",
             sys_prompt=promt_agenteOrientador
         )
-#TODO: revisar esto de la lista
+
         self.agentes = list([self.agenteCurador,self.agenteOrientador])
         self.hub = None
         self.msg_id = 0

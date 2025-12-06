@@ -120,9 +120,10 @@ class Pipeline(BasePipeline):
         self.agenteExploradorEtico = None  
         await self._broadcast(mensaje)
         respuesta_orientador = await self._call_agent(self.agenteOrientador)
+        respuesta_orientador = self.ensure_text(respuesta_orientador.content)   
         return [{
             "agente":"Orientador",
-            "respuesta":respuesta_orientador.content
+            "respuesta":respuesta_orientador
         }]
 
 
@@ -163,17 +164,23 @@ class Pipeline(BasePipeline):
         await self._broadcast(mensaje)
         print("se llama al validador")
         curador_msg = await self._call_agent(self.agenteValidador,mensaje)
-        print("respuesta del curador obtenida")
+        curador_msg = self.extract_content(curador_msg)
+        curador_msg = self.ensure_text(curador_msg)
+
         respuestas = [{
             "agente":"Curador",
-            "respuesta":curador_msg.content
+            "respuesta":curador_msg
         }]
-        next_agent = filter_agents(curador_msg.content, self.agentes)
+        next_agent = filter_agents(curador_msg, self.agentes)
         if next_agent and next_agent[0].name == "Orientador":
             orientador_msg = await self._call_agent(self.agenteOrientador)
+            respuesta_orientador = self.extract_content(orientador_msg)
+            respuesta_orientador = self.ensure_text(respuesta_orientador)
+
+
             respuestas.append({
                 "agente":"Orientador",
-                "respuesta":orientador_msg.content
+                "respuesta":respuesta_orientador
             })
         return respuestas
     
@@ -187,9 +194,11 @@ class Pipeline(BasePipeline):
                          content=mensaje)
         await self._broadcast(msgUsuario)
         respuesta = await self._call_agent(self.agenteOrientador)
+        respuesta_orientador = self.extract_content(respuesta)
+        respuesta_orientador = self.ensure_text(respuesta_orientador)   
         return [{
             "agente":"Orientador",
-            "respuesta":respuesta.content
+            "respuesta":respuesta_orientador
         }]
     
     async def avisar_tiempo(self, elapsed_time, remaining_time):
@@ -254,7 +263,8 @@ class Pipeline(BasePipeline):
         
         # Solicitar respuesta del Orientador
         respuesta_orientador = await self._call_agent(self.agenteOrientador, msg_hito)
-        
+        respuesta_orientador = self.extract_content(respuesta_orientador)
+        respuesta_orientador = self.ensure_text(respuesta_orientador)   
         if not respuesta_orientador or not respuesta_orientador.content:
             return [{
                 "agente": "Orientador",
@@ -263,7 +273,7 @@ class Pipeline(BasePipeline):
         
         return [{
             "agente": "Orientador",
-            "respuesta": respuesta_orientador.content
+            "respuesta": respuesta_orientador
         }]
 
 
@@ -281,10 +291,11 @@ class Pipeline(BasePipeline):
         )
         await self._broadcast(msg)
         respuesta_orientador = await self._call_agent(self.agenteOrientador, msg)
+        respuesta_orientador = self.extract_content(respuesta_orientador)
+        respuesta_orientador = self.ensure_text(respuesta_orientador)
         return [{
             "agente": "Orientador",
-            "respuesta": (respuesta_orientador.content if respuesta_orientador and respuesta_orientador.content else
-                          "Para retomar, ¿qué argumento necesitan desarrollar mejor?")
+            "respuesta": respuesta_orientador 
         }]
 
     

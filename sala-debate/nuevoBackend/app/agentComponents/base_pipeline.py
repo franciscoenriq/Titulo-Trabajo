@@ -185,3 +185,51 @@ class BasePipeline(ABC):
         with open(ruta_archivo, "w", encoding="utf-8") as f:
             json.dump(datos, f, indent=2, ensure_ascii=False)
         return ruta_archivo
+
+    def ensure_text(self, msg):
+        """
+        Convierte cualquier estructura de Agentscope (list, dict, Msg, etc.)
+        en un string simple, evitando insertar dicts en la base de datos.
+        """
+
+        # Agentscope a veces retorna msgs estilo MsgHub → convertirlos:
+        try:
+            # si tiene método .to_dict() → convertirlo primero
+            if hasattr(msg, "to_dict"):
+                msg = msg.to_dict()
+        except:
+            pass
+
+        # Si es lista → concatenar
+        if isinstance(msg, list):
+            return "\n".join(self.ensure_text(m) for m in msg)
+
+        # Si es diccionario
+        if isinstance(msg, dict):
+            # Formatos comunes de Agentscope:
+            # {"type": "text", "text": "..."}
+            if "text" in msg and isinstance(msg["text"], str):
+                return msg["text"]
+
+            # {"content": "..."}
+            if "content" in msg and isinstance(msg["content"], str):
+                return msg["content"]
+
+            # Agentscope 0.11+ usa "value"
+            if "value" in msg and isinstance(msg["value"], str):
+                return msg["value"]
+
+            # fallback
+            return json.dumps(msg, ensure_ascii=False)
+
+        # Cualquier otro tipo (int, str...)
+        return str(msg)
+    def extract_content(self, raw):
+        """
+        Normaliza la respuesta de un agente.
+        Si es Msg → devuelve msg.content
+        Si es string → devuelve el string
+        """
+        if hasattr(raw, "content"):
+            return raw.content
+        return str(raw)

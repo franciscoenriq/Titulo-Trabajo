@@ -74,9 +74,11 @@ class PipelineToulmin(BasePipeline):
         await self._observe_agent(agent=self.agenteValidador,msg=mensaje)   
         await self._broadcast(mensaje)
         respuesta_orientador = await self._call_agent(self.agenteOrientador,mensaje)
+        respuesta_orientador = self.extract_content(respuesta_orientador)
+        respuesta_orientador = self.ensure_text(respuesta_orientador)
         return [{
             "agente":"Orientador",
-            "respuesta":respuesta_orientador.content
+            "respuesta":respuesta_orientador
         }]
 
 
@@ -110,7 +112,9 @@ class PipelineToulmin(BasePipeline):
                   content=mensaje)
         await self._broadcast(msg)  
         respuesta_validador = await self._call_agent(self.agenteValidador,msg)
-        return respuesta_validador.content
+        respuesta_validador = self.extract_content(respuesta_validador)
+        respuesta_validador = self.ensure_text(respuesta_validador)
+        return respuesta_validador
         
        
 
@@ -122,18 +126,22 @@ class PipelineToulmin(BasePipeline):
             content="Como Curador, evalúa si la sala necesita intervención del agente Orientador o no."
         )
         curador_msg = await self._call_agent(self.agenteCurador,msg_curador)
+        curador_msg = self.extract_content(curador_msg)
+        curador_msg = self.ensure_text(curador_msg)
         print("respuesta del curador obtenida")
         respuestas = [{
             "agente":"Curador",
-            "respuesta":curador_msg.content
+            "respuesta":curador_msg
         }]
-        next_agent = filter_agents(curador_msg.content, self.agentes)
+        next_agent = filter_agents(curador_msg, self.agentes)
         if next_agent and next_agent[0].name == "Orientador":
             orientador_msg = await self._call_agent(self.agenteOrientador)
+            orientador_msg = self.extract_content(orientador_msg)
+            orientador_msg = self.ensure_text(orientador_msg)
             await self._observe_agent(agent=self.agenteValidador,msg=orientador_msg)
             respuestas.append({
                 "agente":"Orientador",
-                "respuesta":orientador_msg.content
+                "respuesta":orientador_msg
             })
         return respuestas
     
@@ -149,10 +157,13 @@ class PipelineToulmin(BasePipeline):
         await self._observe_agent(agent=self.agenteValidador,msg=msgUsuario)
         respuesta = await self._call_agent(self.agenteOrientador,msgUsuario)
         await self._observe_agent(agent=self.agenteValidador,msg=respuesta)
+        respuesta = self.extract_content(respuesta)
+        respuesta = self.ensure_text(respuesta)
+        
 
         return [{
             "agente":"Orientador",
-            "respuesta":respuesta.content
+            "respuesta":respuesta
         }]
     
     async def avisar_tiempo(self, elapsed_time, remaining_time):
@@ -219,7 +230,8 @@ class PipelineToulmin(BasePipeline):
             await self._broadcast(msg_hito)
             # Solicitar respuesta del Orientador
             respuesta_orientador = await self._call_agent(self.agenteOrientador, msg_hito)
-            
+            respuesta_orientador = self.extract_content(respuesta_orientador)
+            respuesta_orientador = self.ensure_text(respuesta_orientador)
             if not respuesta_orientador or not respuesta_orientador.content:
                 return [{
                     "agente": "Orientador",
@@ -228,7 +240,7 @@ class PipelineToulmin(BasePipeline):
             
             return [{
                 "agente": "Orientador",
-                "respuesta": respuesta_orientador.content
+                "respuesta": respuesta_orientador
             }]
             
         except Exception as e:
@@ -252,10 +264,11 @@ class PipelineToulmin(BasePipeline):
         )
         await self._broadcast(msg)
         respuesta_orientador = await self._call_agent(self.agenteOrientador, msg)
+        respuesta_orientador = self.extract_content(respuesta_orientador)
+        respuesta_orientador = self.ensure_text(respuesta_orientador)
         return [{
             "agente": "Orientador",
-            "respuesta": (respuesta_orientador.content if respuesta_orientador and respuesta_orientador.content else
-                          "Para retomar, ¿qué argumento necesitan desarrollar mejor?")
+            "respuesta": respuesta_orientador
         }]
     
     

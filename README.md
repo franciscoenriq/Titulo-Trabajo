@@ -19,3 +19,16 @@ Titulo-Trabajo
     para correr el backend se usa 'uvicorn app.main:app --reload --host 0.0.0.0 --port 8000'
 
 - Base de datos. en la carpeta nuevoBackend/baseDatos se encuentra el archivo que se tiene que usar para crear y poblar las tablas que se necesitan para correr el sistema. Se usa una base de datos Postgres para el proeycto. 
+
+
+
+
+
+las requirements son las siguientes:
+fastapi 
+uvicorn 
+python-socketio[asgi] 
+python-dotenv
+sqlalchemy
+agentscope
+psycopg2-binary

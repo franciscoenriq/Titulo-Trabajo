@@ -60,12 +60,15 @@ export default function Home() {
           >
             Histórico
           </button>
+          {/*
           <button
             onClick={() => router.push('/visualizacion')}
             className="px-3 py-1 text-sm rounded-md font-medium bg-yellow-600 text-white hover:bg-yellow-700 transition"
           >
+
             Graficos
           </button>
+          */}
         </div>
 
         {/* Contenido de las pestañas */}

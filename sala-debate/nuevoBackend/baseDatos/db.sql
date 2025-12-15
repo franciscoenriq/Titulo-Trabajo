@@ -105,10 +105,20 @@ INSERT INTO agent_prompts (agent_name, prompt, system_type) VALUES
 ('Validador', 
 'placeholder', 
 'standard'),
-
 ('Orientador', 
 'placeholder', 
-'standard');
+'standard'),
+
+('Validador',
+'placeholder,'
+'toulmin'),
+('Curador',
+'placeholder,'
+'toulmin'),
+('Orientador',
+'placeholder,'
+'toulmin'),
+;
 
 -- Poblar multiagent_config 
 INSERT INTO multiagent_config (ventana_mensajes, fase_segundos, update_interval) VALUES 

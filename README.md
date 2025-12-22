@@ -22,7 +22,9 @@ Titulo-Trabajo
 
 
 
-
+IMPORTANTE: para que el sistema multiagente funcione correctamente debe insertar los prompts correctamente. 
+La instrucción mínima que se requiere colocar para el agente Validador en el pipeline Standard y el agente Curador en el pipeline Toulmin debe ser:
+'Si decides que hay que intervenir debes llamar al agente Orientador de la siguiente manera '@orientador interviene por favor [Motivo de la intervencion]' por ejemplo. Ya que la forma en que implementa la forma en que se pasan los turnos entre agentes es esta. 
 
 las requirements son las siguientes:
 fastapi 
